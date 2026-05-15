@@ -1,0 +1,353 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kriday Dave</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --ink: #1a1a2e; --ink2: #16213e; --accent: #e94560; --cyan: #0f3460; --gold: #ffd369; --glass: rgba(255,255,255,0.03); }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--ink); color: #eee;
+  overflow-x: hidden; line-height: 1.6;
+}
+::selection { background: var(--accent); color: #fff; }
+
+/* Grid bg pattern */
+.grid-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Sections */
+section { position: relative; overflow: hidden; }
+.section-inner { max-width: 1000px; margin: 0 auto; padding: 80px 32px; position: relative; z-index: 2; }
+
+/* Hero */
+#hero { min-height: 100vh; display: flex; align-items: center; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+.hero-content { text-align: center; max-width: 700px; margin: 0 auto; padding: 0 24px; }
+.hero-tag {
+  display: inline-block; font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 4px; color: var(--accent); margin-bottom: 24px;
+  border: 1px solid rgba(233,69,96,0.2); padding: 6px 20px;
+}
+.hero-glitch {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 5rem; font-weight: 700; line-height: 1.05;
+  position: relative; display: inline-block;
+}
+.hero-glitch::before, .hero-glitch::after {
+  content: attr(data-text); position: absolute; inset: 0;
+  opacity: 0.7;
+}
+.hero-glitch::before { color: var(--accent); animation: g1 3s infinite; clip-path: inset(20% 0 60% 0); }
+.hero-glitch::after { color: var(--gold); animation: g2 3s infinite; clip-path: inset(60% 0 10% 0); }
+@keyframes g1 {
+  0%,100% { transform: translate(0); }
+  20% { transform: translate(-3px, 2px); }
+  40% { transform: translate(3px, -1px); }
+  60% { transform: translate(-1px, -3px); }
+  80% { transform: translate(2px, 1px); }
+}
+@keyframes g2 {
+  0%,100% { transform: translate(0); }
+  20% { transform: translate(2px, -2px); }
+  40% { transform: translate(-2px, 3px); }
+  60% { transform: translate(3px, 1px); }
+  80% { transform: translate(-1px, -2px); }
+}
+.hero-sub { margin-top: 20px; color: rgba(255,255,255,0.35); font-size: 1rem; }
+.hero-actions { margin-top: 36px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 32px; border-radius: 100px; font-size: 0.85rem;
+  font-weight: 500; text-decoration: none; transition: 0.25s; font-family: inherit; cursor: pointer;
+}
+.btn-p { background: var(--accent); color: #fff; border: none; box-shadow: 0 4px 24px rgba(233,69,96,0.25); }
+.btn-p:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(233,69,96,0.35); }
+.btn-o { background: transparent; color: #eee; border: 1px solid rgba(255,255,255,0.1); }
+.btn-o:hover { border-color: rgba(255,255,255,0.3); }
+
+/* Section header */
+.sh { margin-bottom: 48px; }
+.sh-label { font-family: 'Space Grotesk', monospace; font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; }
+.sh-title { font-family: 'Space Grotesk', monospace; font-size: 2.4rem; font-weight: 600; }
+.sh-desc { color: rgba(255,255,255,0.35); font-size: 0.9rem; margin-top: 8px; max-width: 500px; }
+
+/* About */
+#about { background: var(--ink2); }
+.about-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 60px; align-items: start; }
+.about-text p { color: rgba(255,255,255,0.5); font-size: 0.95rem; line-height: 1.85; margin-bottom: 18px; }
+.about-highlights { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ah-item {
+  padding: 28px 24px; border: 1px solid rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.02); transition: 0.2s;
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: 110px;
+}
+.ah-item:hover { border-color: rgba(233,69,96,0.2); background: rgba(233,69,96,0.02); }
+.ah-icon { font-size: 1.6rem; margin-bottom: 8px; }
+.ah-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.25); margin-bottom: 4px; }
+.ah-value { font-size: 1rem; font-weight: 500; }
+
+/* Skills */
+#skills { background: linear-gradient(180deg, #16213e, #1a1a2e); }
+.skills-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+.skill-rings { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; align-self: center; }
+.sr-item { text-align: center; }
+.sr-ring {
+  width: 110px; height: 110px; border-radius: 50%;
+  position: relative; display: flex; align-items: center; justify-content: center;
+}
+.sr-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.sr-ring circle { fill: none; stroke-width: 3; stroke: rgba(255,255,255,0.04); }
+.sr-ring .sr-fill { stroke-dasharray: 282.7; stroke-dashoffset: calc(282.7 - (282.7 * var(--pct)) / 100); transition: stroke-dashoffset 1.5s ease; }
+.sr-pct { font-family: 'Space Grotesk', monospace; font-weight: 700; font-size: 1.4rem; }
+.sr-label { font-size: 0.7rem; color: rgba(255,255,255,0.35); margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; }
+
+.skills-list { display: flex; flex-direction: column; gap: 16px; }
+.sk-item { }
+.sk-top { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; }
+.sk-name { font-weight: 500; }
+.sk-pct2 { color: rgba(255,255,255,0.3); }
+.sk-track { height: 3px; background: rgba(255,255,255,0.04); border-radius: 2px; overflow: hidden; }
+.sk-fill { height: 100%; border-radius: 2px; }
+
+/* Projects */
+#projects { background: var(--ink); }
+.proj-showcase { overflow: hidden; }
+.ps-track { overflow: hidden; }
+.ps-inner { display: flex; transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
+.ps-card { min-width: 100%; padding: 40px; border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); }
+.ps-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.ps-tag { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px; border: 1px solid rgba(255,255,255,0.08); color: var(--gold); }
+.ps-title { font-family: 'Space Grotesk', monospace; font-size: 1.8rem; font-weight: 600; margin-bottom: 12px; }
+.ps-desc { font-size: 0.9rem; color: rgba(255,255,255,0.45); line-height: 1.8; max-width: 600px; margin-bottom: 16px; }
+.ps-link a { color: var(--accent); text-decoration: none; font-size: 0.85rem; border-bottom: 1px solid transparent; transition: 0.2s; }
+.ps-link a:hover { border-bottom-color: var(--accent); }
+.ps-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 24px; }
+.ps-btn {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent; color: #fff; cursor: pointer;
+  font-size: 1rem; transition: 0.2s; display: flex; align-items: center; justify-content: center;
+}
+.ps-btn:hover { border-color: var(--accent); background: rgba(233,69,96,0.08); }
+.ps-dots { display: flex; gap: 8px; }
+.ps-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.08); border: none; cursor: pointer; transition: 0.2s; padding: 0; }
+.ps-dot.act { background: var(--accent); }
+
+/* Contact */
+#contact { background: linear-gradient(135deg, #1a1a2e, #0f3460); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.contact-item { display: flex; gap: 16px; padding: 16px 20px; border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); transition: 0.2s; }
+.contact-item:hover { border-color: rgba(233,69,96,0.15); }
+.contact-icon { font-size: 1.2rem; opacity: 0.4; }
+.ci-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.3); margin-bottom: 2px; }
+.ci-value { font-size: 0.9rem; }
+.ci-value a { color: #eee; text-decoration: none; transition: color 0.2s; }
+.ci-value a:hover { color: var(--accent); }
+
+.quote-card {
+  padding: 32px; border: 1px solid rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.02); display: flex; flex-direction: column; justify-content: center;
+}
+.quote-card p { font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.4); font-style: italic; }
+.quote-card cite { color: var(--gold); font-size: 0.8rem; margin-top: 12px; display: block; }
+
+footer { text-align: center; padding: 40px 24px; border-top: 1px solid rgba(255,255,255,0.04); color: rgba(255,255,255,0.2); font-size: 0.8rem; background: var(--ink); }
+
+/* Floating shapes (decorative) */
+.floating-shapes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.fs {
+  position: absolute; border-radius: 50%; opacity: 0.06;
+  animation: floatShape 10s ease-in-out infinite;
+}
+@keyframes floatShape {
+  0%,100% { transform: translate(0,0); }
+  33% { transform: translate(20px,-20px); }
+  66% { transform: translate(-10px,10px); }
+}
+
+@media (max-width: 768px) {
+  .hero-glitch { font-size: 2.8rem; }
+  .about-grid, .skills-wrap, .contact-grid { grid-template-columns: 1fr; gap: 32px; }
+  .about-highlights { grid-template-columns: 1fr; }
+  .section-inner { padding: 60px 20px; }
+  .sh-title { font-size: 1.6rem; }
+  .skill-rings { gap: 16px; }
+  .sr-ring { width: 80px; height: 80px; }
+  .ps-card { padding: 24px; }
+  .ps-title { font-size: 1.3rem; }
+}
+</style>
+</head>
+<body>
+<!-- HERO -->
+<section id="hero">
+  <div class="grid-bg"></div>
+  <div class="floating-shapes">
+    <div class="fs" style="width:300px;height:300px;background:var(--accent);top:-80px;right:-60px;animation-delay:0s;"></div>
+    <div class="fs" style="width:200px;height:200px;background:var(--gold);bottom:10%;left:-40px;animation-delay:-3s;"></div>
+    <div class="fs" style="width:150px;height:150px;background:var(--cyan);bottom:-40px;right:30%;animation-delay:-6s;"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-tag">10th Grade &middot; AI-Powered Developer</div>
+    <h1 class="hero-glitch" data-text="Kriday Dave">Kriday Dave</h1>
+    <p class="hero-sub">Building the future with Python, JavaScript, and AI &mdash; one commit at a time</p>
+    <div class="hero-actions">
+      <a href="#projects" class="btn btn-p">See my work</a>
+      <a href="#contact" class="btn btn-o">Get in touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="floating-shapes">
+    <div class="fs" style="width:250px;height:250px;background:var(--gold);top:-60px;left:-60px;animation-delay:-2s;"></div>
+  </div>
+  <div class="section-inner">
+    <div class="sh"><div class="sh-label">About</div><div class="sh-title">Who I Am</div><div class="sh-desc">A 10th grader who codes, studies JEE, and games in between.</div></div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>I'm Kriday Dave — a 10th grade student balancing JEE preparation with a deep passion for coding. I build with Python, JavaScript, and AI-assisted tools, turning ideas into real, shippable projects. From MCP servers to AI middleware, I love creating things that actually solve problems.</p>
+        <p>When I'm not studying or coding, I'm gaming. It keeps the mind sharp and the creativity flowing. My belief is simple: AI isn't here to replace developers — it's here to empower us to build bigger, smarter, and faster than ever before.</p>
+      </div>
+      <div class="about-highlights">
+        <div class="ah-item"><div class="ah-icon">&#x1F393;</div><div class="ah-label">Grade</div><div class="ah-value">10th &middot; JEE Prep</div></div>
+        <div class="ah-item"><div class="ah-icon">&#x1F4BB;</div><div class="ah-label">Stack</div><div class="ah-value">Python, JS, AI</div></div>
+        <div class="ah-item"><div class="ah-icon">&#x1F3AE;</div><div class="ah-label">Hobbies</div><div class="ah-value">Coding &amp; Gaming</div></div>
+        <div class="ah-item"><div class="ah-icon">&#x1F4E7;</div><div class="ah-label">Contact</div><div class="ah-value">davekriday@gmail.com</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-inner">
+    <div class="sh"><div class="sh-label">Skills</div><div class="sh-title">My Toolkit</div><div class="sh-desc">Technologies I work with on a daily basis.</div></div>
+    <div class="skills-wrap">
+      <div class="skill-rings">
+        <div class="sr-item"><div class="sr-ring" style="--pct: 85;"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45"/><circle class="sr-fill" cx="50" cy="50" r="45" style="stroke: var(--accent);"/></svg><span class="sr-pct">85%</span></div><div class="sr-label">Python</div></div>
+        <div class="sr-item"><div class="sr-ring" style="--pct: 80;"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45"/><circle class="sr-fill" cx="50" cy="50" r="45" style="stroke: var(--gold);"/></svg><span class="sr-pct">80%</span></div><div class="sr-label">JavaScript</div></div>
+        <div class="sr-item"><div class="sr-ring" style="--pct: 95;"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45"/><circle class="sr-fill" cx="50" cy="50" r="45" style="stroke: var(--accent);"/></svg><span class="sr-pct">95%</span></div><div class="sr-label">AI-Assisted</div></div>
+        <div class="sr-item"><div class="sr-ring" style="--pct: 75;"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45"/><circle class="sr-fill" cx="50" cy="50" r="45" style="stroke: var(--gold);"/></svg><span class="sr-pct">75%</span></div><div class="sr-label">React</div></div>
+      </div>
+      <div class="skills-list">
+        <div class="sk-item">
+          <div class="sk-top"><span class="sk-name">Python</span><span class="sk-pct2">85%</span></div>
+          <div class="sk-track"><div class="sk-fill" style="width:85%;background:var(--accent);"></div></div>
+        </div>
+        <div class="sk-item">
+          <div class="sk-top"><span class="sk-name">JavaScript</span><span class="sk-pct2">80%</span></div>
+          <div class="sk-track"><div class="sk-fill" style="width:80%;background:var(--gold);"></div></div>
+        </div>
+        <div class="sk-item">
+          <div class="sk-top"><span class="sk-name">AI-Assisted Dev</span><span class="sk-pct2">95%</span></div>
+          <div class="sk-track"><div class="sk-fill" style="width:95%;background:var(--accent);"></div></div>
+        </div>
+        <div class="sk-item">
+          <div class="sk-top"><span class="sk-name">HTML &amp; CSS</span><span class="sk-pct2">85%</span></div>
+          <div class="sk-track"><div class="sk-fill" style="width:85%;background:var(--gold);"></div></div>
+        </div>
+        <div class="sk-item">
+          <div class="sk-top"><span class="sk-name">React</span><span class="sk-pct2">65%</span></div>
+          <div class="sk-track"><div class="sk-fill" style="width:65%;background:var(--accent);"></div></div>
+        </div>
+        <div class="sk-item">
+          <div class="sk-top"><span class="sk-name">Node.js</span><span class="sk-pct2">70%</span></div>
+          <div class="sk-track"><div class="sk-fill" style="width:70%;background:var(--gold);"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-inner">
+    <div class="sh"><div class="sh-label">Projects</div><div class="sh-title">Things I've Built</div><div class="sh-desc">Real projects I've shipped. More coming as I keep building.</div></div>
+    <div class="proj-showcase">
+      <div class="ps-track">
+        <div class="ps-inner" id="psInner">
+          <div class="ps-card">
+            <div class="ps-tags"><span class="ps-tag">MCP</span><span class="ps-tag">TypeScript</span><span class="ps-tag">Node.js</span></div>
+            <div class="ps-title">File Organizer MCP</div>
+            <div class="ps-desc">A security-hardened MCP server that lets AI assistants intelligently organize your files. Features smart categorization into 12+ categories, SHA-256 duplicate detection, EXIF metadata extraction from photos and ID3 from music, dry-run mode with rollback support, and cron-based scheduling. Published on npm with 36 GitHub stars.</div>
+            <div class="ps-link"><a href="https://github.com/kridaydave/File-Organizer-MCP" target="_blank">View on GitHub &rarr;</a></div>
+          </div>
+          <div class="ps-card">
+            <div class="ps-tags"><span class="ps-tag">Python</span><span class="ps-tag">AI</span><span class="ps-tag">Middleware</span></div>
+            <div class="ps-title">Relay</div>
+            <div class="ps-desc">A lightweight Python middleware for passing context reliably between AI agents in multi-agent pipelines. Treats context like a ledger — append-only, cryptographically signed at every step, and reversible on corruption detection. Works with any LLM provider: OpenAI, Anthropic, local models.</div>
+            <div class="ps-link"><a href="https://github.com/kridaydave/Relay" target="_blank">View on GitHub &rarr;</a></div>
+          </div>
+          <div class="ps-card">
+            <div class="ps-tags"><span class="ps-tag">TypeScript</span><span class="ps-tag">CLI</span><span class="ps-tag">A2A</span></div>
+            <div class="ps-title">Codo</div>
+            <div class="ps-desc">A multi-model AI coding CLI tool with native Agent-to-Agent collaboration built in. Supports Anthropic, OpenAI, and Google models running in parallel workflows. Features a beautiful terminal UI built with Ink v5 and seamless parallel execution.</div>
+            <div class="ps-link"><a href="https://github.com/kridaydave/Codo" target="_blank">View on GitHub &rarr;</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="ps-controls">
+        <button class="ps-btn" id="psPrev">&larr;</button>
+        <div class="ps-dots" id="psDots">
+          <button class="ps-dot act"></button>
+          <button class="ps-dot"></button>
+          <button class="ps-dot"></button>
+        </div>
+        <button class="ps-btn" id="psNext">&rarr;</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="floating-shapes">
+    <div class="fs" style="width:200px;height:200px;background:var(--accent);top:-40px;right:-40px;animation-delay:-4s;"></div>
+  </div>
+  <div class="section-inner">
+    <div class="sh"><div class="sh-label">Contact</div><div class="sh-title">Let's Connect</div><div class="sh-desc">Got a question, idea, or just want to say hi?</div></div>
+    <div class="contact-grid">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="contact-item"><div><div class="contact-icon">&#x2709;&#xFE0F;</div></div><div><div class="ci-label">Email</div><div class="ci-value"><a href="mailto:davekriday@gmail.com">davekriday@gmail.com</a></div></div></div>
+        <div class="contact-item"><div><div class="contact-icon">&#x1F426;</div></div><div><div class="ci-label">X / Twitter</div><div class="ci-value"><a href="https://x.com/KridayTop" target="_blank">@KridayTop</a></div></div></div>
+        <div class="contact-item"><div><div class="contact-icon">&#x1F4BB;</div></div><div><div class="ci-label">GitHub</div><div class="ci-value"><a href="https://github.com/kridaydave" target="_blank">github.com/kridaydave</a></div></div></div>
+        <div class="contact-item"><div><div class="contact-icon">&#x1F30D;</div></div><div><div class="ci-label">Location</div><div class="ci-value">India</div></div></div>
+      </div>
+      <div class="quote-card">
+        <p>"The best way to predict the future is to create it."</p>
+        <cite>&mdash; Lincoln</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>Built with &Delta; by Kriday Dave &middot; 2026</footer>
+
+<script>
+// Project carousel
+let psIdx = 0;
+const psInner = document.getElementById('psInner');
+const psDots = document.querySelectorAll('#psDots .ps-dot');
+function psGo(i) {
+  psIdx = Math.max(0, Math.min(i, 2));
+  psInner.style.transform = 'translateX(-' + (psIdx * 100) + '%)';
+  psDots.forEach((d, idx) => d.classList.toggle('act', idx === psIdx));
+}
+document.getElementById('psNext').addEventListener('click', () => psGo(psIdx + 1));
+document.getElementById('psPrev').addEventListener('click', () => psGo(psIdx - 1));
+psDots.forEach((d, i) => d.addEventListener('click', () => psGo(i)));
+</script>
+</body>
+</html>
