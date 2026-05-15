@@ -98,26 +98,17 @@ section { position: relative; overflow: hidden; }
 
 /* Skills */
 #skills { background: linear-gradient(180deg, #16213e, #1a1a2e); }
-.skills-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
-.skill-rings { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; align-self: center; }
-.sr-item { text-align: center; }
-.sr-ring {
-  width: 110px; height: 110px; border-radius: 50%;
-  position: relative; display: flex; align-items: center; justify-content: center;
+.skills-tags {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  max-width: 600px; margin: 0 auto;
 }
-.sr-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
-.sr-ring circle { fill: none; stroke-width: 3; stroke: rgba(255,255,255,0.04); }
-.sr-ring .sr-fill { stroke-dasharray: 282.7; stroke-dashoffset: calc(282.7 - (282.7 * var(--pct)) / 100); transition: stroke-dashoffset 1.5s ease; }
-.sr-pct { font-family: 'Space Grotesk', monospace; font-weight: 700; font-size: 1.4rem; }
-.sr-label { font-size: 0.7rem; color: rgba(255,255,255,0.35); margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; }
-
-.skills-list { display: flex; flex-direction: column; gap: 16px; }
-.sk-item { }
-.sk-top { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; }
-.sk-name { font-weight: 500; }
-.sk-pct2 { color: rgba(255,255,255,0.3); }
-.sk-track { height: 3px; background: rgba(255,255,255,0.04); border-radius: 2px; overflow: hidden; }
-.sk-fill { height: 100%; border-radius: 2px; }
+.st-tag {
+  padding: 10px 24px; font-size: 0.9rem; font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.6);
+  transition: 0.2s; cursor: default;
+}
+.st-tag:hover { border-color: var(--accent); color: var(--accent); background: rgba(233,69,96,0.03); }
 
 /* Projects */
 #projects { background: var(--ink); }
@@ -177,7 +168,7 @@ footer { text-align: center; padding: 40px 24px; border-top: 1px solid rgba(255,
 
 @media (max-width: 768px) {
   .hero-glitch { font-size: 2.8rem; }
-  .about-grid, .skills-wrap, .contact-grid { grid-template-columns: 1fr; gap: 32px; }
+  .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 32px; }
   .about-highlights { grid-template-columns: 1fr; }
   .section-inner { padding: 60px 20px; }
   .sh-title { font-size: 1.6rem; }
@@ -234,40 +225,17 @@ footer { text-align: center; padding: 40px 24px; border-top: 1px solid rgba(255,
 <section id="skills">
   <div class="section-inner">
     <div class="sh"><div class="sh-label">Skills</div><div class="sh-title">My Toolkit</div><div class="sh-desc">Technologies I work with on a daily basis.</div></div>
-    <div class="skills-wrap">
-      <div class="skill-rings">
-        <div class="sr-item"><div class="sr-ring" style="--pct: 85;"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45"/><circle class="sr-fill" cx="50" cy="50" r="45" style="stroke: var(--accent);"/></svg><span class="sr-pct">85%</span></div><div class="sr-label">Python</div></div>
-        <div class="sr-item"><div class="sr-ring" style="--pct: 80;"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45"/><circle class="sr-fill" cx="50" cy="50" r="45" style="stroke: var(--gold);"/></svg><span class="sr-pct">80%</span></div><div class="sr-label">JavaScript</div></div>
-        <div class="sr-item"><div class="sr-ring" style="--pct: 95;"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45"/><circle class="sr-fill" cx="50" cy="50" r="45" style="stroke: var(--accent);"/></svg><span class="sr-pct">95%</span></div><div class="sr-label">AI-Assisted</div></div>
-        <div class="sr-item"><div class="sr-ring" style="--pct: 75;"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45"/><circle class="sr-fill" cx="50" cy="50" r="45" style="stroke: var(--gold);"/></svg><span class="sr-pct">75%</span></div><div class="sr-label">React</div></div>
+    <div class="skills-tags">
+        <span class="st-tag" style="border-color:var(--accent);color:var(--accent);">Python</span>
+        <span class="st-tag" style="border-color:var(--gold);color:var(--gold);">JavaScript</span>
+        <span class="st-tag" style="border-color:var(--accent);color:var(--accent);">AI-Assisted Dev</span>
+        <span class="st-tag">HTML &amp; CSS</span>
+        <span class="st-tag" style="border-color:var(--gold);color:var(--gold);">React</span>
+        <span class="st-tag">Node.js</span>
+        <span class="st-tag" style="border-color:var(--accent);color:var(--accent);">TypeScript</span>
+        <span class="st-tag" style="border-color:var(--gold);color:var(--gold);">Git</span>
+        <span class="st-tag">Prompt Engineering</span>
       </div>
-      <div class="skills-list">
-        <div class="sk-item">
-          <div class="sk-top"><span class="sk-name">Python</span><span class="sk-pct2">85%</span></div>
-          <div class="sk-track"><div class="sk-fill" style="width:85%;background:var(--accent);"></div></div>
-        </div>
-        <div class="sk-item">
-          <div class="sk-top"><span class="sk-name">JavaScript</span><span class="sk-pct2">80%</span></div>
-          <div class="sk-track"><div class="sk-fill" style="width:80%;background:var(--gold);"></div></div>
-        </div>
-        <div class="sk-item">
-          <div class="sk-top"><span class="sk-name">AI-Assisted Dev</span><span class="sk-pct2">95%</span></div>
-          <div class="sk-track"><div class="sk-fill" style="width:95%;background:var(--accent);"></div></div>
-        </div>
-        <div class="sk-item">
-          <div class="sk-top"><span class="sk-name">HTML &amp; CSS</span><span class="sk-pct2">85%</span></div>
-          <div class="sk-track"><div class="sk-fill" style="width:85%;background:var(--gold);"></div></div>
-        </div>
-        <div class="sk-item">
-          <div class="sk-top"><span class="sk-name">React</span><span class="sk-pct2">65%</span></div>
-          <div class="sk-track"><div class="sk-fill" style="width:65%;background:var(--accent);"></div></div>
-        </div>
-        <div class="sk-item">
-          <div class="sk-top"><span class="sk-name">Node.js</span><span class="sk-pct2">70%</span></div>
-          <div class="sk-track"><div class="sk-fill" style="width:70%;background:var(--gold);"></div></div>
-        </div>
-      </div>
-    </div>
   </div>
 </section>
 
