@@ -98,17 +98,73 @@ section { position: relative; overflow: hidden; }
 
 /* Skills */
 #skills { background: linear-gradient(180deg, #16213e, #1a1a2e); }
-.skills-tags {
-  display: flex; gap: 12px; flex-wrap: wrap;
-  max-width: 600px; margin: 0 auto;
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 700px;
+  margin: 0 auto;
 }
-.st-tag {
-  padding: 10px 24px; font-size: 0.9rem; font-weight: 500;
-  border: 1px solid rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.6);
-  transition: 0.2s; cursor: default;
+.skill-card {
+  padding: 28px 16px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.015);
+  text-align: center;
+  transition: 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+  cursor: default;
+  position: relative;
+  overflow: hidden;
 }
-.st-tag:hover { border-color: var(--accent); color: var(--accent); background: rgba(233,69,96,0.03); }
+.skill-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 16px; right: 16px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 0 0 2px 2px;
+  opacity: 0;
+  transition: 0.3s;
+}
+.skill-card:hover::before { opacity: 1; left: 0; right: 0; }
+.skill-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.035);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+}
+.sk-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 14px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  font-family: 'Space Grotesk', monospace;
+  transition: 0.3s;
+}
+.skill-card:hover .sk-icon {
+  border-color: rgba(255,255,255,0.15);
+  transform: scale(1.05);
+}
+.sk-name {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  transition: 0.3s;
+}
+.skill-card:hover .sk-name { color: rgba(255,255,255,0.95); }
+.sk-accent .sk-icon { border-color: rgba(233,69,96,0.2); color: var(--accent); }
+.sk-accent:hover .sk-icon { border-color: rgba(233,69,96,0.4); box-shadow: 0 0 20px rgba(233,69,96,0.08); }
+.sk-gold .sk-icon { border-color: rgba(255,211,105,0.2); color: var(--gold); }
+.sk-gold:hover .sk-icon { border-color: rgba(255,211,105,0.4); box-shadow: 0 0 20px rgba(255,211,105,0.08); }
+.sk-default .sk-icon { border-color: rgba(255,255,255,0.06); color: rgba(255,255,255,0.35); }
+.sk-default:hover .sk-icon { border-color: rgba(255,255,255,0.12); }
 
 /* Projects */
 #projects { background: var(--ink); }
@@ -172,10 +228,12 @@ footer { text-align: center; padding: 40px 24px; border-top: 1px solid rgba(255,
   .about-highlights { grid-template-columns: 1fr; }
   .section-inner { padding: 60px 20px; }
   .sh-title { font-size: 1.6rem; }
-  .skill-rings { gap: 16px; }
-  .sr-ring { width: 80px; height: 80px; }
+  .skills-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .ps-card { padding: 24px; }
   .ps-title { font-size: 1.3rem; }
+}
+@media (max-width: 480px) {
+  .skills-grid { grid-template-columns: 1fr; max-width: 280px; }
 }
 </style>
 </head>
@@ -225,16 +283,16 @@ footer { text-align: center; padding: 40px 24px; border-top: 1px solid rgba(255,
 <section id="skills">
   <div class="section-inner">
     <div class="sh"><div class="sh-label">Skills</div><div class="sh-title">My Toolkit</div><div class="sh-desc">Technologies I work with on a daily basis.</div></div>
-    <div class="skills-tags">
-        <span class="st-tag" style="border-color:var(--accent);color:var(--accent);">Python</span>
-        <span class="st-tag" style="border-color:var(--gold);color:var(--gold);">JavaScript</span>
-        <span class="st-tag" style="border-color:var(--accent);color:var(--accent);">AI-Assisted Dev</span>
-        <span class="st-tag">HTML &amp; CSS</span>
-        <span class="st-tag" style="border-color:var(--gold);color:var(--gold);">React</span>
-        <span class="st-tag">Node.js</span>
-        <span class="st-tag" style="border-color:var(--accent);color:var(--accent);">TypeScript</span>
-        <span class="st-tag" style="border-color:var(--gold);color:var(--gold);">Git</span>
-        <span class="st-tag">Prompt Engineering</span>
+    <div class="skills-grid">
+        <div class="skill-card sk-accent"><div class="sk-icon">Py</div><div class="sk-name">Python</div></div>
+        <div class="skill-card sk-gold"><div class="sk-icon">JS</div><div class="sk-name">JavaScript</div></div>
+        <div class="skill-card sk-accent"><div class="sk-icon">AI</div><div class="sk-name">AI-Assisted Dev</div></div>
+        <div class="skill-card sk-default"><div class="sk-icon">&lt;/&gt;</div><div class="sk-name">HTML &amp; CSS</div></div>
+        <div class="skill-card sk-gold"><div class="sk-icon">⚛</div><div class="sk-name">React</div></div>
+        <div class="skill-card sk-default"><div class="sk-icon">●</div><div class="sk-name">Node.js</div></div>
+        <div class="skill-card sk-accent"><div class="sk-icon">TS</div><div class="sk-name">TypeScript</div></div>
+        <div class="skill-card sk-gold"><div class="sk-icon">▲</div><div class="sk-name">Git</div></div>
+        <div class="skill-card sk-default"><div class="sk-icon">⌘</div><div class="sk-name">Prompt Engineering</div></div>
       </div>
   </div>
 </section>
