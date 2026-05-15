@@ -1,381 +1,441 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kriday Dave</title>
+<title>Kriday Dave · Noir</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-:root { --ink: #1a1a2e; --ink2: #16213e; --accent: #e94560; --cyan: #0f3460; --gold: #ffd369; --glass: rgba(255,255,255,0.03); }
 body {
-  font-family: 'Inter', sans-serif;
-  background: var(--ink); color: #eee;
-  overflow-x: hidden; line-height: 1.6;
+  font-family: 'IBM Plex Mono', monospace;
+  background: #0A0A0A;
+  color: #FFF;
+  line-height: 1.7;
+  padding: 0;
+  overflow-x: hidden;
 }
-::selection { background: var(--accent); color: #fff; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0A0A0A; }
+::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
 
-/* Grid bg pattern */
-.grid-bg {
-  position: absolute; inset: 0; pointer-events: none;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-  background-size: 60px 60px;
+.crt {
+  position: fixed; inset: 0; pointer-events: none; z-index: 100;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px
+  );
+}
+.crt::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.4) 100%);
 }
 
-/* Sections */
-section { position: relative; overflow: hidden; }
-.section-inner { max-width: 1000px; margin: 0 auto; padding: 80px 32px; position: relative; z-index: 2; }
+.noise {
+  position: fixed; inset: 0; pointer-events: none; z-index: 99;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  animation: noiseShift 0.3s steps(3) infinite;
+}
+@keyframes noiseShift {
+  0% { transform: translate(0,0); }
+  33% { transform: translate(6px,-4px); }
+  66% { transform: translate(-4px,6px); }
+}
 
-/* Hero */
-#hero { min-height: 100vh; display: flex; align-items: center; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
-.hero-content { text-align: center; max-width: 700px; margin: 0 auto; padding: 0 24px; }
-.hero-tag {
-  display: inline-block; font-size: 0.72rem; text-transform: uppercase;
-  letter-spacing: 4px; color: var(--accent); margin-bottom: 24px;
-  border: 1px solid rgba(233,69,96,0.2); padding: 6px 20px;
-}
-.hero-glitch {
-  font-family: 'Space Grotesk', monospace;
-  font-size: 5rem; font-weight: 700; line-height: 1.05;
-  position: relative; display: inline-block;
-}
-.hero-glitch::before, .hero-glitch::after {
-  content: attr(data-text); position: absolute; inset: 0;
-  opacity: 0.7;
-}
-.hero-glitch::before { color: var(--accent); animation: g1 3s infinite; clip-path: inset(20% 0 60% 0); }
-.hero-glitch::after { color: var(--gold); animation: g2 3s infinite; clip-path: inset(60% 0 10% 0); }
-@keyframes g1 {
-  0%,100% { transform: translate(0); }
-  20% { transform: translate(-3px, 2px); }
-  40% { transform: translate(3px, -1px); }
-  60% { transform: translate(-1px, -3px); }
-  80% { transform: translate(2px, 1px); }
-}
-@keyframes g2 {
-  0%,100% { transform: translate(0); }
-  20% { transform: translate(2px, -2px); }
-  40% { transform: translate(-2px, 3px); }
-  60% { transform: translate(3px, 1px); }
-  80% { transform: translate(-1px, -2px); }
-}
-.hero-sub { margin-top: 20px; color: rgba(255,255,255,0.35); font-size: 1rem; }
-.hero-actions { margin-top: 36px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-.btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 12px 32px; border-radius: 100px; font-size: 0.85rem;
-  font-weight: 500; text-decoration: none; transition: 0.25s; font-family: inherit; cursor: pointer;
-}
-.btn-p { background: var(--accent); color: #fff; border: none; box-shadow: 0 4px 24px rgba(233,69,96,0.25); }
-.btn-p:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(233,69,96,0.35); }
-.btn-o { background: transparent; color: #eee; border: 1px solid rgba(255,255,255,0.1); }
-.btn-o:hover { border-color: rgba(255,255,255,0.3); }
-
-/* Section header */
-.sh { margin-bottom: 48px; }
-.sh-label { font-family: 'Space Grotesk', monospace; font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; }
-.sh-title { font-family: 'Space Grotesk', monospace; font-size: 2.4rem; font-weight: 600; }
-.sh-desc { color: rgba(255,255,255,0.35); font-size: 0.9rem; margin-top: 8px; max-width: 500px; }
-
-/* About */
-#about { background: var(--ink2); }
-.about-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 60px; align-items: start; }
-.about-text p { color: rgba(255,255,255,0.5); font-size: 0.95rem; line-height: 1.85; margin-bottom: 18px; }
-.about-highlights { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.ah-item {
-  padding: 28px 24px; border: 1px solid rgba(255,255,255,0.04);
-  background: rgba(255,255,255,0.02); transition: 0.2s;
-  display: flex; flex-direction: column; justify-content: center;
-  min-height: 110px;
-}
-.ah-item:hover { border-color: rgba(233,69,96,0.2); background: rgba(233,69,96,0.02); }
-.ah-icon { font-size: 1.6rem; margin-bottom: 8px; }
-.ah-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.25); margin-bottom: 4px; }
-.ah-value { font-size: 1rem; font-weight: 500; }
-
-/* Skills */
-#skills { background: linear-gradient(180deg, #16213e, #1a1a2e); }
-.skills-scroll {
-  -webkit-overflow-scrolling: touch;
-}
-.skills-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  max-width: 700px;
-  margin: 0 auto;
-}
-.skill-card {
-  padding: 28px 16px;
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 14px;
-  background: rgba(255,255,255,0.015);
+.hero-poster {
+  height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
   text-align: center;
-  transition: 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
-  cursor: default;
   position: relative;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   overflow: hidden;
 }
-.skill-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 16px; right: 16px;
-  height: 2px;
-  background: var(--accent);
-  border-radius: 0 0 2px 2px;
+.hero-poster::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 600px 400px at 50% 40%, rgba(255,255,255,0.015), transparent);
+}
+.hero-poster .tag {
+  font-size: 13px; letter-spacing: 0.25em; text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 6px 16px; margin-bottom: 32px;
+  font-weight: 300;
+  animation: tagFade 3s ease-out;
+}
+.hero-avatar {
+  width: 120px; height: 120px; border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 24px;
+  border: 2px solid rgba(255,255,255,0.1);
+  filter: grayscale(1) contrast(1.15) brightness(0.9);
+  transition: filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hero-avatar:hover {
+  filter: grayscale(0) contrast(1) brightness(1);
+}
+@keyframes tagFade {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero-poster h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(96px, 16vw, 200px);
+  letter-spacing: 0.05em;
+  line-height: 0.86;
+  color: #FFF;
+  position: relative;
+}
+.hero-poster h1 .glow {
+  position: absolute; inset: 0;
+  color: #FFF; z-index: -1;
+  filter: blur(30px);
+  opacity: 0.08;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.06; filter: blur(30px); }
+  50% { opacity: 0.15; filter: blur(40px); }
+}
+
+.crt-glow {
+  display: inline;
+  text-shadow:
+    0 0 7px rgba(180, 220, 255, 0.4),
+    0 0 15px rgba(180, 220, 255, 0.2),
+    0 0 30px rgba(180, 220, 255, 0.1),
+    0 0 60px rgba(180, 220, 255, 0.05),
+    0 0 120px rgba(180, 220, 255, 0.025);
+}
+
+.crt-glow-subtle {
+  display: inline;
+  text-shadow:
+    0 0 4px rgba(180, 220, 255, 0.15),
+    0 0 10px rgba(180, 220, 255, 0.06);
+}
+.hero-poster h1 .shadow { color: rgba(255,255,255,0.04); display: block; }
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  91% { opacity: 1; }
+  92% { opacity: 0.1; transform: translateX(-2px); }
+  93% { opacity: 0.7; transform: translateX(1px); }
+  94% { opacity: 0.15; }
+  95% { opacity: 0.8; }
+  96% { opacity: 0.2; }
+  97% { opacity: 0.9; }
+  98% { opacity: 1; transform: translateX(0); }
+}
+.hero-poster .sub {
+  font-size: 13px; color: rgba(255,255,255,0.6);
+  margin-top: 16px; letter-spacing: 0.15em;
+  text-transform: uppercase; font-weight: 300;
+  animation: flicker 6s infinite;
+}
+
+.glitch-layer {
+  position: absolute; inset: 0;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(96px, 16vw, 200px);
+  letter-spacing: 0.05em;
+  line-height: 0.86;
+  pointer-events: none;
   opacity: 0;
-  transition: 0.3s;
 }
-.skill-card:hover::before { opacity: 1; left: 0; right: 0; }
-.skill-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.035);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+.hero-poster:hover .glitch-layer {
+  opacity: 0.08;
+  animation: glitchSplit 0.15s ease-out;
+  color: #FF6B9D;
 }
-.sk-icon {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 14px;
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
+.hero-poster:hover .glitch-layer + .glitch-layer {
+  color: #00D4AA;
+  animation-delay: 0.02s;
+  margin-left: 3px;
+  margin-top: -2px;
+}
+@keyframes glitchSplit {
+  0% { clip-path: inset(0 0 80% 0); transform: translate(-4px, 0); }
+  10% { clip-path: inset(20% 0 60% 0); transform: translate(4px, 0); }
+  20% { clip-path: inset(40% 0 40% 0); transform: translate(-3px, 0); }
+  30% { clip-path: inset(60% 0 20% 0); transform: translate(3px, 0); }
+  40% { clip-path: inset(80% 0 0 0); transform: translate(-5px, 0); }
+  50%, 100% { clip-path: inset(0 0 0 0); transform: translate(0, 0); opacity: 0; }
+}
+
+.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 1060px;
+  margin: 0 auto;
+}
+.grid-layout > * { border-bottom: 1px solid rgba(255,255,255,0.04); }
+
+.about-grid {
+  grid-column: 1 / -1;
+  padding: 72px 56px;
+  text-align: center;
+  position: relative;
+}
+.about-grid::after {
+  content: ''; position: absolute; bottom: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+}
+.about-grid h2 {
+  font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.5); margin-bottom: 20px;
+  font-weight: 400;
+}
+.about-grid p {
+  font-size: 16px; color: rgba(255,255,255,0.85);
+  line-height: 2; max-width: 680px; margin: 0 auto;
+  font-weight: 300;
+}
+.about-grid p strong { color: #FFF; font-weight: 500; }
+
+.stats-band {
+  grid-column: 1 / -1;
+  padding: 24px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.008);
+  position: relative;
+}
+.stats-band::before, .stats-band::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 60px; z-index: 2;
+  pointer-events: none;
+}
+.stats-band::before { left: 0; background: linear-gradient(90deg, #0A0A0A, transparent); }
+.stats-band::after { right: 0; background: linear-gradient(270deg, #0A0A0A, transparent); }
+.stats-band .track {
+  display: inline-flex;
+  animation: marquee 18s linear infinite;
+  font-size: 18px;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.stats-band .track span {
+  margin: 0 40px;
+  display: flex; align-items: center; gap: 10px;
+}
+.stats-band .track .hl {
+  color: #FFF;
   font-weight: 600;
-  font-family: 'Space Grotesk', monospace;
-  transition: 0.3s;
 }
-.skill-card:hover .sk-icon {
-  border-color: rgba(255,255,255,0.15);
-  transform: scale(1.05);
-}
-.sk-name {
-  font-family: 'Space Grotesk', monospace;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: rgba(255,255,255,0.75);
-  transition: 0.3s;
-}
-.skill-card:hover .sk-name { color: rgba(255,255,255,0.95); }
-.sk-accent .sk-icon { border-color: rgba(233,69,96,0.2); color: var(--accent); }
-.sk-accent:hover .sk-icon { border-color: rgba(233,69,96,0.4); box-shadow: 0 0 20px rgba(233,69,96,0.08); }
-.sk-gold .sk-icon { border-color: rgba(255,211,105,0.2); color: var(--gold); }
-.sk-gold:hover .sk-icon { border-color: rgba(255,211,105,0.4); box-shadow: 0 0 20px rgba(255,211,105,0.08); }
-.sk-default .sk-icon { border-color: rgba(255,255,255,0.06); color: rgba(255,255,255,0.35); }
-.sk-default:hover .sk-icon { border-color: rgba(255,255,255,0.12); }
-
-/* Projects */
-#projects { background: var(--ink); }
-.proj-showcase { overflow: hidden; }
-.ps-track { overflow: hidden; }
-.ps-inner { display: flex; transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
-.ps-card { min-width: 100%; padding: 40px; border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); }
-.ps-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-.ps-tag { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px; border: 1px solid rgba(255,255,255,0.08); color: var(--gold); }
-.ps-title { font-family: 'Space Grotesk', monospace; font-size: 1.8rem; font-weight: 600; margin-bottom: 12px; }
-.ps-desc { font-size: 0.9rem; color: rgba(255,255,255,0.45); line-height: 1.8; max-width: 600px; margin-bottom: 16px; }
-.ps-link a { color: var(--accent); text-decoration: none; font-size: 0.85rem; border-bottom: 1px solid transparent; transition: 0.2s; }
-.ps-link a:hover { border-bottom-color: var(--accent); }
-.ps-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 24px; }
-.ps-btn {
-  width: 38px; height: 38px; border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: transparent; color: #fff; cursor: pointer;
-  font-size: 1rem; transition: 0.2s; display: flex; align-items: center; justify-content: center;
-}
-.ps-btn:hover { border-color: var(--accent); background: rgba(233,69,96,0.08); }
-.ps-dots { display: flex; gap: 8px; }
-.ps-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.08); border: none; cursor: pointer; transition: 0.2s; padding: 0; }
-.ps-dot.act { background: var(--accent); }
-
-/* Contact */
-#contact { background: linear-gradient(135deg, #1a1a2e, #0f3460); }
-.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-.contact-item { display: flex; gap: 16px; padding: 16px 20px; border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); transition: 0.2s; }
-.contact-item:hover { border-color: rgba(233,69,96,0.15); }
-.contact-icon { font-size: 1.2rem; opacity: 0.4; }
-.ci-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.3); margin-bottom: 2px; }
-.ci-value { font-size: 0.9rem; }
-.ci-value a { color: #eee; text-decoration: none; transition: color 0.2s; }
-.ci-value a:hover { color: var(--accent); }
-
-.quote-card {
-  padding: 32px; border: 1px solid rgba(255,255,255,0.04);
-  background: rgba(255,255,255,0.02); display: flex; flex-direction: column; justify-content: center;
-}
-.quote-card p { font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.4); font-style: italic; }
-.quote-card cite { color: var(--gold); font-size: 0.8rem; margin-top: 12px; display: block; }
-
-footer { text-align: center; padding: 40px 24px; border-top: 1px solid rgba(255,255,255,0.04); color: rgba(255,255,255,0.2); font-size: 0.8rem; background: var(--ink); }
-
-/* Floating shapes (decorative) */
-.floating-shapes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.fs {
-  position: absolute; border-radius: 50%; opacity: 0.06;
-  animation: floatShape 10s ease-in-out infinite;
-}
-@keyframes floatShape {
-  0%,100% { transform: translate(0,0); }
-  33% { transform: translate(20px,-20px); }
-  66% { transform: translate(-10px,10px); }
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-@media (max-width: 768px) {
-  .hero-glitch { font-size: 2.8rem; }
-  .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 32px; }
-  .about-highlights { grid-template-columns: 1fr; }
-  .section-inner { padding: 60px 20px; }
-  .sh-title { font-size: 1.6rem; }
-  .skills-grid { max-width: 700px; margin: 0 auto; }
-  .ps-card { padding: 24px; }
-  .ps-title { font-size: 1.3rem; }
+.proj-cell {
+  padding: 52px 44px;
+  border-right: 1px solid rgba(255,255,255,0.04);
+  transition: all 0.3s; cursor: pointer;
+  position: relative;
+}
+.proj-cell:nth-child(even) { border-right: none; }
+.proj-cell:hover { background: rgba(255,255,255,0.012); }
+.proj-cell::before {
+  content: ''; position: absolute; top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.proj-cell:hover::before { opacity: 1; }
+.proj-cell .p-icon { font-size: 36px; margin-bottom: 18px; display: inline-block; }
+.proj-cell:hover .p-icon { animation: iconBuzz 0.3s ease-out; }
+@keyframes iconBuzz {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-6deg); }
+  75% { transform: rotate(6deg); }
+}
+.proj-cell h3 {
+  font-size: 18px; font-weight: 500;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 10px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.proj-cell p { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.7; font-weight: 300; }
+.proj-cell .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.proj-cell .tags span {
+  font-size: 11px; color: rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 3px 10px; font-weight: 300;
+  transition: all 0.2s;
+}
+.proj-cell:hover .tags span { border-color: rgba(255,255,255,0.3); color: #FFF; }
+.proj-cell .p-detail {
+  margin-top: 16px; padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  font-size: 13px; color: rgba(255,255,255,0.6);
+  line-height: 1.6;
+}
+
+.note-cell {
+  grid-column: 1 / -1;
+  padding: 36px 56px;
+  font-size: 14px; color: rgba(255,255,255,0.6);
+  line-height: 2; text-align: center;
+  font-weight: 300;
+  background: rgba(255,255,255,0.005);
+}
+.note-cell span { color: rgba(255,255,255,0.8); }
+.note-cell .cmd { color: rgba(255,255,255,0.3); }
+
+.contact-grid {
+  grid-column: 1 / -1;
+  padding: 52px 56px;
+  text-align: center;
+  position: relative;
+}
+.contact-grid .prompt {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  letter-spacing: 0.1em; margin-bottom: 4px;
+}
+.contact-grid .prompt span {
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.contact-grid p {
+  font-size: 14px; color: rgba(255,255,255,0.6);
+  margin-bottom: 16px; letter-spacing: 0.1em;
+}
+.contact-grid .links { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; }
+.contact-grid .links a {
+  font-size: 14px; color: rgba(255,255,255,0.7);
+  text-decoration: none; text-transform: uppercase;
+  letter-spacing: 0.15em;
+  transition: all 0.3s;
+  position: relative;
+  padding-bottom: 4px;
+}
+.contact-grid .links a::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 1px; background: rgba(255,255,255,0.1);
+  transform: scaleX(0); transition: transform 0.3s;
+}
+.contact-grid .links a:hover { color: #FFF; }
+.contact-grid .links a:hover::after { transform: scaleX(1); }
+
+.footer-grid {
+  grid-column: 1 / -1; text-align: center;
+  padding: 28px; font-size: 10px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.1em;
+}
+
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 700px) {
+  .grid-layout { grid-template-columns: 1fr; }
+  .proj-cell { border-right: none; }
+  .about-grid, .proj-cell, .note-cell, .contact-grid { padding: 36px 24px; }
 }
 </style>
 </head>
 <body>
-<!-- HERO -->
-<section id="hero">
-  <div class="grid-bg"></div>
-  <div class="floating-shapes">
-    <div class="fs" style="width:300px;height:300px;background:var(--accent);top:-80px;right:-60px;animation-delay:0s;"></div>
-    <div class="fs" style="width:200px;height:200px;background:var(--gold);bottom:10%;left:-40px;animation-delay:-3s;"></div>
-    <div class="fs" style="width:150px;height:150px;background:var(--cyan);bottom:-40px;right:30%;animation-delay:-6s;"></div>
+
+<div class="crt"></div>
+<div class="noise"></div>
+
+<div class="hero-poster">
+  <img src="profile.jpg" alt="Kriday Dave" class="hero-avatar reveal">
+  <div class="tag reveal">$ whoami</div>
+  <h1 class="reveal">
+    <span class="glow">KRIDAY DAVE</span>
+    <span class="shadow"><span class="crt-glow">KRIDAY</span></span><span class="crt-glow-subtle">DAVE</span>
+    <span class="glitch-layer" aria-hidden="true">KRIDAY DAVE</span>
+    <span class="glitch-layer" aria-hidden="true">KRIDAY DAVE</span>
+  </h1>
+  <p class="sub reveal">cs grad · builder · daydreamer</p>
+</div>
+
+<div class="grid-layout">
+
+  <div class="about-grid reveal">
+    <h2>$ cat about.txt</h2>
+    <p>I'm a recent computer science graduate who loves <strong>building things that help people</strong>. My approach is simple: write code that's maintainable, design interfaces that don't get in the way, and always keep learning. Right now I'm deep into distributed systems and developer tools.</p>
   </div>
-  <div class="hero-content">
-    <div class="hero-tag">10th Grade &middot; AI-Powered Developer</div>
-    <h1 class="hero-glitch" data-text="Kriday Dave">Kriday Dave</h1>
-    <p class="hero-sub">Building the future with Python, JavaScript, and AI &mdash; one commit at a time</p>
-    <div class="hero-actions">
-      <a href="#projects" class="btn btn-p">See my work</a>
-      <a href="#contact" class="btn btn-o">Get in touch</a>
+
+  <div class="stats-band reveal">
+    <div class="track">
+      <span>⌨ <span class="hl">4</span> languages</span>
+      <span>📦 <span class="hl">6</span> projects</span>
+      <span>☕ <span class="hl">∞</span> coffee</span>
+      <span>📖 <span class="hl">DDIA</span> reading</span>
+      <span>⌨ <span class="hl">4</span> languages</span>
+      <span>📦 <span class="hl">6</span> projects</span>
+      <span>☕ <span class="hl">∞</span> coffee</span>
+      <span>📖 <span class="hl">DDIA</span> reading</span>
     </div>
   </div>
-</section>
 
-<!-- ABOUT -->
-<section id="about">
-  <div class="floating-shapes">
-    <div class="fs" style="width:250px;height:250px;background:var(--gold);top:-60px;left:-60px;animation-delay:-2s;"></div>
+  <div class="proj-cell reveal">
+    <div class="p-icon">⚡</div>
+    <h3>Relay</h3>
+    <p>Agent-agent context passing middleware for multi-agent pipelines.</p>
+    <div class="tags"><span>Python</span><span>AI</span><span>Multi-Agent</span></div>
+    <div class="p-detail">Signed context envelopes with rollback on corruption, token budget enforcement, and parallel fork-join. Works with any LLM provider or framework.</div>
   </div>
-  <div class="section-inner">
-    <div class="sh"><div class="sh-label">About</div><div class="sh-title">Who I Am</div><div class="sh-desc">A 10th grader who codes, studies JEE, and games in between.</div></div>
-    <div class="about-grid">
-      <div class="about-text">
-        <p>I'm Kriday Dave — a 10th grade student balancing JEE preparation with a deep passion for coding. I build with Python, JavaScript, and AI-assisted tools, turning ideas into real, shippable projects. From MCP servers to AI middleware, I love creating things that actually solve problems.</p>
-        <p>When I'm not studying or coding, I'm gaming. It keeps the mind sharp and the creativity flowing. My belief is simple: AI isn't here to replace developers — it's here to empower us to build bigger, smarter, and faster than ever before.</p>
-      </div>
-      <div class="about-highlights">
-        <div class="ah-item"><div class="ah-icon">&#x1F393;</div><div class="ah-label">Grade</div><div class="ah-value">10th &middot; JEE Prep</div></div>
-        <div class="ah-item"><div class="ah-icon">&#x1F4BB;</div><div class="ah-label">Stack</div><div class="ah-value">Python, JS, AI</div></div>
-        <div class="ah-item"><div class="ah-icon">&#x1F3AE;</div><div class="ah-label">Hobbies</div><div class="ah-value">Coding &amp; Gaming</div></div>
-        <div class="ah-item"><div class="ah-icon">&#x1F4E7;</div><div class="ah-label">Contact</div><div class="ah-value">davekriday@gmail.com</div></div>
-      </div>
+
+  <div class="proj-cell reveal">
+    <div class="p-icon">⭐</div>
+    <h3>File-Organizer-MCP</h3>
+    <p>MCP server that organizes files via Claude, Cursor & Gemini CLI.</p>
+    <div class="tags"><span>TypeScript</span><span>MCP</span><span>AI</span></div>
+    <div class="p-detail">AI-powered file organization using the Model Context Protocol. Connect via any MCP client to automatically sort and categorize your files.</div>
+  </div>
+
+  <div class="proj-cell reveal">
+    <div class="p-icon">📊</div>
+    <h3>Codo</h3>
+    <p>Coding CLI tool with A2A (Agent-to-Agent) protocol baked in.</p>
+    <div class="tags"><span>TypeScript</span><span>CLI</span><span>A2A</span></div>
+    <div class="p-detail">Terminal-native coding tool with agent-to-agent communication. Code generation, refactoring, and debugging across collaborative AI agents.</div>
+  </div>
+
+  <div class="proj-cell reveal">
+    <div class="p-icon">🏏</div>
+    <h3>Crick AI</h3>
+    <p>Fun cricket match predictor — not production, just for sport.</p>
+    <div class="tags"><span>Python</span><span>ML</span><span>Fun</span></div>
+    <div class="p-detail">Experimental ML model that predicts cricket match outcomes from historical data. Built for fun, not for betting or professional use.</div>
+  </div>
+
+  <div class="note-cell reveal">
+    <span class="cmd">$ </span><span>building things that don't break</span><br>
+    <span class="cmd">$ </span><span>reading: Designing Data-Intensive Applications</span><br>
+    <span class="cmd">$ </span><span>fun fact: writes Rust for fun</span>
+  </div>
+
+  <div class="contact-grid reveal">
+    <div class="prompt">$ ./contact<span>_</span></div>
+    <p>new projects · ideas · or just to say hi</p>
+    <div class="links">
+      <a href="mailto:davekriday@gmail.com">davekriday@gmail.com</a>
+      <a href="https://github.com/kridaydave">GitHub</a>
+      <a href="https://www.linkedin.com/in/kriday-dave-0169a83b5">LinkedIn</a>
+      <a href="https://twitter.com/KridayTop">@KridayTop</a>
     </div>
   </div>
-</section>
 
-<!-- SKILLS -->
-<section id="skills">
-  <div class="section-inner">
-    <div class="sh"><div class="sh-label">Skills</div><div class="sh-title">My Toolkit</div><div class="sh-desc">Technologies I work with on a daily basis.</div></div>
-    <div class="skills-scroll">
-      <div class="skills-grid">
-        <div class="skill-card sk-accent"><div class="sk-icon">Py</div><div class="sk-name">Python</div></div>
-        <div class="skill-card sk-gold"><div class="sk-icon">JS</div><div class="sk-name">JavaScript</div></div>
-        <div class="skill-card sk-accent"><div class="sk-icon">AI</div><div class="sk-name">AI-Assisted Dev</div></div>
-        <div class="skill-card sk-default"><div class="sk-icon">&lt;/&gt;</div><div class="sk-name">HTML &amp; CSS</div></div>
-        <div class="skill-card sk-gold"><div class="sk-icon">⚛</div><div class="sk-name">React</div></div>
-        <div class="skill-card sk-default"><div class="sk-icon">●</div><div class="sk-name">Node.js</div></div>
-        <div class="skill-card sk-accent"><div class="sk-icon">TS</div><div class="sk-name">TypeScript</div></div>
-        <div class="skill-card sk-gold"><div class="sk-icon">▲</div><div class="sk-name">Git</div></div>
-        <div class="skill-card sk-default"><div class="sk-icon">⌘</div><div class="sk-name">Prompt Engineering</div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PROJECTS -->
-<section id="projects">
-  <div class="section-inner">
-    <div class="sh"><div class="sh-label">Projects</div><div class="sh-title">Things I've Built</div><div class="sh-desc">Real projects I've shipped. More coming as I keep building.</div></div>
-    <div class="proj-showcase">
-      <div class="ps-track">
-        <div class="ps-inner" id="psInner">
-          <div class="ps-card">
-            <div class="ps-tags"><span class="ps-tag">MCP</span><span class="ps-tag">TypeScript</span><span class="ps-tag">Node.js</span></div>
-            <div class="ps-title">File Organizer MCP</div>
-            <div class="ps-desc">A security-hardened MCP server that lets AI assistants intelligently organize your files. Features smart categorization into 12+ categories, SHA-256 duplicate detection, EXIF metadata extraction from photos and ID3 from music, dry-run mode with rollback support, and cron-based scheduling. Published on npm with 36 GitHub stars.</div>
-            <div class="ps-link"><a href="https://github.com/kridaydave/File-Organizer-MCP" target="_blank">View on GitHub &rarr;</a></div>
-          </div>
-          <div class="ps-card">
-            <div class="ps-tags"><span class="ps-tag">Python</span><span class="ps-tag">AI</span><span class="ps-tag">Middleware</span></div>
-            <div class="ps-title">Relay</div>
-            <div class="ps-desc">A lightweight Python middleware for passing context reliably between AI agents in multi-agent pipelines. Treats context like a ledger — append-only, cryptographically signed at every step, and reversible on corruption detection. Works with any LLM provider: OpenAI, Anthropic, local models.</div>
-            <div class="ps-link"><a href="https://github.com/kridaydave/Relay" target="_blank">View on GitHub &rarr;</a></div>
-          </div>
-          <div class="ps-card">
-            <div class="ps-tags"><span class="ps-tag">TypeScript</span><span class="ps-tag">CLI</span><span class="ps-tag">A2A</span></div>
-            <div class="ps-title">Codo</div>
-            <div class="ps-desc">A multi-model AI coding CLI tool with native Agent-to-Agent collaboration built in. Supports Anthropic, OpenAI, and Google models running in parallel workflows. Features a beautiful terminal UI built with Ink v5 and seamless parallel execution.</div>
-            <div class="ps-link"><a href="https://github.com/kridaydave/Codo" target="_blank">View on GitHub &rarr;</a></div>
-          </div>
-        </div>
-      </div>
-      <div class="ps-controls">
-        <button class="ps-btn" id="psPrev">&larr;</button>
-        <div class="ps-dots" id="psDots">
-          <button class="ps-dot act"></button>
-          <button class="ps-dot"></button>
-          <button class="ps-dot"></button>
-        </div>
-        <button class="ps-btn" id="psNext">&rarr;</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-  <div class="floating-shapes">
-    <div class="fs" style="width:200px;height:200px;background:var(--accent);top:-40px;right:-40px;animation-delay:-4s;"></div>
-  </div>
-  <div class="section-inner">
-    <div class="sh"><div class="sh-label">Contact</div><div class="sh-title">Let's Connect</div><div class="sh-desc">Got a question, idea, or just want to say hi?</div></div>
-    <div class="contact-grid">
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div class="contact-item"><div><div class="contact-icon">&#x2709;&#xFE0F;</div></div><div><div class="ci-label">Email</div><div class="ci-value"><a href="mailto:davekriday@gmail.com">davekriday@gmail.com</a></div></div></div>
-        <div class="contact-item"><div><div class="contact-icon">&#x1F426;</div></div><div><div class="ci-label">X / Twitter</div><div class="ci-value"><a href="https://x.com/KridayTop" target="_blank">@KridayTop</a></div></div></div>
-        <div class="contact-item"><div><div class="contact-icon">&#x1F4BB;</div></div><div><div class="ci-label">GitHub</div><div class="ci-value"><a href="https://github.com/kridaydave" target="_blank">github.com/kridaydave</a></div></div></div>
-        <div class="contact-item"><div><div class="contact-icon">&#x1F30D;</div></div><div><div class="ci-label">Location</div><div class="ci-value">India</div></div></div>
-      </div>
-      <div class="quote-card">
-        <p>"The best way to predict the future is to create it."</p>
-        <cite>&mdash; Lincoln</cite>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer>Built with &Delta; by Kriday Dave &middot; 2026</footer>
+  <div class="footer-grid">© 2026 Kriday Dave</div>
+</div>
 
 <script>
-// Project carousel
-let psIdx = 0;
-const psInner = document.getElementById('psInner');
-const psDots = document.querySelectorAll('#psDots .ps-dot');
-function psGo(i) {
-  psIdx = Math.max(0, Math.min(i, 2));
-  psInner.style.transform = 'translateX(-' + (psIdx * 100) + '%)';
-  psDots.forEach((d, idx) => d.classList.toggle('act', idx === psIdx));
-}
-document.getElementById('psNext').addEventListener('click', () => psGo(psIdx + 1));
-document.getElementById('psPrev').addEventListener('click', () => psGo(psIdx - 1));
-psDots.forEach((d, i) => d.addEventListener('click', () => psGo(i)));
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
