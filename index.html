@@ -98,6 +98,9 @@ section { position: relative; overflow: hidden; }
 
 /* Skills */
 #skills { background: linear-gradient(180deg, #16213e, #1a1a2e); }
+.skills-scroll {
+  -webkit-overflow-scrolling: touch;
+}
 .skills-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -228,12 +231,9 @@ footer { text-align: center; padding: 40px 24px; border-top: 1px solid rgba(255,
   .about-highlights { grid-template-columns: 1fr; }
   .section-inner { padding: 60px 20px; }
   .sh-title { font-size: 1.6rem; }
-  .skills-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .skills-grid { max-width: 700px; margin: 0 auto; }
   .ps-card { padding: 24px; }
   .ps-title { font-size: 1.3rem; }
-}
-@media (max-width: 480px) {
-  .skills-grid { grid-template-columns: 1fr; max-width: 280px; }
 }
 </style>
 </head>
@@ -283,7 +283,8 @@ footer { text-align: center; padding: 40px 24px; border-top: 1px solid rgba(255,
 <section id="skills">
   <div class="section-inner">
     <div class="sh"><div class="sh-label">Skills</div><div class="sh-title">My Toolkit</div><div class="sh-desc">Technologies I work with on a daily basis.</div></div>
-    <div class="skills-grid">
+    <div class="skills-scroll">
+      <div class="skills-grid">
         <div class="skill-card sk-accent"><div class="sk-icon">Py</div><div class="sk-name">Python</div></div>
         <div class="skill-card sk-gold"><div class="sk-icon">JS</div><div class="sk-name">JavaScript</div></div>
         <div class="skill-card sk-accent"><div class="sk-icon">AI</div><div class="sk-name">AI-Assisted Dev</div></div>
@@ -294,6 +295,7 @@ footer { text-align: center; padding: 40px 24px; border-top: 1px solid rgba(255,
         <div class="skill-card sk-gold"><div class="sk-icon">▲</div><div class="sk-name">Git</div></div>
         <div class="skill-card sk-default"><div class="sk-icon">⌘</div><div class="sk-name">Prompt Engineering</div></div>
       </div>
+    </div>
   </div>
 </section>
 
