@@ -74,6 +74,8 @@ body {
   position: fixed; top: 20px; right: 20px;
   display: flex; gap: 8px;
   z-index: 200;
+  opacity: 0.7;
+  transition: opacity 0.3s;
 }
 .quick-nav a {
   font-size: 11px;
@@ -897,7 +899,7 @@ for (let i = 0; i < 20; i++) {
 
 window.addEventListener('scroll', () => {
   const scrolled = window.pageYOffset;
-  document.querySelector('.hero-poster').style.transform = `translateY(${scrolled * 0.3}px)`;
+  document.querySelector('.quick-nav').style.opacity = scrolled > 50 ? '1' : '0.7';
 });
 
 document.querySelectorAll('a, .proj-cell, .skill-tags span, .game-row, .focus-item, .dream-card, .spec-item').forEach(el => {
