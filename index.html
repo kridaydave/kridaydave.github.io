@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: 'IBM Plex Mono', monospace;
   background: #0A0A0A;
@@ -68,6 +68,30 @@ body {
   10% { opacity: 0.4; }
   90% { opacity: 0.4; }
   100% { transform: translateY(-100vh) translateX(30px) rotate(5deg); opacity: 0; }
+}
+
+.quick-nav {
+  position: fixed; top: 20px; right: 20px;
+  display: flex; gap: 8px;
+  z-index: 200;
+}
+.quick-nav a {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  padding: 6px 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(10,10,10,0.7);
+  backdrop-filter: blur(4px);
+  transition: all 0.3s;
+  font-family: 'IBM Plex Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.quick-nav a:hover {
+  color: #FFF;
+  border-color: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.1);
 }
 
 .crt {
@@ -627,6 +651,14 @@ body {
   .footer-grid { font-size: 11px; }
   .boot-lines { font-size: 11px; padding: 0 20px; }
   .code-float { display: none; }
+  .quick-nav { 
+    top: 10px; right: 10px; 
+    flex-wrap: wrap; justify-content: flex-end;
+    max-width: 160px;
+  }
+  .quick-nav a {
+    font-size: 9px; padding: 4px 8px;
+  }
 }
 </style>
 </head>
@@ -645,6 +677,14 @@ body {
 </div>
 <div class="particles" id="particles"></div>
 
+<div class="quick-nav">
+  <a href="#about">About</a>
+  <a href="#projects">Projects</a>
+  <a href="#skills">Skills</a>
+  <a href="#gaming">Gaming</a>
+  <a href="#contact">Contact</a>
+</div>
+
 <div class="crt"></div>
 <div class="noise"></div>
 
@@ -662,7 +702,7 @@ body {
 
 <div class="grid-layout">
 
-  <div class="about-grid reveal">
+  <div class="about-grid reveal" id="about">
     <h2>$ cat about.txt</h2>
     <p>I'm a 10th grade student preparing for <strong>JEE</strong> while nurturing my passion for <strong>coding</strong> and <strong>gaming</strong>. I love building things, learning new tech, and gaming when I'm not buried in textbooks.</p>
   </div>
@@ -680,7 +720,7 @@ body {
     </div>
   </div>
 
-  <div class="proj-cell reveal">
+  <div class="proj-cell reveal" id="projects">
     <div class="p-icon">⚡</div>
     <h3><a href="https://github.com/kridaydave/Relay" target="_blank">Relay</a> <a href="https://github.com/kridaydave/Relay" target="_blank" class="gh-link">GitHub</a> <span class="badge">current</span></h3>
     <p>Agent-agent context passing middleware for multi-agent pipelines.</p>
@@ -718,7 +758,7 @@ body {
     <span class="cmd">$ </span><span>JEE prep + coding = busy life</span>
   </div>
 
-  <div class="skills-grid reveal">
+  <div class="skills-grid reveal" id="skills">
     <h2>$ cat skills.txt</h2>
     <div class="skill-tags">
       <span>Python</span><span>TypeScript</span><span>JavaScript</span><span>HTML/CSS</span>
@@ -727,7 +767,7 @@ body {
     </div>
   </div>
 
-  <div class="gaming-grid reveal">
+  <div class="gaming-grid reveal" id="gaming">
     <h2>$ cat gaming.txt</h2>
     <div class="games-container">
       <div class="game-row">
@@ -812,7 +852,7 @@ body {
     </div>
   </div>
 
-  <div class="contact-grid reveal">
+  <div class="contact-grid reveal" id="contact">
     <div class="prompt">$ ./contact<span>_</span></div>
     <p>new projects · ideas · or just to say hi</p>
     <div class="links">
