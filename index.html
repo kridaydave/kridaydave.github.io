@@ -77,6 +77,13 @@ body {
 .hero-avatar:hover {
   filter: grayscale(0) contrast(1) brightness(1);
 }
+@keyframes avatarFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.hero-avatar {
+  animation: avatarFloat 4s ease-in-out infinite;
+}
 @keyframes tagFade {
   from { opacity: 0; transform: translateY(-12px); }
   to { opacity: 1; transform: translateY(0); }
@@ -315,6 +322,183 @@ body {
 .note-cell span { color: rgba(255,255,255,0.8); }
 .note-cell .cmd { color: rgba(255,255,255,0.3); }
 
+.skills-grid {
+  grid-column: 1 / -1;
+  padding: 36px 56px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.skills-grid h2 {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  letter-spacing: 0.15em; margin-bottom: 20px;
+  font-weight: 400;
+}
+.skill-tags {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  justify-content: center;
+}
+.skill-tags span {
+  font-size: 13px; color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.02);
+  transition: all 0.3s;
+}
+.skill-tags span:hover {
+  border-color: rgba(255,255,255,0.4);
+  color: #FFF;
+  background: rgba(255,255,255,0.08);
+}
+
+.gaming-grid {
+  grid-column: 1 / -1;
+  padding: 36px 56px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.gaming-grid h2 {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  letter-spacing: 0.15em; margin-bottom: 20px;
+  font-weight: 400;
+}
+.gaming-grid .games-container {
+  display: flex; justify-content: center; gap: 16px;
+  flex-wrap: wrap;
+}
+.game-row {
+  display: flex; align-items: center; gap: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 14px 20px;
+  min-width: 200px;
+  transform: rotate(-0.5deg);
+  transition: transform 0.3s, background 0.3s;
+}
+.game-row:nth-child(2) { transform: rotate(0.5deg); }
+.game-row:nth-child(3) { transform: rotate(-0.3deg); }
+.game-row:nth-child(4) { transform: rotate(0.3deg); }
+.game-row:hover {
+  transform: rotate(0deg) scale(1.02);
+  background: rgba(255,255,255,0.08);
+}
+.game-icon { font-size: 22px; }
+.game-name {
+  font-size: 14px; color: #FFF;
+  font-weight: 500;
+}
+.game-note {
+  font-size: 12px; color: rgba(255,255,255,0.5);
+  margin-left: auto;
+}
+
+.focus-grid {
+  grid-column: 1 / -1;
+  padding: 36px 56px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.focus-grid h2 {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  letter-spacing: 0.15em; margin-bottom: 20px;
+  font-weight: 400;
+}
+.focus-items {
+  display: flex; justify-content: center; gap: 24px;
+  flex-wrap: wrap;
+}
+.focus-item {
+  text-align: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 20px 28px;
+  min-width: 140px;
+  transform: rotate(-1deg);
+  transition: transform 0.3s, background 0.3s;
+}
+.focus-item:nth-child(2) { transform: rotate(1deg); }
+.focus-item:nth-child(3) { transform: rotate(-0.5deg); }
+.focus-item:hover {
+  transform: rotate(0deg) scale(1.03);
+  background: rgba(255,255,255,0.08);
+}
+.focus-icon {
+  font-size: 28px; display: block; margin-bottom: 10px;
+}
+.focus-title {
+  font-size: 14px; color: #FFF;
+  font-weight: 500; display: block;
+  letter-spacing: 0.05em;
+}
+.focus-desc {
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  margin-top: 6px;
+}
+
+.dream-grid {
+  grid-column: 1 / -1;
+  padding: 36px 56px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.dream-grid h2 {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  letter-spacing: 0.15em; margin-bottom: 20px;
+  font-weight: 400;
+}
+.dream-cards {
+  display: flex; justify-content: center; gap: 20px;
+  flex-wrap: wrap;
+}
+.dream-card {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 16px 24px;
+  transform: rotate(-1deg);
+  transition: transform 0.3s, background 0.3s;
+}
+.dream-card:nth-child(2) { transform: rotate(1deg); }
+.dream-card:hover {
+  transform: rotate(0deg) scale(1.03);
+  background: rgba(255,255,255,0.08);
+}
+.dream-rank {
+  font-size: 14px; color: rgba(255,255,255,0.4);
+  font-weight: 600;
+}
+.dream-name {
+  font-size: 15px; color: #FFF;
+  font-weight: 500;
+}
+.dream-note {
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  margin-left: 8px;
+}
+
+.setup-grid {
+  grid-column: 1 / -1;
+  padding: 36px 56px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.setup-grid h2 {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  letter-spacing: 0.15em; margin-bottom: 20px;
+  font-weight: 400;
+}
+.setup-specs {
+  display: flex; justify-content: center; gap: 24px;
+  flex-wrap: wrap;
+}
+.spec-item {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 18px;
+  transition: all 0.3s;
+}
+.spec-item:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.2);
+}
+.spec-icon { font-size: 18px; }
+.spec-name { font-size: 13px; color: rgba(255,255,255,0.8); }
+
 .contact-grid {
   grid-column: 1 / -1;
   padding: 52px 56px;
@@ -363,7 +547,18 @@ body {
 @media (max-width: 700px) {
   .grid-layout { grid-template-columns: 1fr; }
   .proj-cell { border-right: none; }
-  .about-grid, .proj-cell, .note-cell, .contact-grid { padding: 36px 24px; }
+  .about-grid, .proj-cell, .note-cell, .contact-grid, .skills-grid, .gaming-grid, .focus-grid, .dream-grid, .setup-grid { padding: 28px 20px; }
+  .hero-poster { padding: 20px; }
+  .hero-poster h1 { font-size: 42px !important; }
+  .hero-avatar { width: 100px !important; height: 100px !important; }
+  .skill-tags { justify-content: flex-start; }
+  .skill-tags span { font-size: 12px; padding: 6px 12px; }
+  .focus-items { flex-direction: column; gap: 24px; }
+  .game-row { justify-content: center; }
+  .stats-band .track { font-size: 12px; }
+  .contact-grid .links { flex-direction: column; gap: 12px; }
+  .dream-cards { flex-direction: column; align-items: center; }
+  .setup-specs { flex-direction: column; align-items: center; gap: 12px; }
 }
 </style>
 </head>
@@ -438,8 +633,102 @@ body {
 
   <div class="note-cell reveal">
     <span class="cmd">$ </span><span>building things that don't break</span><br>
-    <span class="cmd">$ </span><span>reading: Designing Data-Intensive Applications</span><br>
-    <span class="cmd">$ </span><span>fun fact: writes Rust for fun</span>
+    <span class="cmd">$ </span><span>learning: AI/ML & MCP protocols</span><br>
+    <span class="cmd">$ </span><span>JEE prep + coding = busy life</span>
+  </div>
+
+  <div class="skills-grid reveal">
+    <h2>$ cat skills.txt</h2>
+    <div class="skill-tags">
+      <span>Python</span><span>TypeScript</span><span>JavaScript</span><span>HTML/CSS</span>
+      <span>React</span><span>Node.js</span><span>Git</span><span>VS Code</span>
+      <span>Cursor</span><span>Claude</span><span>MCP</span><span>AI APIs</span>
+    </div>
+  </div>
+
+  <div class="gaming-grid reveal">
+    <h2>$ cat gaming.txt</h2>
+    <div class="games-container">
+      <div class="game-row">
+        <span class="game-icon">🏏</span>
+        <span class="game-name">Cricket 24</span>
+        <span class="game-note">PS5</span>
+      </div>
+      <div class="game-row">
+        <span class="game-icon">💀</span>
+        <span class="game-name">Mortal Kombat 1</span>
+        <span class="game-note">PS5</span>
+      </div>
+      <div class="game-row">
+        <span class="game-icon">🎲</span>
+        <span class="game-name">Roblox</span>
+        <span class="game-note">friends & fun</span>
+      </div>
+      <div class="game-row">
+        <span class="game-icon">🤠</span>
+        <span class="game-name">RDR2</span>
+        <span class="game-note">story mode</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="focus-grid reveal">
+    <h2>$ cat focus.txt</h2>
+    <div class="focus-items">
+      <div class="focus-item">
+        <span class="focus-icon">📚</span>
+        <span class="focus-title">JEE 2029</span>
+        <span class="focus-desc">Physics · Chem · Math</span>
+      </div>
+      <div class="focus-item">
+        <span class="focus-icon">⚡</span>
+        <span class="focus-title">Relay</span>
+        <span class="focus-desc">Agent middleware</span>
+      </div>
+      <div class="focus-item">
+        <span class="focus-icon">🤖</span>
+        <span class="focus-title">AI/ML</span>
+        <span class="focus-desc">Learning new stuff</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dream-grid reveal">
+    <h2>$ cat dream.txt</h2>
+    <div class="dream-cards">
+      <div class="dream-card">
+        <span class="dream-rank">1</span>
+        <span class="dream-name">IIT Bombay</span>
+        <span class="dream-note">Dream 🎯</span>
+      </div>
+      <div class="dream-card">
+        <span class="dream-rank">2</span>
+        <span class="dream-name">DAU (DAIICT)</span>
+        <span class="dream-note">Gandhinagar</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="setup-grid reveal">
+    <h2>$ cat setup.txt</h2>
+    <div class="setup-specs">
+      <div class="spec-item">
+        <span class="spec-icon">💻</span>
+        <span class="spec-name">Lenovo IdeaPad V15-IIL</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-icon">⚙️</span>
+        <span class="spec-name">Intel Core i3-1005G1</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-icon">🧠</span>
+        <span class="spec-name">8GB RAM</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-icon">🪟</span>
+        <span class="spec-name">Windows 11</span>
+      </div>
+    </div>
   </div>
 
   <div class="contact-grid reveal">
