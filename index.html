@@ -627,18 +627,17 @@ body {
   .about-grid, .proj-cell, .note-cell, .contact-grid, .skills-grid, .gaming-grid, .focus-grid, .dream-grid, .setup-grid { padding: 28px 20px; }
   .hero-poster { padding: 40px 16px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; }
   .hero-poster h1 { font-size: 52px !important; letter-spacing: 0.05em; line-height: 1.1; display: block; }
-  .hero-poster h1 .glow { display: none; }
-  .hero-poster h1 .shadow { display: none; }
-  .hero-poster h1 .crt-glow-subtle { display: none; }
-  .hero-poster h1::after { 
-    content: 'KRIDAY\\A DAVE'; 
-    display: block; 
-    white-space: pre;
+  .hero-poster h1 > span { display: none !important; }
+  .hero-poster h1::before {
+    content: 'KRIDAY DAVE';
+    display: block;
+    color: #FFF;
     text-shadow: 
-      0 0 10px rgba(180, 220, 255, 0.4),
-      0 0 20px rgba(180, 220, 255, 0.2);
+      0 0 10px rgba(180, 220, 255, 0.5),
+      0 0 20px rgba(180, 220, 255, 0.3),
+      0 0 40px rgba(180, 220, 255, 0.15);
+    white-space: nowrap;
   }
-  .hero-poster h1 .glitch-layer { display: none; }
   .hero-avatar { width: 110px !important; height: 110px !important; margin-bottom: 24px; }
   .hero-poster .tag { font-size: 11px; padding: 6px 14px; margin-bottom: 24px; opacity: 0.8; }
   .hero-poster .sub { font-size: 13px; margin-top: 24px; color: rgba(255,255,255,0.7); }
