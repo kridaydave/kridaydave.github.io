@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 300" role="img" aria-labelledby="title">
+  <title id="title">Epoch AI Labs reversed logo</title>
+  <rect width="920" height="300" fill="#171714"/>
+  <g transform="translate(38 48) scale(.52)">
+    <path fill="#F2EFE7" d="M0 0h300v60l-100 60H0z"/>
+    <path fill="#A64B2A" d="M0 160h160l70-50h70v100h-105l-70 50H0z"/>
+    <path fill="#F2EFE7" d="M0 300h120l70-50h110v140H0z"/>
+  </g>
+  <text x="245" y="158" fill="#F2EFE7"
+        font-family="Georgia, 'Times New Roman', serif" font-size="112"
+        letter-spacing="-4">Epoch</text>
+  <text x="251" y="225" fill="#F2EFE7"
+        font-family="Arial, Helvetica, sans-serif" font-size="32"
+        font-weight="500" letter-spacing="15">AI LABS</text>
+</svg>
