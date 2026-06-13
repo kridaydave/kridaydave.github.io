@@ -8,4 +8,4 @@ binding = "ASSETS"
 run_worker_first = ["/api/*"]
 
 [vars]
-CONTACT_FROM_EMAIL = "Portfolio <onboarding@resend.dev>"
+CONTACT_FROM_EMAIL = "Kriday Dave <contact@kridaydave.com>"

@@ -42,7 +42,7 @@ async function handleContact(request, env) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: env.CONTACT_FROM_EMAIL || "Portfolio <onboarding@resend.dev>",
+      from: env.CONTACT_FROM_EMAIL || "Kriday Dave <contact@kridaydave.com>",
       to: [env.CONTACT_TO_EMAIL],
       reply_to: email,
       subject: `Portfolio message from ${name}`,
