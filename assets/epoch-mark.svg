@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 470" role="img" aria-labelledby="title">
+  <title id="title">Epoch AI Labs strata mark</title>
+  <rect width="380" height="470" fill="#F2EFE7"/>
+  <g transform="translate(40 40)">
+    <path fill="#60727A" d="M0 0h300v60l-100 60H0z"/>
+    <path fill="#A64B2A" d="M0 160h160l70-50h70v100h-105l-70 50H0z"/>
+    <path fill="#171714" d="M0 300h120l70-50h110v140H0z"/>
+  </g>
+</svg>

@@ -1,0 +1,3 @@
+- [2026-06-13] Portfolio uses the Epoch AI Labs editorial identity: Bone/Ink/Copper/Mineral, Newsreader + Inter, restrained asymmetric layouts, and original brand SVG masters from Desktop/Me.
+- [2026-06-13] Cloudflare Pages is the deployment target; dynamic behavior belongs in Pages Functions, with the contact endpoint using Resend environment variables.
+- [2026-06-13] Portfolio motion should remain editorial: staged reveals, phase/strata movement, subtle parallax, and restrained hover feedback with full reduced-motion support.

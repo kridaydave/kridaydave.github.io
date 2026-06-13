@@ -1,940 +1,146 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kriday Dave · Noir</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'IBM Plex Mono', monospace;
-  background: #0A0A0A;
-  color: #FFF;
-  line-height: 1.7;
-  padding: 0;
-  overflow-x: hidden;
-}
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0A0A0A; }
-::-webkit-scrollbar-thumb { 
-  background: linear-gradient(90deg, #333, #555, #333); 
-  border-radius: 3px;
-  border: 1px solid #222;
-}
-::-webkit-scrollbar-thumb:hover { background: #666; }
-
-.boot-screen {
-  position: fixed; inset: 0;
-  background: #0A0A0A;
-  z-index: 9999;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  font-family: 'IBM Plex Mono', monospace;
-}
-.boot-lines {
-  color: #FFF;
-  font-size: 14px;
-  line-height: 1.8;
-  text-align: left;
-  max-width: 500px;
-}
-.boot-line { opacity: 0; animation: bootFade 0.1s forwards; }
-@keyframes bootFade { to { opacity: 1; } }
-.boot-cursor {
-  display: inline-block; width: 10px; height: 18px;
-  background: #FFF; animation: bootBlink 0.5s step-end infinite;
-  margin-left: 4px; vertical-align: middle;
-}
-@keyframes bootBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-.boot-complete { opacity: 0; animation: bootComplete 0.5s 0.5s forwards; }
-@keyframes bootComplete { to { opacity: 0; pointer-events: none; } }
-
-.particles {
-  position: fixed; inset: 0; pointer-events: none;
-  z-index: 0; overflow: hidden;
-}
-.code-float {
-  position: absolute;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: rgba(255,255,255,0.25);
-  animation: codeFloat 20s linear infinite;
-  white-space: nowrap;
-}
-@keyframes codeFloat {
-  0% { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.4; }
-  90% { opacity: 0.4; }
-  100% { transform: translateY(-100vh) translateX(30px) rotate(5deg); opacity: 0; }
-}
-
-.quick-nav {
-  position: fixed; top: 20px; right: 20px;
-  display: flex; gap: 8px;
-  z-index: 200;
-  opacity: 0.7;
-  transition: opacity 0.3s;
-}
-.quick-nav a {
-  font-size: 11px;
-  color: rgba(255,255,255,0.5);
-  text-decoration: none;
-  padding: 6px 12px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(10,10,10,0.7);
-  backdrop-filter: blur(4px);
-  transition: all 0.3s;
-  font-family: 'IBM Plex Mono', monospace;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-.quick-nav a:hover {
-  color: #FFF;
-  border-color: rgba(255,255,255,0.4);
-  background: rgba(255,255,255,0.1);
-}
-
-.crt {
-  position: fixed; inset: 0; pointer-events: none; z-index: 100;
-  background: repeating-linear-gradient(
-    0deg, transparent, transparent 2px,
-    rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px
-  );
-}
-.crt::after {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.4) 100%);
-}
-
-.noise {
-  position: fixed; inset: 0; pointer-events: none; z-index: 99;
-  opacity: 0.015;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
-  animation: noiseShift 0.3s steps(3) infinite;
-}
-@keyframes noiseShift {
-  0% { transform: translate(0,0); }
-  33% { transform: translate(6px,-4px); }
-  66% { transform: translate(-4px,6px); }
-}
-
-.hero-poster {
-  height: 100vh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center;
-  position: relative;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  overflow: hidden;
-}
-.hero-poster::before {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse 600px 400px at 50% 40%, rgba(255,255,255,0.015), transparent);
-}
-.hero-poster .tag {
-  font-size: 13px; letter-spacing: 0.25em; text-transform: uppercase;
-  color: rgba(255,255,255,0.7);
-  border: 1px solid rgba(255,255,255,0.15);
-  padding: 6px 16px; margin-bottom: 32px;
-  font-weight: 300;
-  animation: tagFade 3s ease-out;
-}
-.hero-avatar {
-  width: 120px; height: 120px; border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 24px;
-  border: 2px solid rgba(255,255,255,0.1);
-  filter: grayscale(1) contrast(1.15) brightness(0.9);
-  transition: filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.hero-avatar:hover {
-  filter: grayscale(0) contrast(1) brightness(1);
-}
-@keyframes avatarFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-.hero-avatar {
-  animation: avatarFloat 4s ease-in-out infinite;
-}
-@keyframes tagFade {
-  from { opacity: 0; transform: translateY(-12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.hero-poster h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(96px, 16vw, 200px);
-  letter-spacing: 0.05em;
-  line-height: 0.86;
-  color: #FFF;
-  position: relative;
-}
-.hero-poster h1 .glow {
-  position: absolute; inset: 0;
-  color: #FFF; z-index: -1;
-  filter: blur(30px);
-  opacity: 0.08;
-  animation: glowPulse 3s ease-in-out infinite;
-}
-@keyframes glowPulse {
-  0%, 100% { opacity: 0.06; filter: blur(30px); }
-  50% { opacity: 0.15; filter: blur(40px); }
-}
-
-.crt-glow {
-  display: inline;
-  text-shadow:
-    0 0 7px rgba(180, 220, 255, 0.4),
-    0 0 15px rgba(180, 220, 255, 0.2),
-    0 0 30px rgba(180, 220, 255, 0.1),
-    0 0 60px rgba(180, 220, 255, 0.05),
-    0 0 120px rgba(180, 220, 255, 0.025);
-}
-
-.crt-glow-subtle {
-  display: inline;
-  text-shadow:
-    0 0 4px rgba(180, 220, 255, 0.15),
-    0 0 10px rgba(180, 220, 255, 0.06);
-}
-.hero-poster h1 .shadow { color: rgba(255,255,255,0.04); display: block; }
-
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  91% { opacity: 1; }
-  92% { opacity: 0.1; transform: translateX(-2px); }
-  93% { opacity: 0.7; transform: translateX(1px); }
-  94% { opacity: 0.15; }
-  95% { opacity: 0.8; }
-  96% { opacity: 0.2; }
-  97% { opacity: 0.9; }
-  98% { opacity: 1; transform: translateX(0); }
-}
-.hero-poster .sub {
-  font-size: 13px; color: rgba(255,255,255,0.6);
-  margin-top: 16px; letter-spacing: 0.15em;
-  text-transform: uppercase; font-weight: 300;
-  animation: flicker 6s infinite;
-}
-
-.glitch-layer {
-  position: absolute; inset: 0;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(96px, 16vw, 200px);
-  letter-spacing: 0.05em;
-  line-height: 0.86;
-  pointer-events: none;
-  opacity: 0;
-}
-.hero-poster:hover .glitch-layer {
-  opacity: 0.08;
-  animation: glitchSplit 0.15s ease-out;
-  color: #FF6B9D;
-}
-.hero-poster:hover .glitch-layer + .glitch-layer {
-  color: #00D4AA;
-  animation-delay: 0.02s;
-  margin-left: 3px;
-  margin-top: -2px;
-}
-@keyframes glitchSplit {
-  0% { clip-path: inset(0 0 80% 0); transform: translate(-4px, 0); }
-  10% { clip-path: inset(20% 0 60% 0); transform: translate(4px, 0); }
-  20% { clip-path: inset(40% 0 40% 0); transform: translate(-3px, 0); }
-  30% { clip-path: inset(60% 0 20% 0); transform: translate(3px, 0); }
-  40% { clip-path: inset(80% 0 0 0); transform: translate(-5px, 0); }
-  50%, 100% { clip-path: inset(0 0 0 0); transform: translate(0, 0); opacity: 0; }
-}
-
-.grid-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  max-width: 1060px;
-  margin: 0 auto;
-}
-.grid-layout > * { border-bottom: 1px solid rgba(255,255,255,0.04); }
-
-.about-grid {
-  grid-column: 1 / -1;
-  padding: 72px 56px;
-  text-align: center;
-  position: relative;
-}
-.about-grid::after {
-  content: ''; position: absolute; bottom: 0; left: 10%; right: 10%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
-}
-.about-grid h2 {
-  font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(255,255,255,0.5); margin-bottom: 20px;
-  font-weight: 400;
-}
-.about-grid p {
-  font-size: 16px; color: rgba(255,255,255,0.85);
-  line-height: 2; max-width: 680px; margin: 0 auto;
-  font-weight: 300;
-}
-.about-grid p strong { color: #FFF; font-weight: 500; }
-
-.stats-band {
-  grid-column: 1 / -1;
-  padding: 24px 0;
-  overflow: hidden;
-  white-space: nowrap;
-  background: rgba(255,255,255,0.008);
-  position: relative;
-}
-.stats-band::before, .stats-band::after {
-  content: ''; position: absolute; top: 0; bottom: 0; width: 60px; z-index: 2;
-  pointer-events: none;
-}
-.stats-band::before { left: 0; background: linear-gradient(90deg, #0A0A0A, transparent); }
-.stats-band::after { right: 0; background: linear-gradient(270deg, #0A0A0A, transparent); }
-.stats-band .track {
-  display: inline-flex;
-  animation: marquee 18s linear infinite;
-  font-size: 18px;
-  color: rgba(255,255,255,0.7);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-.stats-band .track span {
-  margin: 0 40px;
-  display: flex; align-items: center; gap: 10px;
-}
-.stats-band .track .hl {
-  color: #FFF;
-  font-weight: 600;
-}
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.proj-cell {
-  padding: 52px 44px;
-  border-right: 1px solid rgba(255,255,255,0.04);
-  transition: all 0.3s; cursor: pointer;
-  position: relative;
-}
-.proj-cell:nth-child(even) { border-right: none; }
-.proj-cell:hover { background: rgba(255,255,255,0.012); }
-.proj-cell::before {
-  content: ''; position: absolute; top: 0; left: 10%; right: 10%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.proj-cell:hover::before { opacity: 1; }
-.proj-cell .p-icon { font-size: 36px; margin-bottom: 18px; display: inline-block; }
-.proj-cell:hover .p-icon { animation: iconBuzz 0.3s ease-out; }
-@keyframes iconBuzz {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-6deg); }
-  75% { transform: rotate(6deg); }
-}
-.proj-cell h3 {
-  font-size: 18px; font-weight: 500;
-  color: rgba(255,255,255,0.9);
-  margin-bottom: 10px;
-  text-transform: uppercase; letter-spacing: 0.08em;
-}
-.proj-cell h3 a {
-  color: inherit;
-  text-decoration: none;
-}
-.proj-cell h3 a:hover {
-  color: #FFF;
-  text-decoration: underline;
-}
-.proj-cell h3 .badge {
-  font-size: 9px;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.3);
-  padding: 2px 6px;
-  margin-left: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.proj-cell h3 .gh-link {
-  font-size: 11px;
-  color: rgba(255,255,255,0.5);
-  text-decoration: none;
-  margin-left: 6px;
-  font-weight: 300;
-}
-.proj-cell h3 .gh-link:hover {
-  color: #FFF;
-}
-.proj-cell p { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.7; font-weight: 300; }
-.proj-cell .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
-.proj-cell .tags span {
-  font-size: 11px; color: rgba(255,255,255,0.6);
-  border: 1px solid rgba(255,255,255,0.15);
-  padding: 3px 10px; font-weight: 300;
-  transition: all 0.2s;
-}
-.proj-cell:hover .tags span { border-color: rgba(255,255,255,0.3); color: #FFF; }
-.proj-cell .p-detail {
-  margin-top: 16px; padding-top: 14px;
-  border-top: 1px solid rgba(255,255,255,0.04);
-  font-size: 13px; color: rgba(255,255,255,0.6);
-  line-height: 1.6;
-}
-
-.note-cell {
-  grid-column: 1 / -1;
-  padding: 36px 56px;
-  font-size: 14px; color: rgba(255,255,255,0.6);
-  line-height: 2; text-align: center;
-  font-weight: 300;
-  background: rgba(255,255,255,0.005);
-}
-.note-cell span { color: rgba(255,255,255,0.8); }
-.note-cell .cmd { color: rgba(255,255,255,0.3); }
-
-.skills-grid {
-  grid-column: 1 / -1;
-  padding: 36px 56px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.skills-grid h2 {
-  font-size: 12px; color: rgba(255,255,255,0.4);
-  letter-spacing: 0.15em; margin-bottom: 20px;
-  font-weight: 400;
-}
-.skill-tags {
-  display: flex; flex-wrap: wrap; gap: 10px;
-  justify-content: center;
-}
-.skill-tags span {
-  font-size: 13px; color: rgba(255,255,255,0.7);
-  border: 1px solid rgba(255,255,255,0.12);
-  padding: 8px 16px;
-  background: rgba(255,255,255,0.02);
-  transition: all 0.3s;
-}
-.skill-tags span:hover {
-  border-color: rgba(255,255,255,0.4);
-  color: #FFF;
-  background: rgba(255,255,255,0.08);
-}
-
-.gaming-grid {
-  grid-column: 1 / -1;
-  padding: 36px 56px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.gaming-grid h2 {
-  font-size: 12px; color: rgba(255,255,255,0.4);
-  letter-spacing: 0.15em; margin-bottom: 20px;
-  font-weight: 400;
-}
-.gaming-grid .games-container {
-  display: flex; justify-content: center; gap: 16px;
-  flex-wrap: wrap;
-}
-.game-row {
-  display: flex; align-items: center; gap: 16px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 14px 20px;
-  min-width: 200px;
-  transform: rotate(-0.5deg);
-  transition: transform 0.3s, background 0.3s;
-}
-.game-row:nth-child(2) { transform: rotate(0.5deg); }
-.game-row:nth-child(3) { transform: rotate(-0.3deg); }
-.game-row:nth-child(4) { transform: rotate(0.3deg); }
-.game-row:hover {
-  transform: rotate(0deg) scale(1.02);
-  background: rgba(255,255,255,0.08);
-}
-.game-icon { font-size: 22px; }
-.game-name {
-  font-size: 14px; color: #FFF;
-  font-weight: 500;
-}
-.game-note {
-  font-size: 12px; color: rgba(255,255,255,0.5);
-  margin-left: auto;
-}
-
-.focus-grid {
-  grid-column: 1 / -1;
-  padding: 36px 56px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.focus-grid h2 {
-  font-size: 12px; color: rgba(255,255,255,0.4);
-  letter-spacing: 0.15em; margin-bottom: 20px;
-  font-weight: 400;
-}
-.focus-items {
-  display: flex; justify-content: center; gap: 24px;
-  flex-wrap: wrap;
-}
-.focus-item {
-  text-align: center;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 20px 28px;
-  min-width: 140px;
-  transform: rotate(-1deg);
-  transition: transform 0.3s, background 0.3s;
-}
-.focus-item:nth-child(2) { transform: rotate(1deg); }
-.focus-item:nth-child(3) { transform: rotate(-0.5deg); }
-.focus-item:hover {
-  transform: rotate(0deg) scale(1.03);
-  background: rgba(255,255,255,0.08);
-}
-.focus-icon {
-  font-size: 28px; display: block; margin-bottom: 10px;
-}
-.focus-title {
-  font-size: 14px; color: #FFF;
-  font-weight: 500; display: block;
-  letter-spacing: 0.05em;
-}
-.focus-desc {
-  font-size: 11px; color: rgba(255,255,255,0.5);
-  margin-top: 6px;
-}
-
-.dream-grid {
-  grid-column: 1 / -1;
-  padding: 36px 56px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.dream-grid h2 {
-  font-size: 12px; color: rgba(255,255,255,0.4);
-  letter-spacing: 0.15em; margin-bottom: 20px;
-  font-weight: 400;
-}
-.dream-cards {
-  display: flex; justify-content: center; gap: 20px;
-  flex-wrap: wrap;
-}
-.dream-card {
-  display: flex; align-items: center; gap: 12px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 16px 24px;
-  transform: rotate(-1deg);
-  transition: transform 0.3s, background 0.3s;
-}
-.dream-card:nth-child(2) { transform: rotate(1deg); }
-.dream-card:hover {
-  transform: rotate(0deg) scale(1.03);
-  background: rgba(255,255,255,0.08);
-}
-.dream-rank {
-  font-size: 14px; color: rgba(255,255,255,0.4);
-  font-weight: 600;
-}
-.dream-name {
-  font-size: 15px; color: #FFF;
-  font-weight: 500;
-}
-.dream-note {
-  font-size: 11px; color: rgba(255,255,255,0.5);
-  margin-left: 8px;
-}
-
-.setup-grid {
-  grid-column: 1 / -1;
-  padding: 36px 56px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.setup-grid h2 {
-  font-size: 12px; color: rgba(255,255,255,0.4);
-  letter-spacing: 0.15em; margin-bottom: 20px;
-  font-weight: 400;
-}
-.setup-specs {
-  display: flex; justify-content: center; gap: 24px;
-  flex-wrap: wrap;
-}
-.spec-item {
-  display: flex; align-items: center; gap: 10px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  padding: 12px 18px;
-  transition: all 0.3s;
-}
-.spec-item:hover {
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.2);
-}
-.spec-icon { font-size: 18px; }
-.spec-name { font-size: 13px; color: rgba(255,255,255,0.8); }
-
-.contact-grid {
-  grid-column: 1 / -1;
-  padding: 52px 56px;
-  text-align: center;
-  position: relative;
-}
-.contact-grid .prompt {
-  font-size: 12px; color: rgba(255,255,255,0.4);
-  letter-spacing: 0.1em; margin-bottom: 4px;
-}
-.contact-grid .prompt span {
-  animation: blink 1s step-end infinite;
-}
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-.contact-grid p {
-  font-size: 14px; color: rgba(255,255,255,0.6);
-  margin-bottom: 16px; letter-spacing: 0.1em;
-}
-.contact-grid .links { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; }
-.contact-grid .links a {
-  font-size: 14px; color: rgba(255,255,255,0.7);
-  text-decoration: none; text-transform: uppercase;
-  letter-spacing: 0.15em;
-  transition: all 0.3s;
-  position: relative;
-  padding-bottom: 4px;
-}
-.contact-grid .links a::after {
-  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-  height: 1px; background: rgba(255,255,255,0.1);
-  transform: scaleX(0); transition: transform 0.3s;
-}
-.contact-grid .links a:hover { color: #FFF; }
-.contact-grid .links a:hover::after { transform: scaleX(1); }
-
-.footer-grid {
-  grid-column: 1 / -1; text-align: center;
-  padding: 28px; font-size: 10px;
-  color: rgba(255,255,255,0.3);
-  letter-spacing: 0.1em;
-}
-
-.reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s ease, transform 0.7s ease; }
-.reveal.visible { opacity: 1; transform: translateY(0); }
-
-@media (max-width: 700px) {
-  .grid-layout { grid-template-columns: 1fr; }
-  .proj-cell { border-right: none; }
-  .about-grid, .proj-cell, .note-cell, .contact-grid, .skills-grid, .gaming-grid, .focus-grid, .dream-grid, .setup-grid { padding: 28px 20px; }
-  .hero-poster { padding: 40px 16px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; }
-  .hero-poster h1 { font-size: 52px !important; letter-spacing: 0.05em; line-height: 1.1; display: block; }
-  .hero-poster h1 > span { display: none !important; }
-  .hero-poster h1::before {
-    content: 'KRIDAY DAVE';
-    display: block;
-    color: #FFF;
-    text-shadow: 
-      0 0 10px rgba(180, 220, 255, 0.5),
-      0 0 20px rgba(180, 220, 255, 0.3),
-      0 0 40px rgba(180, 220, 255, 0.15);
-    white-space: nowrap;
-  }
-  .hero-avatar { width: 110px !important; height: 110px !important; margin-bottom: 24px; }
-  .hero-poster .tag { font-size: 11px; padding: 6px 14px; margin-bottom: 24px; opacity: 0.8; }
-  .hero-poster .sub { font-size: 13px; margin-top: 24px; color: rgba(255,255,255,0.7); }
-  .skill-tags { justify-content: center; gap: 8px; }
-  .skill-tags span { font-size: 11px; padding: 5px 10px; }
-  .focus-items { flex-direction: column; gap: 16px; }
-  .focus-item { min-width: 100%; padding: 16px 20px; }
-  .games-container { flex-direction: column; align-items: center; gap: 12px; }
-  .game-row { width: 100%; max-width: 300px; justify-content: flex-start; padding: 12px 16px; }
-  .stats-band .track { font-size: 11px; gap: 16px; }
-  .stats-band .track span { padding: 0 8px; }
-  .contact-grid { padding: 36px 20px; }
-  .contact-grid .links { flex-direction: column; gap: 14px; }
-  .contact-grid .links a { font-size: 14px; }
-  .dream-cards { flex-direction: column; align-items: center; gap: 12px; }
-  .dream-card { width: 100%; max-width: 280px; justify-content: center; padding: 14px 20px; }
-  .setup-specs { flex-direction: column; align-items: center; gap: 10px; }
-  .spec-item { width: 100%; max-width: 260px; justify-content: center; padding: 10px 14px; }
-  .proj-cell { padding: 24px 18px; }
-  .proj-cell h3 { font-size: 15px; }
-  .proj-cell p { font-size: 13px; }
-  .about-grid p { font-size: 13px; }
-  .note-cell { padding: 24px; font-size: 12px; line-height: 1.8; }
-  .footer-grid { font-size: 11px; }
-  .boot-lines { font-size: 11px; padding: 0 20px; }
-  .code-float { display: none; }
-  .quick-nav { 
-    top: 10px; bottom: auto; right: 10px; left: 10px;
-    justify-content: center;
-    gap: 8px;
-    max-width: none;
-    z-index: 300;
-  }
-  .quick-nav a {
-    font-size: 11px; padding: 8px 14px;
-    flex: 0 0 auto;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kriday Dave builds AI systems, developer tools, and Epoch AI Labs.">
+  <meta name="theme-color" content="#f2efe7">
+  <title>Kriday Dave — Builder & Researcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/epoch-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="boot-screen" id="bootScreen">
-  <div class="boot-lines">
-    <div class="boot-line" style="animation-delay: 0s">Lenovo IdeaPad V15-IIL BIOS...</div>
-    <div class="boot-line" style="animation-delay: 0.2s">CPU: Intel Core i3-1005G1 @ 1.20GHz</div>
-    <div class="boot-line" style="animation-delay: 0.4s">Memory: 8192MB OK</div>
-    <div class="boot-line" style="animation-delay: 0.6s">Checking memory...</div>
-    <div class="boot-line" style="animation-delay: 0.8s">Loading KridayOS v2026...</div>
-    <div class="boot-line" style="animation-delay: 1s">Initializing CRT effects...</div>
-    <div class="boot-line" style="animation-delay: 1.2s">Loading portfolio...</div>
-    <div class="boot-line" style="animation-delay: 1.4s"><span class="boot-complete">System ready.</span><span class="boot-cursor"></span></div>
-  </div>
-</div>
-<div class="particles" id="particles"></div>
+  <header class="site-header">
+    <a class="identity" href="#top" aria-label="Kriday Dave, home">
+      <span class="identity-mark">KD</span>
+      <span>Kriday Dave</span>
+    </a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main navigation">
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
 
-<div class="quick-nav">
-  <a href="#about">About</a>
-  <a href="#projects">Projects</a>
-  <a href="#skills">Skills</a>
-  <a href="#gaming">Gaming</a>
-  <a href="#contact">Contact</a>
-</div>
+  <main id="top">
+    <section class="hero">
+      <div class="hero-index label">01 / Introduction</div>
+      <div class="hero-copy">
+        <p class="eyebrow">Student · Founder · Builder</p>
+        <h1>I build intelligent tools for the <em>next regime.</em></h1>
+        <p class="hero-deck">I’m Kriday, a young engineer exploring AI systems, agent infrastructure, and the research questions behind more capable models.</p>
+        <div class="hero-actions">
+          <a class="button button-dark" href="#work">Explore my work <span>↓</span></a>
+          <a class="text-link" href="https://github.com/kridaydave" target="_blank" rel="noreferrer">GitHub ↗</a>
+        </div>
+      </div>
+      <div class="hero-portrait">
+        <div class="portrait-frame">
+          <img src="profile.jpg" alt="Illustrated portrait of Kriday Dave">
+        </div>
+        <p><span>Based in India</span><span>Working globally</span></p>
+      </div>
+      <div class="hero-strata" aria-hidden="true"><span></span><span></span><span></span></div>
+    </section>
 
-<div class="crt"></div>
-<div class="noise"></div>
+    <section class="manifesto" id="about">
+      <p class="label">02 / Point of view</p>
+      <blockquote>“The interesting work begins where software stops being a tool and starts becoming a collaborator.”</blockquote>
+      <div class="manifesto-note">
+        <span class="rule"></span>
+        <p>I care about systems that are useful, inspectable, and honest about what they can do. That means building the infrastructure as carefully as the intelligence itself.</p>
+      </div>
+    </section>
 
-<div class="hero-poster">
-  <img src="profile.jpg" alt="Kriday Dave" class="hero-avatar reveal">
-  <div class="tag reveal">$ whoami</div>
-  <h1 class="reveal">
-    <span class="glow">KRIDAY DAVE</span>
-    <span class="shadow"><span class="crt-glow">KRIDAY</span></span><span class="crt-glow-subtle">DAVE</span>
-    <span class="glitch-layer" aria-hidden="true">KRIDAY DAVE</span>
-    <span class="glitch-layer" aria-hidden="true">KRIDAY DAVE</span>
-  </h1>
-  <p class="sub reveal">10th · JEE prep · coder · gamer</p>
-</div>
+    <section class="work" id="work">
+      <div class="section-heading">
+        <p class="label">03 / Selected work</p>
+        <h2>Things I’m building.</h2>
+      </div>
 
-<div class="grid-layout">
+      <article class="featured-project">
+        <div class="project-number">01</div>
+        <div class="project-copy">
+          <div class="project-meta"><span>Company</span><span>AI Research</span><span>2026</span></div>
+          <img class="epoch-lockup" src="assets/epoch-lockup.svg" alt="Epoch AI Labs">
+          <h3>Research for the next regime.</h3>
+          <p>Epoch AI Labs is an independent research company exploring model behavior, training methods, and the infrastructure required to build capable AI responsibly.</p>
+          <a class="button button-light" href="https://github.com/Epoch-AI-Labs" target="_blank" rel="noreferrer">View the lab ↗</a>
+        </div>
+        <div class="project-visual">
+          <img src="assets/epoch-mark-reversed.svg" alt="" aria-hidden="true">
+          <div class="phase-lines"><i></i><i></i><i></i><i></i></div>
+          <span>STATE 01</span><span>STATE 02</span>
+        </div>
+      </article>
 
-  <div class="about-grid reveal" id="about">
-    <h2>$ cat about.txt</h2>
-    <p>I'm a 10th grade student preparing for <strong>JEE</strong> while nurturing my passion for <strong>coding</strong> and <strong>gaming</strong>. I love building things, learning new tech, and gaming when I'm not buried in textbooks.</p>
-  </div>
+      <div class="project-list">
+        <a class="project-row" href="https://github.com/kridaydave/Relay" target="_blank" rel="noreferrer">
+          <span class="project-number">02</span>
+          <span><strong>Relay</strong><small>Agent-to-agent context middleware</small></span>
+          <span class="project-tags">Python · AI systems</span>
+          <span class="arrow">↗</span>
+        </a>
+        <a class="project-row" href="https://github.com/kridaydave/File-Organizer-MCP" target="_blank" rel="noreferrer">
+          <span class="project-number">03</span>
+          <span><strong>File Organizer MCP</strong><small>AI-native file organization</small></span>
+          <span class="project-tags">TypeScript · MCP</span>
+          <span class="arrow">↗</span>
+        </a>
+        <a class="project-row" href="https://github.com/kridaydave/Codo" target="_blank" rel="noreferrer">
+          <span class="project-number">04</span>
+          <span><strong>Codo</strong><small>A collaborative coding CLI</small></span>
+          <span class="project-tags">TypeScript · A2A</span>
+          <span class="arrow">↗</span>
+        </a>
+      </div>
+    </section>
 
-  <div class="stats-band reveal">
-    <div class="track">
-      <span>⌨ <span class="hl">4</span> languages</span>
-      <span>📦 <span class="hl">6</span> projects</span>
-      <span>🎮 <span class="hl">gaming</span> hobby</span>
-      <span>📚 <span class="hl">JEE</span> prep</span>
-      <span>⌨ <span class="hl">4</span> languages</span>
-      <span>📦 <span class="hl">6</span> projects</span>
-      <span>🎮 <span class="hl">gaming</span> hobby</span>
-      <span>📚 <span class="hl">JEE</span> prep</span>
+    <section class="now">
+      <p class="label">04 / Now</p>
+      <div>
+        <h2>Learning in public.<br>Building with intent.</h2>
+        <p>I split my time between school, JEE preparation, AI research, and shipping open-source tools. The range is the point: rigorous fundamentals make ambitious systems possible.</p>
+      </div>
+      <dl>
+        <div><dt>Studying</dt><dd>Physics, chemistry & mathematics</dd></div>
+        <div><dt>Exploring</dt><dd>Model behavior & agent systems</dd></div>
+        <div><dt>Building</dt><dd>Epoch AI Labs & Relay</dd></div>
+      </dl>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="contact-intro">
+        <p class="label">05 / Get in touch</p>
+        <h2>Have an interesting problem?</h2>
+        <p>Research ideas, open-source collaboration, or thoughtful conversations about AI are all welcome.</p>
+      </div>
+      <form id="contact-form">
+        <label>Name<input name="name" type="text" autocomplete="name" required maxlength="80"></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required maxlength="160"></label>
+        <label class="full">What’s on your mind?<textarea name="message" rows="4" required maxlength="2000"></textarea></label>
+        <div class="form-footer">
+          <p id="form-status" role="status"></p>
+          <button class="button button-dark" type="submit">Send message <span>↗</span></button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-name">Kriday Dave</div>
+    <div class="footer-links">
+      <a href="mailto:davekriday@gmail.com">Email</a>
+      <a href="https://github.com/kridaydave" target="_blank" rel="noreferrer">GitHub</a>
+      <a href="https://www.linkedin.com/in/kriday-dave-0169a83b5" target="_blank" rel="noreferrer">LinkedIn</a>
+      <a href="https://twitter.com/KridayTop" target="_blank" rel="noreferrer">X / Twitter</a>
     </div>
-  </div>
-
-  <div class="proj-cell reveal" id="projects">
-    <div class="p-icon">⚡</div>
-    <h3><a href="https://github.com/kridaydave/Relay" target="_blank">Relay</a> <a href="https://github.com/kridaydave/Relay" target="_blank" class="gh-link">GitHub</a> <span class="badge">current</span></h3>
-    <p>Agent-agent context passing middleware for multi-agent pipelines.</p>
-    <div class="tags"><span>Python</span><span>AI</span><span>Multi-Agent</span></div>
-    <div class="p-detail">Signed context envelopes with rollback on corruption, token budget enforcement, and parallel fork-join. Works with any LLM provider or framework.</div>
-  </div>
-
-  <div class="proj-cell reveal">
-    <div class="p-icon">⭐</div>
-    <h3><a href="https://github.com/kridaydave/File-Organizer-MCP" target="_blank">File-Organizer-MCP</a> <a href="https://github.com/kridaydave/File-Organizer-MCP" target="_blank" class="gh-link">GitHub</a> <span class="badge">most popular</span></h3>
-    <p>MCP server that organizes files via Claude, Cursor & Gemini CLI.</p>
-    <div class="tags"><span>TypeScript</span><span>MCP</span><span>AI</span></div>
-    <div class="p-detail">AI-powered file organization using the Model Context Protocol. Connect via any MCP client to automatically sort and categorize your files.</div>
-  </div>
-
-  <div class="proj-cell reveal">
-    <div class="p-icon">📊</div>
-    <h3><a href="https://github.com/kridaydave/Codo" target="_blank">Codo</a> <a href="https://github.com/kridaydave/Codo" target="_blank" class="gh-link">GitHub</a></h3>
-    <p>Coding CLI tool with A2A (Agent-to-Agent) protocol baked in.</p>
-    <div class="tags"><span>TypeScript</span><span>CLI</span><span>A2A</span></div>
-    <div class="p-detail">Terminal-native coding tool with agent-to-agent communication. Code generation, refactoring, and debugging across collaborative AI agents.</div>
-  </div>
-
-  <div class="proj-cell reveal">
-    <div class="p-icon">🏏</div>
-    <h3><a href="https://github.com/kridaydave/crick-ai" target="_blank">crick-ai</a> <a href="https://github.com/kridaydave/crick-ai" target="_blank" class="gh-link">GitHub</a> <span class="badge">fun</span></h3>
-    <p>Fun cricket match predictor — not production, just for sport.</p>
-    <div class="tags"><span>Python</span><span>ML</span><span>Fun</span></div>
-    <div class="p-detail">Experimental ML model that predicts cricket match outcomes from historical data. Built for fun, not for betting or professional use.</div>
-  </div>
-
-  <div class="note-cell reveal">
-    <span class="cmd">$ </span><span>building things that don't break</span><br>
-    <span class="cmd">$ </span><span>learning: AI/ML & MCP protocols</span><br>
-    <span class="cmd">$ </span><span>JEE prep + coding = busy life</span>
-  </div>
-
-  <div class="skills-grid reveal" id="skills">
-    <h2>$ cat skills.txt</h2>
-    <div class="skill-tags">
-      <span>Python</span><span>TypeScript</span><span>JavaScript</span><span>HTML/CSS</span>
-      <span>React</span><span>Node.js</span><span>Git</span><span>VS Code</span>
-      <span>Cursor</span><span>Claude</span><span>MCP</span><span>AI APIs</span>
-    </div>
-  </div>
-
-  <div class="gaming-grid reveal" id="gaming">
-    <h2>$ cat gaming.txt</h2>
-    <div class="games-container">
-      <div class="game-row">
-        <span class="game-icon">🏏</span>
-        <span class="game-name">Cricket 24</span>
-        <span class="game-note">PS5</span>
-      </div>
-      <div class="game-row">
-        <span class="game-icon">💀</span>
-        <span class="game-name">Mortal Kombat 1</span>
-        <span class="game-note">PS5</span>
-      </div>
-      <div class="game-row">
-        <span class="game-icon">🎲</span>
-        <span class="game-name">Roblox</span>
-        <span class="game-note">friends & fun</span>
-      </div>
-      <div class="game-row">
-        <span class="game-icon">🤠</span>
-        <span class="game-name">RDR2</span>
-        <span class="game-note">story mode</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="focus-grid reveal">
-    <h2>$ cat focus.txt</h2>
-    <div class="focus-items">
-      <div class="focus-item">
-        <span class="focus-icon">📚</span>
-        <span class="focus-title">JEE 2029</span>
-        <span class="focus-desc">Physics · Chem · Math</span>
-      </div>
-      <div class="focus-item">
-        <span class="focus-icon">⚡</span>
-        <span class="focus-title">Relay</span>
-        <span class="focus-desc">Agent middleware</span>
-      </div>
-      <div class="focus-item">
-        <span class="focus-icon">🤖</span>
-        <span class="focus-title">AI/ML</span>
-        <span class="focus-desc">Learning new stuff</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="dream-grid reveal">
-    <h2>$ cat dream.txt</h2>
-    <div class="dream-cards">
-      <div class="dream-card">
-        <span class="dream-rank">1</span>
-        <span class="dream-name">IIT Bombay</span>
-        <span class="dream-note">Dream 🎯</span>
-      </div>
-      <div class="dream-card">
-        <span class="dream-rank">2</span>
-        <span class="dream-name">DAU (DAIICT)</span>
-        <span class="dream-note">Gandhinagar</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="setup-grid reveal">
-    <h2>$ cat setup.txt</h2>
-    <div class="setup-specs">
-      <div class="spec-item">
-        <span class="spec-icon">💻</span>
-        <span class="spec-name">Lenovo IdeaPad V15-IIL</span>
-      </div>
-      <div class="spec-item">
-        <span class="spec-icon">⚙️</span>
-        <span class="spec-name">Intel Core i3-1005G1</span>
-      </div>
-      <div class="spec-item">
-        <span class="spec-icon">🧠</span>
-        <span class="spec-name">8GB RAM</span>
-      </div>
-      <div class="spec-item">
-        <span class="spec-icon">🪟</span>
-        <span class="spec-name">Windows 11</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="contact-grid reveal" id="contact">
-    <div class="prompt">$ ./contact<span>_</span></div>
-    <p>new projects · ideas · or just to say hi</p>
-    <div class="links">
-      <a href="mailto:davekriday@gmail.com">davekriday@gmail.com</a>
-      <a href="https://github.com/kridaydave">GitHub</a>
-      <a href="https://www.linkedin.com/in/kriday-dave-0169a83b5">LinkedIn</a>
-      <a href="https://twitter.com/KridayTop">@KridayTop</a>
-    </div>
-  </div>
-
-  <div class="footer-grid">© 2026 Kriday Dave</div>
-</div>
-
-<script>
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) e.target.classList.add('visible');
-  });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-setTimeout(() => {
-  document.getElementById('bootScreen').style.opacity = '0';
-  document.getElementById('bootScreen').style.transition = 'opacity 0.5s';
-  setTimeout(() => {
-    document.getElementById('bootScreen').style.display = 'none';
-  }, 500);
-}, 2500);
-
-const particlesContainer = document.getElementById('particles');
-const codeSnippets = ['def ', 'import ', 'const ', 'class ', 'await ', 'return ', '{}', '=>', 'if()', 'for()', 'while()', 'print()', 'echo ', 'npm ', 'git ', 'pip ', '&&', '||', '[]', '()', 'fn ', 'let ', 'var ', 'int ', 'str ', '->', '::', 'async'];
-for (let i = 0; i < 20; i++) {
-  const p = document.createElement('div');
-  p.className = 'code-float';
-  p.textContent = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
-  p.style.left = Math.random() * 100 + '%';
-  p.style.animationDelay = Math.random() * 20 + 's';
-  p.style.animationDuration = (20 + Math.random() * 15) + 's';
-  p.style.fontSize = (10 + Math.random() * 8) + 'px';
-  particlesContainer.appendChild(p);
-}
-
-window.addEventListener('scroll', () => {
-  const scrolled = window.pageYOffset;
-  document.querySelector('.quick-nav').style.opacity = scrolled > 50 ? '1' : '0.7';
-});
-
-document.querySelectorAll('a, .proj-cell, .skill-tags span, .game-row, .focus-item, .dream-card, .spec-item').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    el.style.animation = 'none';
-    el.offsetHeight;
-    el.style.animation = 'glitchHover 0.2s ease';
-  });
-});
-
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes glitchHover {
-    0% { transform: translate(0); filter: hue-rotate(0deg); }
-    25% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
-    50% { transform: translate(2px, -1px); filter: hue-rotate(180deg); }
-    75% { transform: translate(-1px, -2px); filter: hue-rotate(270deg); }
-    100% { transform: translate(0); filter: hue-rotate(0deg); }
-  }
-`;
-document.head.appendChild(style);
-</script>
+    <p>© <span id="year"></span> Kriday Dave</p>
+  </footer>
+  <script src="script.js" defer></script>
 </body>
 </html>

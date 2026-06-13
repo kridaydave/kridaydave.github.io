@@ -1,0 +1,6 @@
+name = "kriday-dave"
+compatibility_date = "2026-06-13"
+pages_build_output_dir = "."
+
+[vars]
+CONTACT_FROM_EMAIL = "Portfolio <onboarding@resend.dev>"
