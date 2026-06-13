@@ -1,6 +1,6 @@
 # Kriday Dave
 
-Editorial portfolio and research landing page, deployed on Cloudflare Pages.
+Editorial portfolio and research landing page, deployed as a Cloudflare Workers application with Static Assets.
 
 ## Local development
 
@@ -11,7 +11,7 @@ npm run dev
 
 ## Contact form
 
-The Pages Function at `/api/contact` sends mail through Resend. Configure:
+The Worker route at `/api/contact` sends mail through Resend. Configure:
 
 - `RESEND_API_KEY` as a Cloudflare secret
 - `CONTACT_TO_EMAIL` as a Cloudflare environment variable
@@ -21,7 +21,7 @@ For local development, put these values in `.dev.vars`.
 
 ## Deploy
 
-Connect the repository to Cloudflare Pages, or run:
+Connect the repository to a Cloudflare Workers Builds application, or run:
 
 ```sh
 npm run deploy

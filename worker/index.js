@@ -1,6 +1,21 @@
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export async function onRequestPost({ request, env }) {
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (url.pathname === "/api/contact") {
+      if (request.method !== "POST") {
+        return json({ error: "Method not allowed." }, 405);
+      }
+      return handleContact(request, env);
+    }
+
+    return env.ASSETS.fetch(request);
+  },
+};
+
+async function handleContact(request, env) {
   let payload;
   try {
     payload = await request.json();
@@ -41,10 +56,6 @@ export async function onRequestPost({ request, env }) {
   }
 
   return json({ ok: true });
-}
-
-export function onRequest() {
-  return json({ error: "Method not allowed." }, 405);
 }
 
 function json(body, status = 200) {
