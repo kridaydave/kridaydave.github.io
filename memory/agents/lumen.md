@@ -1,0 +1,1 @@
+- [2026-07-14] Portfolio redesigned from editorial (Bone/Copper/Newsreader) to blueprint/wireframe aesthetic (Instrument Serif, dashed borders, #0F0E0E dark mode) inspired by samworks.vercel.app. User requested "a website like that."
