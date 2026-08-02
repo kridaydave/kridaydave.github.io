@@ -4,6 +4,17 @@
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+// --- Banner Video (respect reduced motion) ---
+const bannerVideo = document.querySelector('.banner-video');
+if (bannerVideo) {
+  if (prefersReducedMotion) {
+    bannerVideo.pause();
+    bannerVideo.removeAttribute('src');
+  } else {
+    bannerVideo.play().catch(() => {});
+  }
+}
+
 // --- Theme Toggle ---
 const themeToggle = document.querySelector('.theme-toggle');
 const html = document.documentElement;
@@ -92,6 +103,8 @@ function tagRevealElements() {
     '.about-content',
     '.contact-grid',
     '.projects-grid',
+    '.timeline',
+    '.writing-list',
     '.tech-filters',
     '.tech-grid',
     '.quote-section',
