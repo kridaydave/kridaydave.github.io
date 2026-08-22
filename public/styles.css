@@ -772,42 +772,159 @@ html:not(.dark) .avatar-frame {
   color: var(--text-secondary);
   margin-bottom: 22px;
 }
-.blog-empty {
-  border: 1px dashed var(--border);
-  padding: 56px 24px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  background: var(--surface-1);
+
+/* --- Blog Post --- */
+.post-section {
+  padding-top: 140px;
+  padding-bottom: 80px;
 }
-.blog-empty-label {
+.post-header {
+  margin-bottom: 36px;
+}
+.post-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.post-tag {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.12em;
+  padding: 3px 9px;
+  border: 1px dotted var(--border);
+  border-radius: 3px;
+  background: var(--surface-1);
   color: var(--text-tertiary);
 }
-.blog-empty-title {
+.post-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+}
+.post-title {
   font-family: var(--font-heading);
-  font-size: 32px;
+  font-weight: 400;
+  font-size: clamp(34px, 6vw, 52px);
+  line-height: 1.15;
   color: var(--text-primary);
-  margin-top: 6px;
 }
-.blog-empty-text {
-  font-size: 15px;
-  line-height: 1.6;
+.post-body {
+  font-size: 16.5px;
+  line-height: 1.75;
   color: var(--text-secondary);
-  max-width: 420px;
 }
-.blog-empty-link {
+.post-body p {
+  margin-bottom: 20px;
+}
+.post-body h2 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 28px;
+  color: var(--text-primary);
+  margin: 40px 0 16px;
+}
+.post-body strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.post-body code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+.post-body pre {
+  background: var(--surface-1);
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  padding: 18px;
+  overflow-x: auto;
+  margin-bottom: 24px;
+}
+.post-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  white-space: pre;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+.post-body ul {
+  list-style: none;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.post-body ul li {
+  position: relative;
+  padding-left: 22px;
+}
+.post-body ul li::before {
+  content: "-";
+  position: absolute;
+  left: 4px;
+  color: var(--text-tertiary);
+}
+.post-link {
   color: var(--text-primary);
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-style: dotted;
 }
-.blog-empty-link:hover {
+.post-link:hover {
   color: var(--text-secondary);
+}
+.post-footer {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--border);
+}
+.post-back {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  transition: color 0.2s;
+}
+.post-back:hover {
+  color: var(--text-primary);
+}
+
+/* --- Terminal Typewriter --- */
+.code-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  margin-left: 2px;
+  background: var(--text-primary);
+  vertical-align: text-bottom;
+  animation: cursor-blink 1s steps(1) infinite;
+}
+@keyframes cursor-blink {
+  50% { opacity: 0; }
+}
+
+/* --- Living Blueprint (deco line drift) --- */
+@media (prefers-reduced-motion: no-preference) {
+  .deco-lines > div {
+    animation: deco-drift var(--drift-dur, 16s) ease-in-out infinite alternate;
+    animation-delay: var(--drift-delay, 0s);
+  }
+  .deco-lines > :nth-child(3n+1) { --drift-dur: 13s; --drift-delay: -4s; }
+  .deco-lines > :nth-child(3n+2) { --drift-dur: 19s; --drift-delay: -9s; }
+  .deco-lines > :nth-child(3n)   { --drift-dur: 24s; --drift-delay: -14s; animation-direction: alternate-reverse; }
+}
+@keyframes deco-drift {
+  from { transform: translateY(-5px); }
+  to   { transform: translateY(5px); }
 }
 
 /* --- Tech Stack --- */
@@ -1203,12 +1320,6 @@ html:not(.dark) .submit-btn:hover {
   }
   .writing-excerpt {
     font-size: 13px;
-  }
-  .blog-empty {
-    padding: 40px 16px;
-  }
-  .blog-empty-title {
-    font-size: 26px;
   }
 }
 

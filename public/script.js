@@ -120,6 +120,72 @@ function tagRevealElements() {
   });
 }
 
+// --- Post & List Choreography ---
+function initStaggeredReveals() {
+  const postEls = document.querySelectorAll('.post-header, .post-body > *');
+  postEls.forEach((el, i) => {
+    el.classList.add('reveal');
+    el.style.transitionDelay = `${Math.min(i * 60, 360)}ms`;
+  });
+
+  document.querySelectorAll('.blog-list .writing-item').forEach((el, i) => {
+    el.classList.add('reveal');
+    el.style.transitionDelay = `${Math.min(i * 90, 450)}ms`;
+  });
+}
+
+// --- Terminal Typewriter ---
+const TYPE_CHARS_PER_FRAME = 3;
+
+function typeBlock(code) {
+  const full = code.dataset.fullText;
+  const cursor = document.createElement('span');
+  cursor.className = 'code-cursor';
+  cursor.setAttribute('aria-hidden', 'true');
+  let i = 0;
+
+  function step() {
+    if (i >= full.length) {
+      setTimeout(() => cursor.remove(), 1400);
+      return;
+    }
+    i = Math.min(full.length, i + TYPE_CHARS_PER_FRAME);
+    code.textContent = full.slice(0, i);
+    code.appendChild(cursor);
+    requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+}
+
+function initTypewriter() {
+  const pres = document.querySelectorAll('.post-body pre');
+  if (!pres.length) return;
+  if (prefersReducedMotion || !('IntersectionObserver' in window)) return;
+
+  pres.forEach(pre => {
+    const code = pre.querySelector('code');
+    if (!code) return;
+    pre.style.minHeight = `${pre.offsetHeight}px`;
+    code.dataset.fullText = code.textContent;
+    code.textContent = '';
+    pre.classList.add('code-terminal');
+  });
+
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        obs.unobserve(entry.target);
+        typeBlock(entry.target.querySelector('code'));
+      });
+    },
+    { threshold: 0.35 }
+  );
+
+  pres.forEach(pre => observer.observe(pre));
+}
+
 // --- Tech Stack Filters ---
 function initTechFilters() {
   const filterBtns = document.querySelectorAll('.filter-btn');
@@ -213,8 +279,10 @@ function initActiveNav() {
 // --- Init ---
 document.addEventListener('DOMContentLoaded', () => {
   tagRevealElements();
+  initStaggeredReveals();
   initCharReveal();
   initScrollReveal();
+  initTypewriter();
   initTechFilters();
   initActiveNav();
 });
