@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Blueline v0.2.0, the release where the tool becomes a product. Review every npm install before it lands on your machine.">
+  <meta name="description" content="Why concurrent coding agents break git repos and how intent verification prevents silent merge regressions.">
   <meta name="theme-color" content="#000000">
   <meta name="author" content="Kriday Dave">
-  <meta property="og:title" content="Your agent installs code nobody reads · Kriday Dave">
-  <meta property="og:description" content="Blueline v0.2.0 is out: sandboxed installs, delta reviews, and a fail-closed supply chain scanner for the agent era.">
+  <meta property="og:title" content="Multi-agent coding loops will wreck your git history · Kriday Dave">
+  <meta property="og:description" content="Standard git merges are line-based and blind. When multiple agents edit one repo, you need intent locks, not just rebase loops.">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://kridaydave.com/posts/blueline-v0-2-0.html">
+  <meta property="og:url" content="https://kridaydave.com/posts/multi-agent-git-chaos.html">
   <meta property="og:image" content="https://kridaydave.com/assets/og-card.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="Kriday Dave">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Your agent installs code nobody reads · Kriday Dave">
-  <meta name="twitter:description" content="Blueline v0.2.0 is out: sandboxed installs, delta reviews, and a fail-closed supply chain scanner for the agent era.">
+  <meta name="twitter:title" content="Multi-agent coding loops will wreck your git history · Kriday Dave">
+  <meta name="twitter:description" content="Standard git merges are line-based and blind. When multiple agents edit one repo, you need intent locks, not just rebase loops.">
   <meta name="twitter:image" content="https://kridaydave.com/assets/og-card.jpg">
-  <title>Your agent installs code nobody reads · Kriday Dave</title>
+  <title>Multi-agent coding loops will wreck your git history · Kriday Dave</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -99,86 +99,48 @@
     <article class="section post-section">
       <header class="post-header">
         <div class="post-meta-row">
-          <span class="post-tag">BLUELINE · V0.2.0</span>
-          <span class="post-date">AUG 22, 2026</span>
+          <span class="post-tag">OOT · GOVERNANCE</span>
+          <span class="post-date">AUG 29, 2026</span>
         </div>
-        <h1 class="post-title">Your agent installs code nobody reads</h1>
+        <h1 class="post-title">Multi-agent coding loops will wreck your git history</h1>
       </header>
 
       <div class="post-body">
-        <p>Blueline v0.2.0 is out, and it's the release where the tool becomes a product. One command and it's on your machine:</p>
+        <p>Everyone is excited to spin up five autonomous subagents in parallel to refactor a codebase. The reality is that Git was designed in 2005 for humans who read diffs, communicate asynchronously, and think before pushing.</p>
 
-        <pre><code>npm i -g blueline
-npx blueline install express@4.21.2</code></pre>
+        <p>When you let multiple autonomous models edit code concurrently in one repository, you get silent regressions that line-based merge engines cannot detect.</p>
 
-        <p>Prebuilt binaries for linux (x64 glibc and musl, arm64), macOS (x64, arm64) and Windows (x64, arm64). No Rust toolchain required.</p>
+        <h2>The illusion of clean merges</h2>
 
-        <h2>The problem hasn't changed</h2>
+        <p>Git uses three-way line merges. If Agent A touches lines 10 through 25 of a file to refactor an auth method, and Agent B touches lines 80 through 95 to update a database query, Git declares a clean merge without conflicts.</p>
 
-        <p>Your coding agent runs <code>npm install</code> dozens of times a day. Each one pulls tarballs off the registry and executes whatever install scripts came along for the ride. Nobody on earth diffs express 4.21.1 against 4.21.2 when an agent fires the command in a loop.</p>
+        <p>Git does not know that Agent A renamed a session token type, while Agent B introduced a query that relies on the old token interface. Both agents run unit tests in isolation on their branch and report green. When merged, the build breaks, or worse, silently behaves incorrectly at runtime.</p>
 
-        <p>Attackers know this. The TanStack router worm shipped malicious npm packages carrying valid SLSA L3 provenance. In 2021, ua-parser-js was hijacked and three malicious versions published with a credential stealer in the preinstall script. The fix window was four hours. Agents compress that window to minutes.</p>
+        <h2>The rebase death loop</h2>
 
-        <p>Package managers treat installs as transport: fetch, unpack, run. Blueline adds the step they skip.</p>
+        <p>When agents detect a conflict, the default instinct is to rebase. In practice, here is what happens:</p>
 
-        <h2>What it does</h2>
+        <ol>
+          <li>Agent A finishes work on branch <code>feat/cache</code> and pushes to main.</li>
+          <li>Agent B was halfway through <code>feat/rate-limit</code>. It runs <code>git pull --rebase</code>.</li>
+          <li>Git pauses on a conflict. Agent B reads the conflict markers and attempts to resolve them.</li>
+          <li>Because Agent B has a narrow context window, it deletes Agent A's changes to make the local test suite pass.</li>
+          <li>Agent B force-pushes, completely erasing Agent A's work from the repository history.</li>
+        </ol>
 
-        <p>Blueline extracts the release tarball in an isolated sandbox, computes what changed against your last approved version, and shows you before anything lands:</p>
+        <p>This is not a theoretical edge case. It happens constantly in multi-agent swarms.</p>
 
-        <pre><code>BLUELINE REVIEW CARD
-─────────────────────────────────────────
-package:    express
-version:    4.21.2
-previous:   4.21.1 (last known-clean)
+        <h2>Intent verification over textual diffs</h2>
 
-delta:      +3 files, -1 file
-size:       +1.2 KB
-author:     expressjs (verified)
-permissions: no new binaries
-install script: none
-
-changed:    lib/router/index.js (3 lines)
-            lib/router/layer.js (1 line, comment only)
-            package.json (version bump)
-
-verdict:    ▶ LOW RISK
-
-[a]pprove · [h]old · [d]iff</code></pre>
-
-        <p>Approve once and that version becomes the baseline. The next release only has to explain its delta. If risk thresholds trip, the install blocks and the workflow halts.</p>
-
-        <p>Around that core loop:</p>
+        <p>To run multiple agents safely, we need semantic governance at the version control layer:</p>
 
         <ul>
-          <li><code>blueline mcp</code>, an MCP server so agents call the review themselves instead of bypassing it</li>
-          <li><code>blueline ci</code>, a lockfile diff scanner for PRs, plus a GitHub Action</li>
-          <li>policy-as-code via <code>blueline.toml</code>: advisory thresholds, allowlists, blocklists</li>
-          <li>OSV and GitHub Advisory checks, SLSA provenance surfacing</li>
+          <li><strong>Intent locks:</strong> Agents must declare which symbols, AST nodes, and API contracts they are modifying before generating code.</li>
+          <li><strong>Semantic merge policies:</strong> Merges must verify type integrity and AST boundaries, not just line numbers.</li>
+          <li><strong>Audit trails:</strong> Every automated merge must record the reasoning and invariants expected by both agents.</li>
         </ul>
 
-        <h2>Why you can trust the installer itself</h2>
-
-        <p>A supply chain tool delivered through the same supply chain it criticizes should hold itself to its own standard. v0.2.0 does:</p>
-
-        <ul>
-          <li>Every binary publishes as an npm package with provenance attestation.</li>
-          <li>SHA256SUMS attach to each GitHub release.</li>
-          <li>A smoke gate runs before shims publish: the actual shipped artifact must review a real package end-to-end through the npm path. If the artifact can't do its one job, nothing ships.</li>
-          <li>Our own composite Action reviews our own <code>package-lock.json</code> on every pull request.</li>
-        </ul>
-
-        <p>The scanner also fails closed. Any doubt in parsing, extraction, or verification errors out rather than guessing. We keep mutation tests pointed at those boundaries so a regression fails CI instead of failing you.</p>
-
-        <h2>Try it</h2>
-
-        <pre><code>npm i -g blueline
-blueline review lodash@4.17.21</code></pre>
-
-        <p>Point your agent at the MCP server, or drop the GitHub Action into a repo and let it review lockfile changes on every PR.</p>
-
-        <p>Repo and docs: <a href="https://github.com/Epoch-AI-Lab/blueline" class="post-link" target="_blank" rel="noopener noreferrer">github.com/Epoch-AI-Lab/blueline</a></p>
-
-        <p>Honest limits: first installs have no baseline to diff against, so they lean harder on advisories, provenance, and static scanning. Heuristics catch common obfuscation routes but are not proof against everything. If you want lower friction while bootstrapping baselines, there's an <code>allow_unreviewed_baseline</code> rule in <code>blueline.toml</code>.</p>
+        <p>This is why I started building <a href="https://github.com/Epoch-AI-Lab/oot" class="post-link" target="_blank" rel="noopener noreferrer">Oot</a>. If we are handing repo keys to autonomous models, version control needs to act as a court for code rather than a dumb text patcher.</p>
       </div>
 
       <footer class="post-footer">

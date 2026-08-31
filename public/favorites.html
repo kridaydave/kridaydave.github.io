@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kriday Dave: Favorite video games.">
+  <meta name="theme-color" content="#000000">
+  <meta name="author" content="Kriday Dave">
+  <meta property="og:title" content="Favorites: Kriday Dave">
+  <meta property="og:description" content="Favorite video games.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kridaydave.com/favorites.html">
+  <meta property="og:image" content="https://kridaydave.com/assets/og-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Kriday Dave">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Favorites: Kriday Dave">
+  <meta name="twitter:description" content="Favorite video games.">
+  <meta name="twitter:image" content="https://kridaydave.com/assets/og-card.jpg">
+  <title>Favorites · Kriday Dave</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/epoch-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    try {
+      var savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <!-- Decorative dashed lines spanning the viewport -->
+  <div class="deco-lines" aria-hidden="true">
+    <div class="deco-line deco-line--top"></div>
+    <div class="deco-band deco-band--1"></div>
+    <div class="deco-line deco-line--1"></div>
+    <div class="deco-band deco-band--2"></div>
+    <div class="deco-line deco-line--2"></div>
+    <div class="deco-line deco-line--3"></div>
+    <div class="deco-band deco-band--3"></div>
+    <div class="deco-line deco-line--4"></div>
+    <div class="deco-band deco-band--4"></div>
+    <div class="deco-line deco-line--5"></div>
+    <div class="deco-line deco-line--6"></div>
+    <div class="deco-band deco-band--5"></div>
+    <div class="deco-line deco-line--7"></div>
+    <div class="deco-band deco-band--6"></div>
+    <div class="deco-line deco-line--8"></div>
+  </div>
+
+  <!-- Vertical frame lines -->
+  <div class="frame-lines" aria-hidden="true">
+    <div class="frame-line frame-line--left"></div>
+    <div class="frame-line frame-line--right"></div>
+  </div>
+
+  <!-- Fixed Navigation -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo">Kriday</a>
+      <nav class="navbar-links" aria-label="Main navigation">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="blog.html" class="nav-link">Blog</a>
+        <a href="rants.html" class="nav-link">Rants</a>
+        <a href="work.html" class="nav-link">Work</a>
+        <a href="favorites.html" class="nav-link active">Favorites</a>
+      </nav>
+      <div class="navbar-actions">
+        <button class="theme-toggle" type="button" aria-label="Toggle theme">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+        <div class="navbar-divider"></div>
+        <button class="menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="blog.html" class="nav-link">Blog</a>
+      <a href="rants.html" class="nav-link">Rants</a>
+      <a href="work.html" class="nav-link">Work</a>
+      <a href="favorites.html" class="nav-link active">Favorites</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- Favorites Section Header -->
+    <section class="section favorites-header-section">
+      <h1 class="section-title">Favorites</h1>
+      <p class="favorites-desc">Video games I keep coming back to. Personal picks, zero review fluff.</p>
+    </section>
+
+    <!-- SECTION: VIDEO GAMES -->
+    <div class="media-section" data-media-category="game">
+      <section class="section media-group-header">
+        <h2 class="media-group-title">Video Games</h2>
+        <span class="media-group-count">7 Picks</span>
+      </section>
+
+      <!-- Number 1 GOAT Highlight -->
+      <section class="section goat-section" data-media-category="game">
+        <div class="goat-card">
+          <div class="goat-media">
+            <img src="assets/favorites/rdr2.jpg" alt="Red Dead Redemption 2" class="goat-img" loading="lazy">
+          </div>
+          <div class="goat-info">
+            <div class="goat-badge-row">
+              <span class="goat-pill">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                NUMBER 1 BEST GAME OF ALL TIME
+              </span>
+              <span class="media-type-tag game-tag">GAME</span>
+            </div>
+            <h2 class="goat-title">Red Dead Redemption 2</h2>
+            <p class="goat-meta">Rockstar Games · 2018 · Open World Western</p>
+            <p class="goat-quote">"Arthur Morgan's story, the atmospheric open world, and the insane level of detail set a standard nothing has topped. Peak storytelling and worldbuilding."</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section favorites-grid-section">
+        <div class="media-grid">
+
+          <!-- Game 1: God of War (2018 & Ragnarok) -->
+          <article class="media-card" data-media-category="game">
+            <div class="media-poster-wrap">
+              <img src="assets/favorites/god-of-war.jpg" alt="God of War" class="media-poster" loading="lazy">
+            </div>
+            <div class="media-card-body">
+              <div class="media-card-top">
+                <span class="media-type-tag game-tag">GAME</span>
+                <span class="media-status-tag">PEAK COMBAT</span>
+              </div>
+              <h3 class="media-card-title">God of War &amp; Ragnarök</h3>
+              <p class="media-card-meta">Santa Monica Studio · 2018 / 2022</p>
+              <p class="media-card-note">Kratos and Atreus across the Norse realms. The Leviathan Axe throw and recall mechanic never gets old.</p>
+            </div>
+          </article>
+
+          <!-- Game 2: Grand Theft Auto V -->
+          <article class="media-card" data-media-category="game">
+            <div class="media-poster-wrap">
+              <img src="assets/favorites/gtav.png" alt="Grand Theft Auto V" class="media-poster" loading="lazy">
+            </div>
+            <div class="media-card-body">
+              <div class="media-card-top">
+                <span class="media-type-tag game-tag">GAME</span>
+                <span class="media-status-tag">TIMELESS</span>
+              </div>
+              <h3 class="media-card-title">Grand Theft Auto V</h3>
+              <p class="media-card-meta">Rockstar Games · 2013</p>
+              <p class="media-card-note">Over a decade later and Los Santos remains the benchmark for open-world sandbox design.</p>
+            </div>
+          </article>
+
+          <!-- Game 3: Grand Theft Auto: San Andreas -->
+          <article class="media-card" data-media-category="game">
+            <div class="media-poster-wrap">
+              <img src="assets/favorites/gtasa.jpg" alt="Grand Theft Auto: San Andreas" class="media-poster" loading="lazy">
+            </div>
+            <div class="media-card-body">
+              <div class="media-card-top">
+                <span class="media-type-tag game-tag">GAME</span>
+                <span class="media-status-tag">CLASSIC</span>
+              </div>
+              <h3 class="media-card-title">Grand Theft Auto: San Andreas</h3>
+              <p class="media-card-meta">Rockstar Games · 2004</p>
+              <p class="media-card-note">Grove Street, CJ, turf wars, and the greatest map variety on the PS2 generation. Peak open-world atmosphere.</p>
+            </div>
+          </article>
+
+          <!-- Game 4: Call of Duty: Modern Warfare 2 (2009) -->
+          <article class="media-card" data-media-category="game">
+            <div class="media-poster-wrap">
+              <img src="assets/favorites/cod-mw2.png" alt="Call of Duty: Modern Warfare 2" class="media-poster" loading="lazy">
+            </div>
+            <div class="media-card-body">
+              <div class="media-card-top">
+                <span class="media-type-tag game-tag">GAME</span>
+                <span class="media-status-tag">PEAK FPS</span>
+              </div>
+              <h3 class="media-card-title">Call of Duty: Modern Warfare 2</h3>
+              <p class="media-card-meta">Infinity Ward · 2009</p>
+              <p class="media-card-note">The golden era of arcade FPS. Iconic campaign missions, Rust 1v1s, and the most memorable multiplayer lobbies in gaming history.</p>
+            </div>
+          </article>
+
+          <!-- Game 5: Mortal Kombat 1 (Latest) -->
+          <article class="media-card" data-media-category="game">
+            <div class="media-poster-wrap">
+              <img src="assets/favorites/mk1.jpg" alt="Mortal Kombat 1" class="media-poster" loading="lazy">
+            </div>
+            <div class="media-card-body">
+              <div class="media-card-top">
+                <span class="media-type-tag game-tag">GAME</span>
+                <span class="media-status-tag">FIGHTING</span>
+              </div>
+              <h3 class="media-card-title">Mortal Kombat 1</h3>
+              <p class="media-card-meta">NetherRealm Studios · 2023</p>
+              <p class="media-card-note">Fluid aerial combos, fresh Kameo fighter dynamics, and crisp visual presentation.</p>
+            </div>
+          </article>
+
+          <!-- Game 6: Mortal Kombat 9 -->
+          <article class="media-card" data-media-category="game">
+            <div class="media-poster-wrap">
+              <img src="assets/favorites/mk9.png" alt="Mortal Kombat 9" class="media-poster" loading="lazy">
+            </div>
+            <div class="media-card-body">
+              <div class="media-card-top">
+                <span class="media-type-tag game-tag">GAME</span>
+                <span class="media-status-tag">REBOOT GOAT</span>
+              </div>
+              <h3 class="media-card-title">Mortal Kombat 9</h3>
+              <p class="media-card-meta">NetherRealm Studios · 2011</p>
+              <p class="media-card-note">The game that saved Mortal Kombat. Dark tone, legendary roster, and the best story mode in fighting games.</p>
+            </div>
+          </article>
+
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>Designed &amp; Developed by <strong>Kriday Dave</strong></p>
+    <p>&copy; <span id="year"></span> All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
