@@ -1,0 +1,31 @@
+# Kriday Dave
+
+> Builder, Founder of Epoch AI Labs, and developer tooling engineer based in Ahmedabad, India.
+
+## About
+Kriday Dave builds developer tools and security governance systems for autonomous coding agents. He runs Epoch AI Labs (independent research lab testing model behavior and agent infrastructure, no affiliation with epoch.ai).
+
+## Projects
+- **Blueline**: Open-source supply chain security for coding agents. Sandboxed package extraction and release delta calculations against verified baselines before install scripts execute. (Rust / CLI)
+  - GitHub: https://github.com/Epoch-AI-Lab/blueline
+  - Command: `npx blueline install <pkg>`
+- **Oot**: Code governance engine resolving intent disputes, visibility policies, and semantic merge conflicts for multi-agent workflows. (Rust / VCS)
+  - GitHub: https://github.com/Epoch-AI-Lab/oot
+- **File Organizer MCP**: Local-first Model Context Protocol (MCP) server adding safe filesystem operations, dry-run safety gates, and semantic tagging for LLM agents. (TypeScript / MCP)
+  - GitHub: https://github.com/kridaydave/File-Organizer-MCP
+  - Command: `npx file-organizer-mcp`
+- **Epoch AI Labs**: Independent research lab focused on agent coordination and developer tooling.
+  - Website: https://theepoch.in
+  - GitHub: https://github.com/Epoch-AI-Lab
+
+## Essays & Writing
+- [Simplicity is the new sophistication](https://kridaydave.com/posts/simplicity-is-the-new-sophistication.html): Architectural lessons from stripping a 27-service bloated system back to raw primitives.
+- [Multi-agent git chaos](https://kridaydave.com/posts/multi-agent-git-chaos.html): Why line-based git rebase loops fail with multi-agent swarms and how AST intent locks fix it.
+- [Blueline v0.2.0](https://kridaydave.com/posts/blueline-v0-2-0.html): Sandboxed package installs and delta reviews for autonomous coding agents.
+
+## Links & Socials
+- Website: https://kridaydave.com
+- GitHub: https://github.com/kridaydave
+- LinkedIn: https://linkedin.com/in/kriday-dave-0169a83b5
+- X / Twitter: https://twitter.com/KridayTop
+- Email: davekriday@gmail.com

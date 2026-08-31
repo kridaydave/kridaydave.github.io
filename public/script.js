@@ -1,10 +1,11 @@
 /* ============================================
-   Portfolio Interactions
+   Kriday Dave · Portfolio Interactions
+   Clean, performant, zero-bloat.
    ============================================ */
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// --- Banner Video (respect reduced motion) ---
+// --- Banner Video ---
 const bannerVideo = document.querySelector('.banner-video');
 if (bannerVideo) {
   if (prefersReducedMotion) {
@@ -53,7 +54,7 @@ if (menuToggle && mobileNav) {
   });
 }
 
-// --- Character Reveal Animation ---
+// --- Subtitle Character Reveal ---
 function initCharReveal() {
   const el = document.querySelector('.char-reveal');
   if (!el) return;
@@ -65,19 +66,33 @@ function initCharReveal() {
     const span = document.createElement('span');
     span.className = 'char';
     span.textContent = char === ' ' ? '\u00A0' : char;
-    span.style.transitionDelay = `${i * 40}ms`;
+    span.style.transitionDelay = `${i * 35}ms`;
     el.appendChild(span);
   });
 
   if (prefersReducedMotion) {
     el.classList.add('revealed');
   } else {
-    setTimeout(() => el.classList.add('revealed'), 400);
+    setTimeout(() => el.classList.add('revealed'), 300);
   }
 }
 
 // --- Scroll Reveal ---
 function initScrollReveal() {
+  const groups = [
+    '.about-content', '.contact-grid', '.projects-grid', '.latest-note-card',
+    '.timeline', '.writing-list', '.tech-filters', '.tech-grid',
+    '.quote-section', '.cta-section', '.goat-card', '.media-grid',
+    '.activity-graph-wrap', '.rants-list'
+  ];
+
+  groups.forEach(selector => {
+    document.querySelectorAll(selector).forEach((el, i) => {
+      el.classList.add('reveal');
+      el.dataset.delay = String(Math.min(i, 2));
+    });
+  });
+
   if (prefersReducedMotion || !('IntersectionObserver' in window)) {
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
     return;
@@ -91,109 +106,17 @@ function initScrollReveal() {
         obs.unobserve(entry.target);
       });
     },
-    { threshold: 0.12, rootMargin: '0px 0px -4% 0px' }
+    { threshold: 0.1, rootMargin: '0px 0px -4% 0px' }
   );
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-}
-
-// Tag elements for reveal
-function tagRevealElements() {
-  const groups = [
-    '.about-content',
-    '.contact-grid',
-    '.projects-grid',
-    '.latest-note-card',
-    '.timeline',
-    '.writing-list',
-    '.tech-filters',
-    '.tech-grid',
-    '.quote-section',
-    '.cta-section',
-    '.goat-card',
-    '.media-grid',
-    '.activity-graph-wrap',
-    '.rants-list',
-  ];
-
-  groups.forEach(selector => {
-    document.querySelectorAll(selector).forEach((el, i) => {
-      el.classList.add('reveal');
-      el.dataset.delay = String(Math.min(i, 2));
-    });
-  });
-}
-
-// --- Post & List Choreography ---
-function initStaggeredReveals() {
-  const postEls = document.querySelectorAll('.post-header, .post-body > *');
-  postEls.forEach((el, i) => {
-    el.classList.add('reveal');
-    el.style.transitionDelay = `${Math.min(i * 60, 360)}ms`;
-  });
-
-  document.querySelectorAll('.blog-list .writing-item').forEach((el, i) => {
-    el.classList.add('reveal');
-    el.style.transitionDelay = `${Math.min(i * 90, 450)}ms`;
-  });
-}
-
-// --- Terminal Typewriter ---
-const TYPE_CHARS_PER_FRAME = 3;
-
-function typeBlock(code) {
-  const full = code.dataset.fullText;
-  const cursor = document.createElement('span');
-  cursor.className = 'code-cursor';
-  cursor.setAttribute('aria-hidden', 'true');
-  let i = 0;
-
-  function step() {
-    if (i >= full.length) {
-      setTimeout(() => cursor.remove(), 1400);
-      return;
-    }
-    i = Math.min(full.length, i + TYPE_CHARS_PER_FRAME);
-    code.textContent = full.slice(0, i);
-    code.appendChild(cursor);
-    requestAnimationFrame(step);
-  }
-
-  requestAnimationFrame(step);
-}
-
-function initTypewriter() {
-  const pres = document.querySelectorAll('.post-body pre');
-  if (!pres.length) return;
-  if (prefersReducedMotion || !('IntersectionObserver' in window)) return;
-
-  pres.forEach(pre => {
-    const code = pre.querySelector('code');
-    if (!code) return;
-    pre.style.minHeight = `${pre.offsetHeight}px`;
-    code.dataset.fullText = code.textContent;
-    code.textContent = '';
-    pre.classList.add('code-terminal');
-  });
-
-  const observer = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        obs.unobserve(entry.target);
-        typeBlock(entry.target.querySelector('code'));
-      });
-    },
-    { threshold: 0.35 }
-  );
-
-  pres.forEach(pre => observer.observe(pre));
 }
 
 // --- Tech Stack Filters ---
 function initTechFilters() {
   const filterBtns = document.querySelectorAll('.filter-btn');
   const techItems = document.querySelectorAll('.tech-item');
+  if (!filterBtns.length) return;
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -201,7 +124,6 @@ function initTechFilters() {
       btn.classList.add('active');
 
       const filter = btn.dataset.filter;
-
       techItems.forEach(item => {
         if (filter === 'all' || item.dataset.category === filter) {
           item.classList.remove('hidden');
@@ -217,7 +139,6 @@ function initTechFilters() {
 function initMediaFilters() {
   const filterBtns = document.querySelectorAll('.media-filter-btn');
   const mediaSections = document.querySelectorAll('.media-section');
-
   if (!filterBtns.length) return;
 
   filterBtns.forEach(btn => {
@@ -226,7 +147,6 @@ function initMediaFilters() {
       btn.classList.add('active');
 
       const filter = btn.dataset.mediaFilter;
-
       mediaSections.forEach(sec => {
         const cat = sec.dataset.mediaCategory;
         if (filter === 'all' || cat === filter) {
@@ -239,12 +159,6 @@ function initMediaFilters() {
   });
 }
 
-// --- Dynamic Year ---
-const yearEl = document.querySelector('#year');
-if (yearEl) {
-  yearEl.textContent = new Date().getFullYear();
-}
-
 // --- Active Nav Link on Scroll ---
 function initActiveNav() {
   const hashLinks = document.querySelectorAll('.nav-link[href^="#"]');
@@ -252,24 +166,18 @@ function initActiveNav() {
 
   function updateActiveNav() {
     const scrollPos = window.scrollY;
-    const windowHeight = window.innerHeight;
-    const docHeight = document.documentElement.scrollHeight;
-    const isAtBottom = scrollPos + windowHeight >= docHeight - 80;
-
+    const isAtBottom = scrollPos + window.innerHeight >= document.documentElement.scrollHeight - 80;
     let activeHash = '#top';
 
     if (isAtBottom) {
       activeHash = '#contact';
     } else {
-      const aboutEl = document.querySelector('#about');
       const contactEl = document.querySelector('#contact');
-
+      const aboutEl = document.querySelector('#about');
       if (contactEl && scrollPos + 180 >= contactEl.offsetTop) {
         activeHash = '#contact';
       } else if (aboutEl && scrollPos + 180 >= aboutEl.offsetTop) {
         activeHash = '#about';
-      } else {
-        activeHash = '#top';
       }
     }
 
@@ -309,9 +217,9 @@ async function initGitHubStats() {
       if (res.ok) {
         const data = await res.json();
         if (typeof data.stargazers_count === 'number') {
-          const stars = data.stargazers_count;
-          countEl.textContent = stars.toLocaleString();
-          repoCache[repo] = stars.toLocaleString();
+          const stars = data.stargazers_count.toLocaleString();
+          countEl.textContent = stars;
+          repoCache[repo] = stars;
           try {
             sessionStorage.setItem('gh_stars_cache', JSON.stringify(repoCache));
           } catch (e) {}
@@ -346,7 +254,7 @@ function initCopyButtons() {
   });
 }
 
-// --- GitHub Activity Graph (Real GitHub Data) ---
+// --- GitHub Activity Graph (Resilient & Non-blocking) ---
 async function initActivityGraph() {
   const grid = document.querySelector('.activity-grid');
   const tooltip = document.querySelector('.activity-tooltip');
@@ -364,7 +272,12 @@ async function initActivityGraph() {
 
   if (!data) {
     try {
-      const res = await fetch('https://github-contributions-api.jogruber.de/v4/kridaydave?y=last');
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      const res = await fetch('https://github-contributions-api.jogruber.de/v4/kridaydave?y=last', {
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
       if (res.ok) {
         data = await res.json();
         try {
@@ -372,7 +285,7 @@ async function initActivityGraph() {
         } catch (e) {}
       }
     } catch (err) {
-      console.warn('Could not load live contributions, fallback will apply', err);
+      // Fallback cleanly if offline or third-party API is slow
     }
   }
 
@@ -398,10 +311,8 @@ async function initActivityGraph() {
     cell.addEventListener('mouseenter', () => {
       const c = item.count;
       tooltip.textContent = `${c === 0 ? 'No' : c} contribution${c === 1 ? '' : 's'} on ${formattedDate}`;
-      
       const cellRect = cell.getBoundingClientRect();
       const wrapRect = wrap.getBoundingClientRect();
-      
       tooltip.style.left = `${cellRect.left - wrapRect.left + (cellRect.width / 2)}px`;
       tooltip.style.top = `${cellRect.top - wrapRect.top - 8}px`;
       tooltip.classList.add('visible');
@@ -441,7 +352,25 @@ function initReadingProgress() {
   update();
 }
 
-// --- Live IST Routine Clock ---
+// --- Live IST Routine Activity ---
+function getISTRoutine(hour, minute) {
+  const mins = hour * 60 + minute;
+  // 12 AM - 8 AM: Sleeping
+  if (mins < 480) return { activity: 'Sleeping / AFK', statusClass: 'status-sleep' };
+  // 8 AM - 12 PM: Morning prep & physics
+  if (mins < 720) return { activity: 'Morning prep & problem solving', statusClass: 'status-study' };
+  // 12 PM - 4 PM: Classes
+  if (mins < 960) return { activity: 'In classes', statusClass: 'status-class' };
+  // 4 PM - 5 PM: Break
+  if (mins < 1020) return { activity: 'Break & reset', statusClass: 'status-break' };
+  // 5 PM - 8 PM: JEE prep
+  if (mins < 1200) return { activity: 'Studying (JEE prep)', statusClass: 'status-study' };
+  // 8 PM - 9 PM: Dinner
+  if (mins < 1260) return { activity: 'Dinner & break', statusClass: 'status-break' };
+  // 9 PM - 12 AM: Hacking & shipping
+  return { activity: 'Hacking & shipping agent tooling', statusClass: 'status-code' };
+}
+
 function initRoutineClock() {
   const timeEl = document.getElementById('ist-clock');
   const activityEl = document.getElementById('routine-activity');
@@ -450,6 +379,21 @@ function initRoutineClock() {
 
   function update() {
     const now = new Date();
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Kolkata',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false
+    }).formatToParts(now);
+
+    let h = 0, m = 0;
+    for (const part of parts) {
+      if (part.type === 'hour') h = parseInt(part.value, 10);
+      if (part.type === 'minute') m = parseInt(part.value, 10);
+    }
+    if (h === 24) h = 0;
+
     const formatter = new Intl.DateTimeFormat('en-US', {
       timeZone: 'Asia/Kolkata',
       hour: 'numeric',
@@ -458,72 +402,69 @@ function initRoutineClock() {
       hour12: true
     });
 
+    if (timeEl) timeEl.textContent = `${formatter.format(now)} IST`;
+
+    const { activity, statusClass } = getISTRoutine(h, m);
+    if (activityEl) activityEl.textContent = activity;
+    if (dotEl) dotEl.className = `now-dot ${statusClass}`;
+  }
+
+  update();
+  setInterval(update, 1000);
+}
+
+// --- Now Page: Analog Wall Clock ---
+function initWallClock() {
+  const hourHand = document.getElementById('now-hand-hour');
+  const minuteHand = document.getElementById('now-hand-minute');
+  const secondHand = document.getElementById('now-hand-second');
+  const digitalEl = document.getElementById('now-digital-time');
+  const activityEl = document.getElementById('now-activity-text');
+  const dotEl = document.getElementById('now-dot');
+
+  if (!hourHand || !minuteHand || !secondHand) return;
+
+  function update() {
+    const now = new Date();
     const parts = new Intl.DateTimeFormat('en-US', {
       timeZone: 'Asia/Kolkata',
       hour: 'numeric',
       minute: 'numeric',
+      second: 'numeric',
       hour12: false
     }).formatToParts(now);
 
-    let hour = 0;
-    let minute = 0;
+    let h = 0, m = 0, s = 0;
     for (const part of parts) {
-      if (part.type === 'hour') hour = parseInt(part.value, 10);
-      if (part.type === 'minute') minute = parseInt(part.value, 10);
+      if (part.type === 'hour') h = parseInt(part.value, 10);
+      if (part.type === 'minute') m = parseInt(part.value, 10);
+      if (part.type === 'second') s = parseInt(part.value, 10);
     }
-    if (hour === 24) hour = 0;
+    if (h === 24) h = 0;
 
-    const timeString = formatter.format(now);
-    if (timeEl) {
-      timeEl.textContent = `${timeString} IST`;
-    }
+    const hourDeg = (h % 12) * 30 + m * 0.5;
+    const minuteDeg = m * 6 + s * 0.1;
+    const secondDeg = s * 6;
 
-    const currentMinutes = hour * 60 + minute;
-    let activity = 'Building & shipping';
-    let statusClass = 'status-code';
+    hourHand.setAttribute('transform', `rotate(${hourDeg}, 110, 110)`);
+    minuteHand.setAttribute('transform', `rotate(${minuteDeg}, 110, 110)`);
+    secondHand.setAttribute('transform', `rotate(${secondDeg}, 110, 110)`);
 
-    // 00:00 - 08:00 (12 AM - 8 AM): Sleeping
-    if (currentMinutes >= 0 && currentMinutes < 480) {
-      activity = 'Sleeping / AFK';
-      statusClass = 'status-sleep';
-    }
-    // 08:00 - 12:00 (8 AM - 12 PM): Morning prep & physics
-    else if (currentMinutes >= 480 && currentMinutes < 720) {
-      activity = 'Morning prep & problem solving';
-      statusClass = 'status-study';
-    }
-    // 12:00 - 16:00 (12 PM - 4 PM): In classes
-    else if (currentMinutes >= 720 && currentMinutes < 960) {
-      activity = 'In classes';
-      statusClass = 'status-class';
-    }
-    // 16:00 - 17:00 (4 PM - 5 PM): Break
-    else if (currentMinutes >= 960 && currentMinutes < 1020) {
-      activity = 'Break & reset';
-      statusClass = 'status-break';
-    }
-    // 17:00 - 20:00 (5 PM - 8 PM): JEE study grind
-    else if (currentMinutes >= 1020 && currentMinutes < 1200) {
-      activity = 'Studying (JEE prep)';
-      statusClass = 'status-study';
-    }
-    // 20:00 - 21:00 (8 PM - 9 PM): Dinner & break
-    else if (currentMinutes >= 1200 && currentMinutes < 1260) {
-      activity = 'Dinner & break';
-      statusClass = 'status-break';
-    }
-    // 21:00 - 24:00 (9 PM - 12 AM): Coding & shipping tools
-    else {
-      activity = 'Hacking & shipping agent tooling';
-      statusClass = 'status-code';
+    if (digitalEl) {
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Kolkata',
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
+      digitalEl.textContent = `${formatter.format(now)} IST`;
     }
 
     if (activityEl) {
+      const { activity, statusClass } = getISTRoutine(h, m);
       activityEl.textContent = activity;
-    }
-
-    if (dotEl) {
-      dotEl.className = `now-dot ${statusClass}`;
+      if (dotEl) dotEl.className = `now-dot ${statusClass}`;
     }
   }
 
@@ -531,20 +472,162 @@ function initRoutineClock() {
   setInterval(update, 1000);
 }
 
+// --- Instant Search & Filter (Blog & Rants) ---
+function initListSearch(config) {
+  const searchInput = document.getElementById(config.inputId);
+  const tagBtns = document.querySelectorAll(config.tagSelector);
+  const items = document.querySelectorAll(config.itemSelector);
+  const emptyState = document.getElementById(config.emptyStateId);
+  if (!items.length) return;
+
+  let currentTag = 'all';
+  let searchQuery = '';
+
+  function filter() {
+    let visibleCount = 0;
+    const query = searchQuery.trim().toLowerCase();
+
+    items.forEach(item => {
+      const tags = (item.dataset.tags || '').toLowerCase();
+      const text = (item.textContent || '').toLowerCase();
+
+      const matchesTag = currentTag === 'all' || tags.includes(currentTag);
+      const matchesSearch = !query || text.includes(query);
+
+      if (matchesTag && matchesSearch) {
+        item.classList.remove('hidden');
+        item.style.display = '';
+        visibleCount++;
+      } else {
+        item.classList.add('hidden');
+        item.style.display = 'none';
+      }
+    });
+
+    if (emptyState) {
+      emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+      emptyState.classList.toggle('hidden', visibleCount > 0);
+    }
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      filter();
+    });
+  }
+
+  tagBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tagBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTag = (btn.dataset.blogTag || btn.dataset.rantTag || 'all').toLowerCase();
+      filter();
+    });
+  });
+}
+
+// --- Post Utilities (Read Time & Clipboard Actions) ---
+function initPostUtilities() {
+  const postBody = document.querySelector('.post-body');
+  const readTimeEl = document.querySelector('.post-read-time');
+  if (postBody && readTimeEl) {
+    const text = postBody.innerText || '';
+    const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+    const minutes = Math.max(1, Math.ceil(wordCount / 200));
+    readTimeEl.textContent = `${minutes} min read`;
+  }
+
+  document.querySelectorAll('.post-action-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const action = btn.dataset.action;
+      const labelSpan = btn.querySelector('span');
+      const originalText = labelSpan ? labelSpan.textContent : '';
+
+      try {
+        if (action === 'copy-link') {
+          await navigator.clipboard.writeText(window.location.href);
+        } else if (action === 'copy-markdown') {
+          const title = document.querySelector('.post-title')?.textContent?.trim() || '';
+          const bodyText = postBody ? postBody.innerText.trim() : '';
+          const content = `# ${title}\n\n${window.location.href}\n\n${bodyText}`;
+          await navigator.clipboard.writeText(content);
+        }
+      } catch (err) {
+        const textarea = document.createElement('textarea');
+        textarea.value = action === 'copy-link' ? window.location.href : (postBody ? postBody.innerText : '');
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+
+      btn.classList.add('copied');
+      if (labelSpan) labelSpan.textContent = 'Copied!';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        if (labelSpan) labelSpan.textContent = originalText;
+      }, 1600);
+    });
+  });
+}
+
+// --- Instant Prefetch on Hover / Touch ---
+function initPrefetch() {
+  const prefetched = new Set();
+
+  function prefetchUrl(url) {
+    if (!url || prefetched.has(url)) return;
+    try {
+      const parsed = new URL(url, window.location.origin);
+      if (parsed.origin !== window.location.origin) return;
+      if (parsed.pathname === window.location.pathname) return;
+
+      prefetched.add(url);
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = parsed.href;
+      link.as = 'document';
+      document.head.appendChild(link);
+    } catch (e) {}
+  }
+
+  document.addEventListener('pointerenter', (e) => {
+    const anchor = e.target.closest('a');
+    if (anchor && anchor.href && !anchor.target) {
+      prefetchUrl(anchor.href);
+    }
+  }, { passive: true, capture: true });
+
+  document.addEventListener('touchstart', (e) => {
+    const anchor = e.target.closest('a');
+    if (anchor && anchor.href && !anchor.target) {
+      prefetchUrl(anchor.href);
+    }
+  }, { passive: true, capture: true });
+}
+
+// --- Dynamic Year ---
+const yearEl = document.querySelector('#year');
+if (yearEl) {
+  yearEl.textContent = new Date().getFullYear();
+}
+
 // --- Init ---
 document.addEventListener('DOMContentLoaded', () => {
-  tagRevealElements();
-  initStaggeredReveals();
-  initCharReveal();
   initScrollReveal();
-  initTypewriter();
+  initCharReveal();
   initTechFilters();
   initMediaFilters();
+  initListSearch({ inputId: 'blog-search', tagSelector: '[data-blog-tag]', itemSelector: '.blog-list .writing-item', emptyStateId: 'blog-empty-state' });
+  initListSearch({ inputId: 'rants-search', tagSelector: '[data-rant-tag]', itemSelector: '.rants-list .rant-card', emptyStateId: 'rants-empty-state' });
+  initPostUtilities();
+  initPrefetch();
   initActiveNav();
   initGitHubStats();
   initCopyButtons();
   initActivityGraph();
   initReadingProgress();
   initRoutineClock();
+  initWallClock();
 });
-

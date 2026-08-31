@@ -36,24 +36,6 @@
   </script>
 </head>
 <body>
-  <!-- Decorative dashed lines spanning the viewport -->
-  <div class="deco-lines" aria-hidden="true">
-    <div class="deco-line deco-line--top"></div>
-    <div class="deco-band deco-band--1"></div>
-    <div class="deco-line deco-line--1"></div>
-    <div class="deco-band deco-band--2"></div>
-    <div class="deco-line deco-line--2"></div>
-    <div class="deco-line deco-line--3"></div>
-    <div class="deco-band deco-band--3"></div>
-    <div class="deco-line deco-line--4"></div>
-    <div class="deco-band deco-band--4"></div>
-    <div class="deco-line deco-line--5"></div>
-    <div class="deco-line deco-line--6"></div>
-    <div class="deco-band deco-band--5"></div>
-    <div class="deco-line deco-line--7"></div>
-    <div class="deco-band deco-band--6"></div>
-    <div class="deco-line deco-line--8"></div>
-  </div>
 
   <!-- Vertical frame lines -->
   <div class="frame-lines" aria-hidden="true">
@@ -67,9 +49,9 @@
       <a href="index.html" class="navbar-logo">Kriday</a>
       <nav class="navbar-links" aria-label="Main navigation">
         <a href="index.html" class="nav-link">Home</a>
+        <a href="now.html" class="nav-link">Now</a>
         <a href="blog.html" class="nav-link active">Blog</a>
         <a href="rants.html" class="nav-link">Rants</a>
-        <a href="work.html" class="nav-link">Work</a>
         <a href="favorites.html" class="nav-link">Favorites</a>
       </nav>
       <div class="navbar-actions">
@@ -86,9 +68,9 @@
     <!-- Mobile nav -->
     <nav class="mobile-nav" aria-label="Mobile navigation">
       <a href="index.html" class="nav-link">Home</a>
+      <a href="now.html" class="nav-link">Now</a>
       <a href="blog.html" class="nav-link active">Blog</a>
       <a href="rants.html" class="nav-link">Rants</a>
-      <a href="work.html" class="nav-link">Work</a>
       <a href="favorites.html" class="nav-link">Favorites</a>
     </nav>
   </header>
@@ -98,8 +80,24 @@
     <section class="section blog-section">
       <h2 class="section-title">Blog</h2>
       <p class="blog-desc">Long-form writing on agentic engineering, AI research, and the developer memory layer.</p>
+      
+      <!-- Search & Filters -->
+      <div class="content-filter-bar" id="blog-filter-bar">
+        <div class="search-input-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="search-input" id="blog-search" placeholder="Search posts..." aria-label="Search posts">
+        </div>
+        <div class="filter-tags-row">
+          <button class="filter-pill active" data-blog-tag="all" type="button">All</button>
+          <button class="filter-pill" data-blog-tag="dev" type="button">Dev</button>
+          <button class="filter-pill" data-blog-tag="architecture" type="button">Architecture</button>
+          <button class="filter-pill" data-blog-tag="governance" type="button">Governance</button>
+          <button class="filter-pill" data-blog-tag="blueline" type="button">Blueline</button>
+        </div>
+      </div>
+
       <div class="writing-list blog-list">
-        <a href="posts/simplicity-is-the-new-sophistication.html" class="writing-item">
+        <a href="posts/simplicity-is-the-new-sophistication.html" class="writing-item" data-tags="dev architecture" data-title="Simplicity is the new sophistication" data-excerpt="How an 8GB downloads folder turned into a bloated 27-service server, and how the v5 rewrite stripped it back to raw primitives.">
           <div class="writing-meta">
             <span class="writing-num">003</span>
             <span class="writing-tag">DEV · ARCHITECTURE</span>
@@ -110,7 +108,7 @@
           </div>
           <svg class="writing-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
         </a>
-        <a href="posts/multi-agent-git-chaos.html" class="writing-item">
+        <a href="posts/multi-agent-git-chaos.html" class="writing-item" data-tags="oot governance" data-title="Multi-agent coding loops will wreck your git history" data-excerpt="Standard git merges are line-based and blind. When multiple agents edit one repo, you need intent locks and AST verification, not just rebase loops.">
           <div class="writing-meta">
             <span class="writing-num">002</span>
             <span class="writing-tag">OOT · GOVERNANCE</span>
@@ -121,7 +119,7 @@
           </div>
           <svg class="writing-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
         </a>
-        <a href="posts/blueline-v0-2-0.html" class="writing-item">
+        <a href="posts/blueline-v0-2-0.html" class="writing-item" data-tags="blueline" data-title="Your agent installs code nobody reads" data-excerpt="Blueline v0.2.0 is out: sandboxed installs, delta reviews against your last approved version, and a fail-closed supply chain scanner built for the agent era.">
           <div class="writing-meta">
             <span class="writing-num">001</span>
             <span class="writing-tag">BLUELINE</span>
@@ -132,6 +130,10 @@
           </div>
           <svg class="writing-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
         </a>
+      </div>
+
+      <div class="empty-filter-state hidden" id="blog-empty-state">
+        No matching posts found.
       </div>
     </section>
   </main>

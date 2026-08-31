@@ -36,24 +36,6 @@
   </script>
 </head>
 <body>
-  <!-- Decorative dashed lines spanning the viewport -->
-  <div class="deco-lines" aria-hidden="true">
-    <div class="deco-line deco-line--top"></div>
-    <div class="deco-band deco-band--1"></div>
-    <div class="deco-line deco-line--1"></div>
-    <div class="deco-band deco-band--2"></div>
-    <div class="deco-line deco-line--2"></div>
-    <div class="deco-line deco-line--3"></div>
-    <div class="deco-band deco-band--3"></div>
-    <div class="deco-line deco-line--4"></div>
-    <div class="deco-band deco-band--4"></div>
-    <div class="deco-line deco-line--5"></div>
-    <div class="deco-line deco-line--6"></div>
-    <div class="deco-band deco-band--5"></div>
-    <div class="deco-line deco-line--7"></div>
-    <div class="deco-band deco-band--6"></div>
-    <div class="deco-line deco-line--8"></div>
-  </div>
 
   <!-- Vertical frame lines -->
   <div class="frame-lines" aria-hidden="true">
@@ -67,9 +49,9 @@
       <a href="index.html" class="navbar-logo">Kriday</a>
       <nav class="navbar-links" aria-label="Main navigation">
         <a href="index.html" class="nav-link">Home</a>
+        <a href="now.html" class="nav-link">Now</a>
         <a href="blog.html" class="nav-link">Blog</a>
         <a href="rants.html" class="nav-link active">Rants</a>
-        <a href="work.html" class="nav-link">Work</a>
         <a href="favorites.html" class="nav-link">Favorites</a>
       </nav>
       <div class="navbar-actions">
@@ -86,9 +68,9 @@
     <!-- Mobile nav -->
     <nav class="mobile-nav" aria-label="Mobile navigation">
       <a href="index.html" class="nav-link">Home</a>
+      <a href="now.html" class="nav-link">Now</a>
       <a href="blog.html" class="nav-link">Blog</a>
       <a href="rants.html" class="nav-link active">Rants</a>
-      <a href="work.html" class="nav-link">Work</a>
       <a href="favorites.html" class="nav-link">Favorites</a>
     </nav>
   </header>
@@ -98,9 +80,22 @@
       <h1 class="section-title">Rants</h1>
       <p class="rants-desc">Quick, unfiltered thoughts on developer tooling, frameworks, and things that bother me in tech.</p>
 
+      <!-- Search & Filters -->
+      <div class="content-filter-bar" id="rants-filter-bar">
+        <div class="search-input-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="search-input" id="rants-search" placeholder="Search rants..." aria-label="Search rants">
+        </div>
+        <div class="filter-tags-row">
+          <button class="filter-pill active" data-rant-tag="all" type="button">All</button>
+          <button class="filter-pill" data-rant-tag="gaming" type="button">Gaming</button>
+          <button class="filter-pill" data-rant-tag="dev" type="button">Dev</button>
+        </div>
+      </div>
+
       <div class="rants-list">
         <!-- Rant 1: Mortal Kombat -->
-        <article class="rant-card">
+        <article class="rant-card" data-tags="gaming" data-title="Mortal Kombat changes everyone's fucking face every single game" data-excerpt="Most franchises retcon lore or rewrite backstories when writers get lazy. Mortal Kombat does that too, but what drives me nuts is how they rebuild every character's literal face from scratch every fucking game.">
           <div class="rant-header">
             <span class="rant-tag">GAMING</span>
             <span class="rant-date">Aug 30, 2026</span>
@@ -113,7 +108,7 @@
         </article>
 
         <!-- Rant 2: Self-glazing smoke tests -->
-        <article class="rant-card">
+        <article class="rant-card" data-tags="dev" data-title="Stop writing self-glazing smoke tests that just stroke your CI" data-excerpt="Nothing is more useless than a test suite filled with fifty hollow smoke tests written purely to keep GitHub Actions green.">
           <div class="rant-header">
             <span class="rant-tag">DEV</span>
             <span class="rant-date">Aug 30, 2026</span>
@@ -124,6 +119,10 @@
             <p>Mocking five internal functions so a method returns <code>true</code>, and then asserting <code>expect(result).toBe(true)</code> does not test your software. It tests whether your mock syntax works. When production breaks, these fake tests still pass because they never touched a real database or real network boundary in their life. Write tests that actually stress edge cases and break things, or delete the bloat. Endless self-glazing tests do nothing except waste CI minutes and give you fake confidence.</p>
           </div>
         </article>
+      </div>
+
+      <div class="empty-filter-state hidden" id="rants-empty-state">
+        No matching rants found.
       </div>
     </section>
   </main>
