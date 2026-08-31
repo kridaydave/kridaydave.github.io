@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Kriday Dave · Work: writing and lab notes on agentic engineering.">
+  <meta name="description" content="Kriday Dave · Rants: Unfiltered dev takes, engineering gripes, and software opinions.">
   <meta name="theme-color" content="#000000">
   <meta name="author" content="Kriday Dave">
-  <meta property="og:title" content="Work · Kriday Dave">
-  <meta property="og:description" content="Writing and lab notes on agentic engineering.">
+  <meta property="og:title" content="Rants · Kriday Dave">
+  <meta property="og:description" content="Unfiltered dev takes, engineering gripes, and software opinions.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://kridaydave.com/work.html">
+  <meta property="og:url" content="https://kridaydave.com/rants.html">
   <meta property="og:image" content="https://kridaydave.com/assets/og-card.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="Kriday Dave">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Work · Kriday Dave">
-  <meta name="twitter:description" content="Writing and lab notes on agentic engineering.">
+  <meta name="twitter:title" content="Rants · Kriday Dave">
+  <meta name="twitter:description" content="Unfiltered dev takes, engineering gripes, and software opinions.">
   <meta name="twitter:image" content="https://kridaydave.com/assets/og-card.jpg">
-  <title>Work · Kriday Dave</title>
+  <title>Rants · Kriday Dave</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -68,8 +68,8 @@
       <nav class="navbar-links" aria-label="Main navigation">
         <a href="index.html" class="nav-link">Home</a>
         <a href="blog.html" class="nav-link">Blog</a>
-        <a href="rants.html" class="nav-link">Rants</a>
-        <a href="work.html" class="nav-link active">Work</a>
+        <a href="rants.html" class="nav-link active">Rants</a>
+        <a href="work.html" class="nav-link">Work</a>
         <a href="favorites.html" class="nav-link">Favorites</a>
       </nav>
       <div class="navbar-actions">
@@ -87,69 +87,50 @@
     <nav class="mobile-nav" aria-label="Mobile navigation">
       <a href="index.html" class="nav-link">Home</a>
       <a href="blog.html" class="nav-link">Blog</a>
-      <a href="rants.html" class="nav-link">Rants</a>
-      <a href="work.html" class="nav-link active">Work</a>
+      <a href="rants.html" class="nav-link active">Rants</a>
+      <a href="work.html" class="nav-link">Work</a>
       <a href="favorites.html" class="nav-link">Favorites</a>
     </nav>
   </header>
 
   <main id="top">
-    <!-- Work / Lab Notes -->
-    <section class="section writing-section">
-      <h2 class="section-title">Work &amp; Lab Notes</h2>
-      <p class="writing-desc">Engineering notes and architecture decisions shipped directly inside repository docs.</p>
-      <div class="writing-list">
-        <a href="https://github.com/Epoch-AI-Lab/blueline" target="_blank" rel="noreferrer" class="writing-item">
-          <div class="writing-meta">
-            <span class="writing-num">01</span>
-            <span class="writing-tag">Blueline</span>
+    <section class="section rants-section">
+      <h1 class="section-title">Rants</h1>
+      <p class="rants-desc">Quick, unfiltered thoughts on developer tooling, frameworks, and things that bother me in tech.</p>
+
+      <div class="rants-list">
+        <!-- Rant 1: Mortal Kombat -->
+        <article class="rant-card">
+          <div class="rant-header">
+            <span class="rant-tag">GAMING</span>
+            <span class="rant-date">Aug 30, 2026</span>
           </div>
-          <div class="writing-body">
-            <h3 class="writing-title">Pre-install package review and sandbox</h3>
-            <p class="writing-excerpt">Sandboxed package extraction, release delta calculations against verified baselines, and approval gates before install scripts run.</p>
+          <h2 class="rant-title">Mortal Kombat changes everyone's fucking face every single game</h2>
+          <div class="rant-body">
+            <p>Most franchises retcon lore or rewrite backstories when writers get lazy. Mortal Kombat does that too, but what drives me nuts is how they rebuild every character's literal face from scratch every fucking game.</p>
+            <p>Look at Liu Kang across MK9, MKX, MK11, and MK1. None of these motherfuckers look remotely related to each other. It is not an engine upgrade thing. They straight up hire a completely new face model, swap their entire facial structure, and act like we will not notice. You boot up a new MK and have to ask yourself who the fuck you are even playing as. Why? Just keep a face consistent for more than one release.</p>
           </div>
-          <svg class="writing-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-        </a>
-        <a href="https://github.com/Epoch-AI-Lab/oot" target="_blank" rel="noreferrer" class="writing-item">
-          <div class="writing-meta">
-            <span class="writing-num">02</span>
-            <span class="writing-tag">Oot</span>
+        </article>
+
+        <!-- Rant 2: Self-glazing smoke tests -->
+        <article class="rant-card">
+          <div class="rant-header">
+            <span class="rant-tag">DEV</span>
+            <span class="rant-date">Aug 30, 2026</span>
           </div>
-          <div class="writing-body">
-            <h3 class="writing-title">Code governance for multi-agent systems</h3>
-            <p class="writing-excerpt">Resolves intent disputes, visibility policies, and semantic merge conflicts when multiple agents work in one repo.</p>
+          <h2 class="rant-title">Stop writing self-glazing smoke tests that just stroke your CI</h2>
+          <div class="rant-body">
+            <p>Nothing is more useless than a test suite filled with fifty hollow smoke tests written purely to keep GitHub Actions green.</p>
+            <p>Mocking five internal functions so a method returns <code>true</code>, and then asserting <code>expect(result).toBe(true)</code> does not test your software. It tests whether your mock syntax works. When production breaks, these fake tests still pass because they never touched a real database or real network boundary in their life. Write tests that actually stress edge cases and break things, or delete the bloat. Endless self-glazing tests do nothing except waste CI minutes and give you fake confidence.</p>
           </div>
-          <svg class="writing-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-        </a>
-        <a href="https://github.com/kridaydave/File-Organizer-MCP/blob/main/ARCHITECTURE.md" target="_blank" rel="noreferrer" class="writing-item">
-          <div class="writing-meta">
-            <span class="writing-num">03</span>
-            <span class="writing-tag">File Organizer MCP</span>
-          </div>
-          <div class="writing-body">
-            <h3 class="writing-title">Architecture notes</h3>
-            <p class="writing-excerpt">High-level atomic MCP tools versus primitive file operations for safer reasoning loops.</p>
-          </div>
-          <svg class="writing-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-        </a>
-        <a href="https://github.com/kridaydave/awesome-ai-plugins" target="_blank" rel="noreferrer" class="writing-item">
-          <div class="writing-meta">
-            <span class="writing-num">04</span>
-            <span class="writing-tag">awesome-ai-plugins</span>
-          </div>
-          <div class="writing-body">
-            <h3 class="writing-title">Curated registry of AI agent plugins</h3>
-            <p class="writing-excerpt">Community plugins, skills, and resources for autonomous agent workflows.</p>
-          </div>
-          <svg class="writing-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-        </a>
+        </article>
       </div>
     </section>
   </main>
 
   <!-- Footer -->
   <footer class="site-footer">
-    <p>Designed & Developed by <strong>Kriday Dave</strong></p>
+    <p>Designed &amp; Developed by <strong>Kriday Dave</strong></p>
     <p>&copy; <span id="year"></span> All rights reserved.</p>
   </footer>
 

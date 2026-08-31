@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="How an 8GB downloads folder turned into a bloated 35k-line MCP server, the rate limit hell of early agent tools, and stripping it down for the stateless v5 era.">
+  <meta name="theme-color" content="#000000">
+  <meta name="author" content="Kriday Dave">
+  <meta property="og:title" content="Simplicity is the new sophistication · Kriday Dave">
+  <meta property="og:description" content="How an 8GB downloads folder turned into a bloated 35k-line MCP server, the rate limit hell of early agent tools, and stripping it down for the stateless v5 era.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://kridaydave.com/posts/simplicity-is-the-new-sophistication.html">
+  <meta property="og:image" content="https://kridaydave.com/assets/og-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Kriday Dave">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Simplicity is the new sophistication · Kriday Dave">
+  <meta name="twitter:description" content="How an 8GB downloads folder turned into a bloated 35k-line MCP server, the rate limit hell of early agent tools, and stripping it down for the stateless v5 era.">
+  <meta name="twitter:image" content="https://kridaydave.com/assets/og-card.jpg">
+  <title>Simplicity is the new sophistication · Kriday Dave</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="../assets/epoch-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../styles.css">
+  <script>
+    try {
+      var savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <div class="reading-progress-bar" aria-hidden="true"></div>
+
+  <!-- Decorative dashed lines spanning the viewport -->
+  <div class="deco-lines" aria-hidden="true">
+    <div class="deco-line deco-line--top"></div>
+    <div class="deco-band deco-band--1"></div>
+    <div class="deco-line deco-line--1"></div>
+    <div class="deco-band deco-band--2"></div>
+    <div class="deco-line deco-line--2"></div>
+    <div class="deco-line deco-line--3"></div>
+    <div class="deco-band deco-band--3"></div>
+    <div class="deco-line deco-line--4"></div>
+    <div class="deco-band deco-band--4"></div>
+    <div class="deco-line deco-line--5"></div>
+    <div class="deco-line deco-line--6"></div>
+    <div class="deco-band deco-band--5"></div>
+    <div class="deco-line deco-line--7"></div>
+    <div class="deco-band deco-band--6"></div>
+    <div class="deco-line deco-line--8"></div>
+  </div>
+
+  <!-- Vertical frame lines -->
+  <div class="frame-lines" aria-hidden="true">
+    <div class="frame-line frame-line--left"></div>
+    <div class="frame-line frame-line--right"></div>
+  </div>
+
+  <!-- Fixed Navigation -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="../index.html" class="navbar-logo">Kriday</a>
+      <nav class="navbar-links" aria-label="Main navigation">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../blog.html" class="nav-link active">Blog</a>
+        <a href="../rants.html" class="nav-link">Rants</a>
+        <a href="../work.html" class="nav-link">Work</a>
+        <a href="../favorites.html" class="nav-link">Favorites</a>
+      </nav>
+      <div class="navbar-actions">
+        <button class="theme-toggle" type="button" aria-label="Toggle theme">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+        <div class="navbar-divider"></div>
+        <button class="menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="../blog.html" class="nav-link active">Blog</a>
+      <a href="../rants.html" class="nav-link">Rants</a>
+      <a href="../work.html" class="nav-link">Work</a>
+      <a href="../favorites.html" class="nav-link">Favorites</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <article class="section post-section">
+      <header class="post-header">
+        <div class="post-meta-row">
+          <span class="post-tag">DEV · ARCHITECTURE</span>
+          <span class="post-date">AUG 31, 2026</span>
+        </div>
+        <h1 class="post-title">Simplicity is the new sophistication</h1>
+      </header>
+
+      <div class="post-body">
+        <p>I started building <a href="https://github.com/kridaydave/File-Organizer-MCP" class="post-link" target="_blank" rel="noopener noreferrer">File-Organizer-MCP</a> after watching a NetworkChuck video about Model Context Protocol and Docker's MCP registry. I looked over at my desktop and noticed my Downloads folder had accumulated 8 gigabytes of unorganized screenshots, random zip archives, physics PDFs, and installer binaries.</p>
+
+        <p>I wanted an agent to clean it up. But when I looked at the existing filesystem tools, they were built around dumb, low-level primitives: <code>read_file</code>, <code>move_file</code>, <code>list_directory</code>.</p>
+
+        <h2>The token trap of early MCP tools</h2>
+
+        <p>The early MCP era had a massive flaw: it was brutal for anyone on a free or limited API budget.</p>
+
+        <p>If you give an LLM an 8GB folder with 500 files and tell it to organize them using primitive tools, here is what happens:</p>
+
+        <ol>
+          <li>The model calls <code>list_directory</code> and dumps 500 filenames into the context window.</li>
+          <li>It calls <code>read_file</code> on file #1 (5,000 tokens).</li>
+          <li>It calls <code>create_directory</code> for category A.</li>
+          <li>It calls <code>move_file</code> to move file #1.</li>
+          <li>It repeats this loop 500 times.</li>
+        </ol>
+
+        <p>Every single tool result bloated the context by 5,000 to 10,000 tokens. Prompt caching was barely starting out. Within twenty minutes, you burned through 300,000 tokens and slammed directly into provider rate limits.</p>
+
+        <p>I hit this exact wall while recording promotional demo videos for the project. I was using Claude to showcase the tool live, and Anthropic hit me with rate limits in the middle of recording. I was so annoyed by the limits that I decided not to edit them out. I kept the rate limit error in the final video. It broke standard marketing playbooks, but people loved seeing the real struggle.</p>
+
+        <p>The conclusion was obvious: <strong>let local code handle everything the AI could do except decide the intent.</strong> The model should never manage individual file pointers in a loop. It should call one high-level, atomic tool, let local Node.js code batch-process 500 files in 15 milliseconds, and return a clean summary diff. One round trip. 400 tokens total.</p>
+
+        <h2>The 35,000-line monster</h2>
+
+        <p>File-Organizer-MCP was my first real open source project. Because I was learning Node.js <code>fs</code> and TypeScript on the fly, I fell into the classic first-project trap: every time I had an idea, I wrote a new service class for it.</p>
+
+        <p>Before long, the <code>main</code> branch ballooned into nearly 35,000 lines of code across 27 distinct services:</p>
+
+        <ul>
+          <li><code>image-metadata.service.ts</code>: 1,403 lines</li>
+          <li><code>content-analyzer.service.ts</code>: 1,304 lines</li>
+          <li><code>categorizer.service.ts</code>: 1,246 lines</li>
+          <li><code>file-signatures.ts</code>: 1,044 lines</li>
+          <li><code>secure-file-reader.ts</code>: 855 lines</li>
+          <li><code>content-screening.service.ts</code>: 788 lines</li>
+          <li>Heavy binary dependencies like <code>mammoth</code> (Word document parser) and <code>pdf-parse</code>.</li>
+          <li>A 2,000-line <code>readers/</code> abstraction layer with custom factories, rate limiters, and audit log queues.</li>
+          <li>A stateful file watcher living directly inside the stdio MCP connection.</li>
+        </ul>
+
+        <p>The project worked, and users found it valuable (42 stars on GitHub, including one user who asked for external drive mount support). But maintaining it felt like pushing a boulder uphill. Fixing a path validation edge case required navigating three factory classes. When JEE prep picked up, I slapped a maintenance banner on the README and froze feature development.</p>
+
+        <h2>The vision was right, the implementation was fat</h2>
+
+        <p>Bundling <code>mammoth</code> and <code>pdf-parse</code> in an MCP package was heavy overkill for local developer tooling. But the underlying idea was not wrong. People do want content-aware organization, they just do not want a 50MB dependency tree that crashes on malformed docx tables.</p>
+
+        <p>When I came back to the project to prepare the <code>simplify-v5</code> PR, I decided to rewrite the architecture from scratch.</p>
+
+        <h2>The simplify-v5 rethink &amp; stateless MCP 2.0</h2>
+
+        <p>The new MCP 2.0 specification introduced stateless servers. The old 2025 protocol forced stateful session handshakes, persistent <code>Mcp-Session-Id</code> headers, and in-memory singletons that leaked file descriptors. MCP 2.0 replaced all of that with <code>server/discover</code>, request metadata in <code>_meta</code>, and clean response caching via <code>cacheHints</code>.</p>
+
+        <p>I structured the v5 refactor around three hard rules:</p>
+
+        <ol>
+          <li><strong>The 300-line ceiling:</strong> No single file in the repository can cross 300 lines. If a module grows beyond that, it gets split or refactored.</li>
+          <li><strong>Zero heavy parsers:</strong> Dropped <code>mammoth</code>, <code>pdf-parse</code>, and the 2,000-line reader framework. Replaced them with a single hardened <code>core/io/readFile()</code> function with TOCTOU guards and sensitive path checks.</li>
+          <li><strong>Deterministic grouping over bloated NLP:</strong> Rebuilt project-based organization using token rarity and Inverse Document Frequency (IDF). It scans plain text markers and identifier tokens in milliseconds with zero external ML dependencies.</li>
+          <li><strong>Decoupled background watcher:</strong> Moved scheduled directory watching out of the MCP server into a standalone CLI binary (<code>bin/file-organizer-watch.mjs</code>). The core stdio server stays completely stateless.</li>
+        </ol>
+
+        <h2>The Linux migration plot twist</h2>
+
+        <p>While finishing v5, I migrated my main setup from Windows to Linux. In the process, I forgot to back up my npm recovery codes. I lost access to the original npm account where the package was published.</p>
+
+        <p>It was frustrating, but honestly fitting. v5 is a complete rebirth of the project anyway. I created a new publisher account and am publishing the clean v5 package there.</p>
+
+        <h2>42 stars and the moonshot</h2>
+
+        <p>File-Organizer-MCP is the first project I ever built. 42 people starred it, gave feedback, and used it daily. My goal for this project has not changed: I want to make it the most reliable, widely downloaded file organizer MCP server in the ecosystem. It is a moonshot, but aim for the stars and land on the moon.</p>
+
+        <p>The lesson from v1 through v5 was clear: it is not that the original features were bad, it is that the implementation was fat. Real engineering is not about how many abstraction layers you can add. It is about how many you can strip away while making the tool faster and more dependable.</p>
+
+        <h2>Appendix: The v5 changelog</h2>
+
+        <p>Here is the raw changelog excerpt from the <code>chore/simplify-v5</code> release:</p>
+
+        <pre><code>## [5.0.0] - 2026-08-22
+
+### ⚠️ Breaking Changes
+- Scheduler is now a standalone bin (bin/file-organizer-watch.mjs). Core stdio server serves 21 tools.
+- Content-based tools deleted (organize_smart, organize_by_content). Dropped dependencies: pdf-parse, mammoth.
+- Stateless protocol era: clients on 2025-era handshake negotiate via dual-era support.
+
+### 🚀 MCP 2026-07-28 Protocol Support
+- Switched to @modelcontextprotocol/server@2.0.0.
+- Implements stateless MCP spec: no session handshake, server/discover negotiation, response caching (cacheHints ttlMs: 3600000).
+
+### 🧹 Simplification (simplify-v5)
+- No file over 300 lines across the entire codebase.
+- 27 services collapsed into core/{path,io,scan,categorize,organize,hash}.
+- 2,000-line readers/ framework replaced by core/io/readFile() with TOCTOU guards.
+- Schemas reduced from 22 to 4 files. RateLimiter deleted.
+- History logger appends directly behind in-process write chain with cross-process lockfile.</code></pre>
+      </div>
+
+      <footer class="post-footer">
+        <a href="../blog.html" class="post-back">&larr; Back to blog</a>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>Designed & Developed by <strong>Kriday Dave</strong></p>
+    <p>&copy; <span id="year"></span> All rights reserved.</p>
+  </footer>
+
+  <script src="../script.js" defer></script>
+</body>
+</html>
