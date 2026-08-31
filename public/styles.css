@@ -531,18 +531,18 @@ html:not(.dark) .avatar-frame {
 .project-card:hover .project-preview-inner {
   transform: scale(1.02);
 }
-/* Gradient themes per project */
+/* Project preview — cleaner dark cards, no washed gradients */
 .epoch-gradient {
-  background: linear-gradient(135deg, #fff 0%, #a64b2a 50%, #1a1a2e 100%);
+  background: linear-gradient(135deg, #1a1a2e 0%, #3d1f15 100%);
 }
 .blueline-gradient {
-  background: linear-gradient(135deg, #fff 0%, #2563eb 50%, #0f172a 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
 }
 .fileorg-gradient {
-  background: linear-gradient(135deg, #fff 0%, #f59e0b 50%, #1a1a2e 100%);
+  background: linear-gradient(135deg, #1a1a2e 0%, #3d2e0a 100%);
 }
 .oot-gradient {
-  background: linear-gradient(135deg, #fff 0%, #0d9488 50%, #064e3b 100%);
+  background: linear-gradient(135deg, #0a1f1c 0%, #0d4a43 100%);
 }
 .project-logo {
   width: 96px;
@@ -761,6 +761,24 @@ html:not(.dark) .avatar-frame {
 .project-cmd.copied {
   border-color: #22c55e;
 }
+.mini-terminal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 4px;
+  padding: 6px 10px;
+  background: #0a0a0a;
+  border: 1px solid #222;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #9a9a9a;
+  overflow: hidden;
+}
+html:not(.dark) .mini-terminal { background: #f5f5f5; border-color: #ddd; color: #555; }
+.term-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+.term-pass { color: #22c55e; font-weight: 700; }
+.term-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* --- Latest Essay Teaser --- */
 .latest-note-section {
@@ -1738,7 +1756,7 @@ html:not(.dark) .media-filter-btn.active {
 }
 
 @media (max-width: 480px) {
-  main { padding-left: 8px; padding-right: 8px; }
+  main { padding-left: 16px; padding-right: 16px; }
   .section { padding: 20px 12px; }
   .profile-row { flex-direction: column; align-items: flex-start; gap: 16px; padding: 8px 8px 0; }
   .avatar-frame { width: 90px; height: 90px; }

@@ -112,28 +112,8 @@ function initScrollReveal() {
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
-// --- Tech Stack Filters ---
-function initTechFilters() {
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const techItems = document.querySelectorAll('.tech-item');
-  if (!filterBtns.length) return;
-
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      const filter = btn.dataset.filter;
-      techItems.forEach(item => {
-        if (filter === 'all' || item.dataset.category === filter) {
-          item.classList.remove('hidden');
-        } else {
-          item.classList.add('hidden');
-        }
-      });
-    });
-  });
-}
+// --- Tech Stack Filters (removed - no filtering needed for ~7 items) ---
+function initTechFilters() {}
 
 // --- Media Filters (Favorites Page) ---
 function initMediaFilters() {
@@ -190,7 +170,7 @@ function initActiveNav() {
   updateActiveNav();
 }
 
-// --- Live GitHub Stars ---
+// --- Live GitHub Stars (hide if <10 to avoid weak social proof) ---
 async function initGitHubStats() {
   const badgeEls = document.querySelectorAll('[data-repo]');
   if (!badgeEls.length) return;
@@ -207,8 +187,27 @@ async function initGitHubStats() {
     const countEl = badge.querySelector('.star-count');
     if (!countEl) continue;
 
+    // helper to hide badge if stars <10
+    const applyStars = (n) => {
+      if (typeof n !== 'number') return;
+      if (n < 10) {
+        badge.style.display = 'none';
+        return;
+      }
+      const stars = n.toLocaleString();
+      countEl.textContent = stars;
+      badge.style.display = '';
+      repoCache[repo] = n;
+      try { sessionStorage.setItem('gh_stars_cache', JSON.stringify(repoCache)); } catch (e) {}
+    };
+
     if (repoCache[repo] !== undefined) {
-      countEl.textContent = repoCache[repo];
+      const cached = repoCache[repo];
+      const num = typeof cached === 'number' ? cached : parseInt(String(cached).replace(/,/g,''),10);
+      if (!isNaN(num) && num < 10) badge.style.display = 'none';
+      else if (!isNaN(num)) countEl.textContent = typeof cached === 'number' ? num.toLocaleString() : cached;
+      else countEl.textContent = cached;
+      if (!isNaN(num) && num < 10) continue;
       continue;
     }
 
@@ -216,14 +215,7 @@ async function initGitHubStats() {
       const res = await fetch(`https://api.github.com/repos/${repo}`);
       if (res.ok) {
         const data = await res.json();
-        if (typeof data.stargazers_count === 'number') {
-          const stars = data.stargazers_count.toLocaleString();
-          countEl.textContent = stars;
-          repoCache[repo] = stars;
-          try {
-            sessionStorage.setItem('gh_stars_cache', JSON.stringify(repoCache));
-          } catch (e) {}
-        }
+        if (typeof data.stargazers_count === 'number') applyStars(data.stargazers_count);
       }
     } catch (e) {}
   }
@@ -254,7 +246,7 @@ function initCopyButtons() {
   });
 }
 
-// --- GitHub Activity Graph (Resilient & Non-blocking) ---
+// --- GitHub Activity Graph (cached longer, fails gracefully) ---
 async function initActivityGraph() {
   const grid = document.querySelector('.activity-grid');
   const tooltip = document.querySelector('.activity-tooltip');
@@ -266,8 +258,10 @@ async function initActivityGraph() {
   let data = null;
 
   try {
-    const cached = sessionStorage.getItem('gh_contributions_kridaydave');
-    if (cached) data = JSON.parse(cached);
+    const raw = localStorage.getItem('gh_contributions_kridaydave');
+    const ts = Number(localStorage.getItem('gh_contributions_ts') || 0);
+    // cache 24h, not per session
+    if (raw && Date.now() - ts < 24 * 60 * 60 * 1000) data = JSON.parse(raw);
   } catch (e) {}
 
   if (!data) {
@@ -281,12 +275,11 @@ async function initActivityGraph() {
       if (res.ok) {
         data = await res.json();
         try {
-          sessionStorage.setItem('gh_contributions_kridaydave', JSON.stringify(data));
+          localStorage.setItem('gh_contributions_kridaydave', JSON.stringify(data));
+          localStorage.setItem('gh_contributions_ts', String(Date.now()));
         } catch (e) {}
       }
-    } catch (err) {
-      // Fallback cleanly if offline or third-party API is slow
-    }
+    } catch (err) {}
   }
 
   const contributions = data?.contributions;
@@ -607,60 +600,18 @@ function initPrefetch() {
   }, { passive: true, capture: true });
 }
 
-// --- GitHub Recent Activity (live) ---
-async function initGitHubActivity() {
-  const wrap = document.getElementById('github-activity');
-  const textEl = document.getElementById('github-activity-text');
-  if (!wrap || !textEl) return;
+// --- GitHub Recent Activity (removed - duplicate with activity graph) ---
+async function initGitHubActivity() {}
 
-  function timeAgo(dateStr) {
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    const days = Math.floor(hrs / 24);
-    return `${days}d ago`;
-  }
-
-  try {
-    const cached = sessionStorage.getItem('gh_activity_kridaydave');
-    let event = cached ? JSON.parse(cached) : null;
-    let fromCache = !!event;
-
-    if (!event) {
-      const res = await fetch('https://api.github.com/users/kridaydave/events/public?per_page=10');
-      if (!res.ok) throw new Error('gh api failed');
-      const events = await res.json();
-      event = events.find(e => e.type === 'PushEvent') || events[0];
-      if (event) {
-        try { sessionStorage.setItem('gh_activity_kridaydave', JSON.stringify(event)); } catch(e) {}
-        // expire after 10 mins via timestamp
-        try { sessionStorage.setItem('gh_activity_ts', String(Date.now())); } catch(e) {}
-      }
-    } else {
-      const ts = Number(sessionStorage.getItem('gh_activity_ts') || 0);
-      if (Date.now() - ts > 10 * 60 * 1000) {
-        sessionStorage.removeItem('gh_activity_kridaydave');
-        sessionStorage.removeItem('gh_activity_ts');
-      }
-    }
-
-    if (!event) return;
-    const repo = event.repo ? event.repo.name.replace('kridaydave/', '').replace('Epoch-AI-Lab/', '') : 'github';
-    const ago = timeAgo(event.created_at);
-    const msg = event.payload && event.payload.commits && event.payload.commits[0] ? event.payload.commits[0].message.split('\n')[0].slice(0, 60) : event.type.replace('Event','');
-    textEl.textContent = `Last push: ${repo} · ${ago} · ${msg}`;
-    wrap.style.display = 'inline-flex';
-  } catch (e) {
-    // silent fail
-  }
-}
-
-// --- Dynamic Year ---
+// --- Dynamic Year + Now Updated ---
 const yearEl = document.querySelector('#year');
 if (yearEl) {
   yearEl.textContent = new Date().getFullYear();
+}
+const nowUpdatedEl = document.getElementById('now-updated');
+if (nowUpdatedEl) {
+  const d = new Date();
+  nowUpdatedEl.textContent = `Last updated: ${d.toLocaleString('en-US', { month: 'long', year: 'numeric' })}`;
 }
 
 // --- Init ---
