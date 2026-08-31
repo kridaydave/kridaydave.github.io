@@ -38,25 +38,6 @@
 <body>
   <div class="reading-progress-bar" aria-hidden="true"></div>
 
-  <!-- Decorative dashed lines spanning the viewport -->
-  <div class="deco-lines" aria-hidden="true">
-    <div class="deco-line deco-line--top"></div>
-    <div class="deco-band deco-band--1"></div>
-    <div class="deco-line deco-line--1"></div>
-    <div class="deco-band deco-band--2"></div>
-    <div class="deco-line deco-line--2"></div>
-    <div class="deco-line deco-line--3"></div>
-    <div class="deco-band deco-band--3"></div>
-    <div class="deco-line deco-line--4"></div>
-    <div class="deco-band deco-band--4"></div>
-    <div class="deco-line deco-line--5"></div>
-    <div class="deco-line deco-line--6"></div>
-    <div class="deco-band deco-band--5"></div>
-    <div class="deco-line deco-line--7"></div>
-    <div class="deco-band deco-band--6"></div>
-    <div class="deco-line deco-line--8"></div>
-  </div>
-
   <!-- Vertical frame lines -->
   <div class="frame-lines" aria-hidden="true">
     <div class="frame-line frame-line--left"></div>
@@ -69,9 +50,9 @@
       <a href="../index.html" class="navbar-logo">Kriday</a>
       <nav class="navbar-links" aria-label="Main navigation">
         <a href="../index.html" class="nav-link">Home</a>
+        <a href="../now.html" class="nav-link">Now</a>
         <a href="../blog.html" class="nav-link active">Blog</a>
         <a href="../rants.html" class="nav-link">Rants</a>
-        <a href="../work.html" class="nav-link">Work</a>
         <a href="../favorites.html" class="nav-link">Favorites</a>
       </nav>
       <div class="navbar-actions">
@@ -88,12 +69,21 @@
     <!-- Mobile nav -->
     <nav class="mobile-nav" aria-label="Mobile navigation">
       <a href="../index.html" class="nav-link">Home</a>
+      <a href="../now.html" class="nav-link">Now</a>
       <a href="../blog.html" class="nav-link active">Blog</a>
       <a href="../rants.html" class="nav-link">Rants</a>
-      <a href="../work.html" class="nav-link">Work</a>
       <a href="../favorites.html" class="nav-link">Favorites</a>
     </nav>
   </header>
+
+  <!-- Floating Back Pill -->
+  <a href="../blog.html" class="floating-back-btn" aria-label="Back to blog">
+    <span class="btn-icon-wrap" aria-hidden="true">
+      <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </span>
+    <span>Back to blog</span>
+  </a>
 
   <main id="top">
     <article class="section post-section">
@@ -101,8 +91,19 @@
         <div class="post-meta-row">
           <span class="post-tag">BLUELINE · V0.2.0</span>
           <span class="post-date">AUG 22, 2026</span>
+          <span class="post-read-time">3 min read</span>
         </div>
         <h1 class="post-title">Your agent installs code nobody reads</h1>
+        <div class="post-actions-row">
+          <button class="post-action-btn" data-action="copy-link" type="button" aria-label="Copy post link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span>Copy Link</span>
+          </button>
+          <button class="post-action-btn" data-action="copy-markdown" type="button" aria-label="Copy post text">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span>Copy Text</span>
+          </button>
+        </div>
       </header>
 
       <div class="post-body">
