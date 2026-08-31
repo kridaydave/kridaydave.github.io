@@ -29,3 +29,7 @@ Kriday Dave builds developer tools and security governance systems for autonomou
 - LinkedIn: https://linkedin.com/in/kriday-dave-0169a83b5
 - X / Twitter: https://twitter.com/KridayTop
 - Email: davekriday@gmail.com
+
+## Feeds
+- RSS: https://kridaydave.com/rss.xml
+- Sitemap: https://kridaydave.com/sitemap.xml

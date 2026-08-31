@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Kriday Dave · Blog</title>
+    <description>Long-form writing on agentic engineering, AI research, and the developer memory layer.</description>
+    <link>https://kridaydave.com/blog.html</link>
+    <atom:link href="https://kridaydave.com/rss.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Sun, 31 Aug 2026 00:00:00 GMT</lastBuildDate>
+    <generator>kridaydave.com</generator>
+    <image>
+      <url>https://kridaydave.com/assets/epoch-mark.svg</url>
+      <title>Kriday Dave</title>
+      <link>https://kridaydave.com/</link>
+    </image>
+    <item>
+      <title>Simplicity is the new sophistication</title>
+      <description>How an 8GB downloads folder turned into a bloated 27-service server, and how the v5 rewrite stripped it back to raw primitives.</description>
+      <link>https://kridaydave.com/posts/simplicity-is-the-new-sophistication.html</link>
+      <guid isPermaLink="true">https://kridaydave.com/posts/simplicity-is-the-new-sophistication.html</guid>
+      <pubDate>Sun, 31 Aug 2026 00:00:00 GMT</pubDate>
+      <category>DEV · ARCHITECTURE</category>
+      <content:encoded><![CDATA[How an 8GB downloads folder turned into a bloated 35k-line MCP server, the rate limit hell of early agent tools, and stripping it down for the stateless v5 era. Full essay at https://kridaydave.com/posts/simplicity-is-the-new-sophistication.html]]></content:encoded>
+    </item>
+    <item>
+      <title>Multi-agent coding loops will wreck your git history</title>
+      <description>Standard git merges are line-based and blind. When multiple agents edit one repo, you need intent locks and AST verification, not just rebase loops.</description>
+      <link>https://kridaydave.com/posts/multi-agent-git-chaos.html</link>
+      <guid isPermaLink="true">https://kridaydave.com/posts/multi-agent-git-chaos.html</guid>
+      <pubDate>Sat, 29 Aug 2026 00:00:00 GMT</pubDate>
+      <category>OOT · GOVERNANCE</category>
+      <content:encoded><![CDATA[Standard git merges are line-based and blind. When multiple agents edit one repo, you need intent locks and AST verification, not just rebase loops. Full essay at https://kridaydave.com/posts/multi-agent-git-chaos.html]]></content:encoded>
+    </item>
+    <item>
+      <title>Your agent installs code nobody reads</title>
+      <description>Blueline v0.2.0 is out: sandboxed installs, delta reviews against your last approved version, and a fail-closed supply chain scanner built for the agent era.</description>
+      <link>https://kridaydave.com/posts/blueline-v0-2-0.html</link>
+      <guid isPermaLink="true">https://kridaydave.com/posts/blueline-v0-2-0.html</guid>
+      <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+      <category>BLUELINE</category>
+      <content:encoded><![CDATA[Blueline v0.2.0 is out: sandboxed installs, delta reviews against your last approved version, and a fail-closed supply chain scanner built for the agent era. Full essay at https://kridaydave.com/posts/blueline-v0-2-0.html]]></content:encoded>
+    </item>
+  </channel>
+</rss>

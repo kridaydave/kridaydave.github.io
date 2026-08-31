@@ -607,6 +607,56 @@ function initPrefetch() {
   }, { passive: true, capture: true });
 }
 
+// --- GitHub Recent Activity (live) ---
+async function initGitHubActivity() {
+  const wrap = document.getElementById('github-activity');
+  const textEl = document.getElementById('github-activity-text');
+  if (!wrap || !textEl) return;
+
+  function timeAgo(dateStr) {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    return `${days}d ago`;
+  }
+
+  try {
+    const cached = sessionStorage.getItem('gh_activity_kridaydave');
+    let event = cached ? JSON.parse(cached) : null;
+    let fromCache = !!event;
+
+    if (!event) {
+      const res = await fetch('https://api.github.com/users/kridaydave/events/public?per_page=10');
+      if (!res.ok) throw new Error('gh api failed');
+      const events = await res.json();
+      event = events.find(e => e.type === 'PushEvent') || events[0];
+      if (event) {
+        try { sessionStorage.setItem('gh_activity_kridaydave', JSON.stringify(event)); } catch(e) {}
+        // expire after 10 mins via timestamp
+        try { sessionStorage.setItem('gh_activity_ts', String(Date.now())); } catch(e) {}
+      }
+    } else {
+      const ts = Number(sessionStorage.getItem('gh_activity_ts') || 0);
+      if (Date.now() - ts > 10 * 60 * 1000) {
+        sessionStorage.removeItem('gh_activity_kridaydave');
+        sessionStorage.removeItem('gh_activity_ts');
+      }
+    }
+
+    if (!event) return;
+    const repo = event.repo ? event.repo.name.replace('kridaydave/', '').replace('Epoch-AI-Lab/', '') : 'github';
+    const ago = timeAgo(event.created_at);
+    const msg = event.payload && event.payload.commits && event.payload.commits[0] ? event.payload.commits[0].message.split('\n')[0].slice(0, 60) : event.type.replace('Event','');
+    textEl.textContent = `Last push: ${repo} · ${ago} · ${msg}`;
+    wrap.style.display = 'inline-flex';
+  } catch (e) {
+    // silent fail
+  }
+}
+
 // --- Dynamic Year ---
 const yearEl = document.querySelector('#year');
 if (yearEl) {
@@ -630,4 +680,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initReadingProgress();
   initRoutineClock();
   initWallClock();
+  initGitHubActivity();
 });
