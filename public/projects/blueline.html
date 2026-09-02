@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Blueline v0.2.0, the release where the tool becomes a product. Review every npm install before it lands on your machine.">
+  <meta name="description" content="Blueline case study: sandboxed package extraction, delta reviews against verified baselines, and fail-closed supply chain security for coding agents.">
   <meta name="theme-color" content="#000000">
   <meta name="author" content="Kriday Dave">
-  <meta property="og:title" content="Your agent installs code nobody reads · Kriday Dave">
-  <meta property="og:description" content="Blueline v0.2.0 is out: sandboxed installs, delta reviews, and a fail-closed supply chain scanner for the agent era.">
+  <meta property="og:title" content="Blueline: approve the change, not the download · Kriday Dave">
+  <meta property="og:description" content="Sandboxed installs, delta reviews against verified baselines, and a fail-closed supply chain scanner built for the agent era.">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://kridaydave.com/posts/blueline-v0-2-0.html">
-  <meta property="og:image" content="https://kridaydave.com/og/blueline-v0-2-0.svg">
+  <meta property="og:url" content="https://kridaydave.com/projects/blueline.html">
+  <meta property="og:image" content="https://kridaydave.com/og/projects/blueline.svg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="Kriday Dave">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Your agent installs code nobody reads · Kriday Dave">
-  <meta name="twitter:description" content="Blueline v0.2.0 is out: sandboxed installs, delta reviews, and a fail-closed supply chain scanner for the agent era.">
-  <meta name="twitter:image" content="https://kridaydave.com/og/blueline-v0-2-0.svg">
-  <title>Your agent installs code nobody reads · Kriday Dave</title>
+  <meta name="twitter:title" content="Blueline: approve the change, not the download · Kriday Dave">
+  <meta name="twitter:description" content="Sandboxed installs, delta reviews against verified baselines, and a fail-closed supply chain scanner built for the agent era.">
+  <meta name="twitter:image" content="https://kridaydave.com/og/projects/blueline.svg">
+  <title>Blueline · Case Study · Kriday Dave</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -35,7 +35,7 @@
       }
     } catch (e) {}
   </script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Your agent installs code nobody reads","author":{"@type":"Person","name":"Kriday Dave","url":"https://kridaydave.com"},"datePublished":"2026-08-22","url":"https://kridaydave.com/posts/blueline-v0-2-0.html","image":"https://kridaydave.com/og/blueline-v0-2-0.svg","keywords":"BLUELINE security"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Blueline: approve the change, not the download","author":{"@type":"Person","name":"Kriday Dave","url":"https://kridaydave.com"},"url":"https://kridaydave.com/projects/blueline.html","image":"https://kridaydave.com/og/projects/blueline.svg","keywords":"supply chain security, Rust, CLI, npm"}</script>
 </head>
 <body>
   <div class="reading-progress-bar" aria-hidden="true"></div>
@@ -51,9 +51,9 @@
     <div class="navbar-inner">
       <a href="../index.html" class="navbar-logo">Kriday</a>
       <nav class="navbar-links" aria-label="Main navigation">
-        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../index.html" class="nav-link active">Home</a>
         <a href="../now.html" class="nav-link">Now</a>
-        <a href="../blog.html" class="nav-link active">Blog</a>
+        <a href="../blog.html" class="nav-link">Blog</a>
         <a href="../rants.html" class="nav-link">Rants</a>
         <a href="../favorites.html" class="nav-link">Favorites</a>
       </nav>
@@ -70,63 +70,63 @@
     </div>
     <!-- Mobile nav -->
     <nav class="mobile-nav" aria-label="Mobile navigation">
-      <a href="../index.html" class="nav-link">Home</a>
+      <a href="../index.html" class="nav-link active">Home</a>
       <a href="../now.html" class="nav-link">Now</a>
-      <a href="../blog.html" class="nav-link active">Blog</a>
+      <a href="../blog.html" class="nav-link">Blog</a>
       <a href="../rants.html" class="nav-link">Rants</a>
       <a href="../favorites.html" class="nav-link">Favorites</a>
     </nav>
   </header>
 
   <!-- Floating Back Pill -->
-  <a href="../blog.html" class="floating-back-btn" aria-label="Back to blog">
+  <a href="../index.html#projects" class="floating-back-btn" aria-label="Back to projects">
     <span class="btn-icon-wrap" aria-hidden="true">
       <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
       <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </span>
-    <span>Back to blog</span>
+    <span>All projects</span>
   </a>
 
   <main id="top">
     <article class="section post-section">
       <header class="post-header">
         <div class="post-meta-row">
-          <span class="post-tag">BLUELINE · V0.2.0</span>
-          <span class="post-date">AUG 22, 2026</span>
-          <span class="post-read-time">3 min read</span>
+          <span class="post-tag">BLUELINE · CASE STUDY</span>
+          <span class="post-date">RUST · CLI · 2026</span>
         </div>
-        <h1 class="post-title">Your agent installs code nobody reads</h1>
+        <h1 class="post-title">Approve the change, not the download</h1>
         <div class="post-actions-row">
-          <button class="post-action-btn" data-action="copy-link" type="button" aria-label="Copy post link">
+          <a class="post-action-btn" href="https://github.com/Epoch-AI-Lab/blueline" target="_blank" rel="noopener noreferrer" aria-label="View Blueline on GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+            <span>GitHub</span>
+          </a>
+          <button class="post-action-btn" data-action="copy-link" type="button" aria-label="Copy page link">
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
             <span>Copy Link</span>
-          </button>
-          <button class="post-action-btn" data-action="copy-markdown" type="button" aria-label="Copy post text">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-            <span>Copy Text</span>
           </button>
         </div>
       </header>
 
       <div class="post-body">
-        <p>Blueline v0.2.0 is out, and it's the release where the tool becomes a product. One command and it's on your machine:</p>
+        <p>Blueline is a supply chain security gate for package installs, written in Rust. It exists because of one sentence: package managers treat installs as transport: fetch, unpack, run. Blueline adds the step they skip.</p>
 
-        <pre><code>npm i -g blueline
-npx blueline install express@4.21.2</code></pre>
+        <pre><code>npx blueline install express@4.21.2</code></pre>
 
-        <p>Prebuilt binaries for linux (x64 glibc and musl, arm64), macOS (x64, arm64) and Windows (x64, arm64). No Rust toolchain required.</p>
-
-        <h2>The problem hasn't changed</h2>
+        <h2>The problem</h2>
 
         <p>Your coding agent runs <code>npm install</code> dozens of times a day. Each one pulls tarballs off the registry and executes whatever install scripts came along for the ride. Nobody on earth diffs express 4.21.1 against 4.21.2 when an agent fires the command in a loop.</p>
 
         <p>Attackers know this. The TanStack router worm shipped malicious npm packages carrying valid SLSA L3 provenance. In 2021, ua-parser-js was hijacked and three malicious versions published with a credential stealer in the preinstall script. The fix window was four hours. Agents compress that window to minutes.</p>
 
-        <p>Package managers treat installs as transport: fetch, unpack, run. Blueline adds the step they skip.</p>
+        <h2>How it works</h2>
 
-        <h2>What it does</h2>
+        <p>Three steps, in order, before anything touches your machine:</p>
 
-        <p>Blueline extracts the release tarball in an isolated sandbox, computes what changed against your last approved version, and shows you before anything lands:</p>
+        <ul>
+          <li><strong>Sandboxed extraction.</strong> The release tarball is unpacked in isolation, with guards against path traversal, symlinks, and decompression bombs.</li>
+          <li><strong>Delta calculation.</strong> The new release is diffed, at line level, against your last verified baseline (stored locally in SQLite). Approved versions become the baseline; the next release only has to explain its delta.</li>
+          <li><strong>Approval gate.</strong> A review card renders the change before it lands. High-risk releases block outright; the install halts until a human decides.</li>
+        </ul>
 
         <pre><code>BLUELINE REVIEW CARD
 ─────────────────────────────────────────
@@ -148,46 +148,46 @@ verdict:    ▶ LOW RISK
 
 [a]pprove · [h]old · [d]iff</code></pre>
 
-        <p>Approve once and that version becomes the baseline. The next release only has to explain its delta. If risk thresholds trip, the install blocks and the workflow halts.</p>
-
         <p>Around that core loop:</p>
 
         <ul>
-          <li><code>blueline mcp</code>, an MCP server so agents call the review themselves instead of bypassing it</li>
-          <li><code>blueline ci</code>, a lockfile diff scanner for PRs, plus a GitHub Action</li>
+          <li><code>blueline mcp</code>: an MCP server, so agents call the review themselves instead of bypassing it</li>
+          <li><code>blueline ci</code>: a lockfile diff scanner for PRs (<code>package-lock.json</code>, <code>Cargo.lock</code>, <code>requirements.txt</code>), plus a GitHub Action</li>
           <li>policy-as-code via <code>blueline.toml</code>: advisory thresholds, allowlists, blocklists</li>
-          <li>OSV and GitHub Advisory checks, SLSA provenance surfacing</li>
+          <li>OSV and GitHub Advisory checks, SLSA/PEP 740 provenance surfacing</li>
+          <li>multi-registry: npm, PyPI (<code>--ecosystem pypi</code>), crates.io</li>
         </ul>
 
         <h2>Why you can trust the installer itself</h2>
 
-        <p>A supply chain tool delivered through the same supply chain it criticizes should hold itself to its own standard. v0.2.0 does:</p>
+        <p>A supply chain tool delivered through the same supply chain it criticizes should hold itself to its own standard:</p>
 
         <ul>
-          <li>Every binary publishes as an npm package with provenance attestation.</li>
-          <li>SHA256SUMS attach to each GitHub release.</li>
+          <li>Every binary publishes as an npm package with provenance attestation, and SHA256SUMS attach to each GitHub release.</li>
           <li>A smoke gate runs before shims publish: the actual shipped artifact must review a real package end-to-end through the npm path. If the artifact can't do its one job, nothing ships.</li>
           <li>Our own composite Action reviews our own <code>package-lock.json</code> on every pull request.</li>
         </ul>
 
-        <p>The scanner also fails closed. Any doubt in parsing, extraction, or verification errors out rather than guessing. We keep mutation tests pointed at those boundaries so a regression fails CI instead of failing you.</p>
+        <p>The scanner also fails closed. Any doubt in parsing, extraction, or verification errors out rather than guessing. Mutation tests are pointed at those boundaries so a regression fails CI instead of failing you.</p>
+
+        <h2>Honest limits</h2>
+
+        <p>First installs have no baseline to diff against, so they lean harder on advisories, provenance, and static scanning. Heuristics catch common obfuscation routes but are not proof against everything. If you want lower friction while bootstrapping baselines, there's an <code>allow_unreviewed_baseline</code> rule in <code>blueline.toml</code>.</p>
 
         <h2>Try it</h2>
 
         <pre><code>npm i -g blueline
 blueline review lodash@4.17.21</code></pre>
 
-        <p>Point your agent at the MCP server, or drop the GitHub Action into a repo and let it review lockfile changes on every PR.</p>
+        <p>Prebuilt binaries for Linux (x64 glibc and musl, arm64), macOS (x64, arm64) and Windows (x64, arm64). No Rust toolchain required.</p>
 
         <p>Repo and docs: <a href="https://github.com/Epoch-AI-Lab/blueline" class="post-link" target="_blank" rel="noopener noreferrer">github.com/Epoch-AI-Lab/blueline</a></p>
 
-        <p>Honest limits: first installs have no baseline to diff against, so they lean harder on advisories, provenance, and static scanning. Heuristics catch common obfuscation routes but are not proof against everything. If you want lower friction while bootstrapping baselines, there's an <code>allow_unreviewed_baseline</code> rule in <code>blueline.toml</code>.</p>
-
-        <p>Full case study: <a href="../projects/blueline.html" class="post-link">Blueline: approve the change, not the download</a></p>
+        <p>Related essay: <a href="../posts/blueline-v0-2-0.html" class="post-link">Your agent installs code nobody reads</a></p>
       </div>
 
       <footer class="post-footer">
-        <a href="../blog.html" class="post-back">&larr; Back to blog</a>
+        <a href="../index.html#projects" class="post-back">&larr; All projects</a>
       </footer>
     </article>
   </main>

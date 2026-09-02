@@ -170,55 +170,60 @@ function initActiveNav() {
   updateActiveNav();
 }
 
-// --- Live GitHub Stars (hide if <10 to avoid weak social proof) ---
+// --- Live GitHub Stats & Releases (cached at worker edge) ---
 async function initGitHubStats() {
-  const badgeEls = document.querySelectorAll('[data-repo]');
-  if (!badgeEls.length) return;
+  const badgeEls = document.querySelectorAll('.github-badge[data-repo]');
+  const releaseEls = document.querySelectorAll('.release-badge[data-repo]');
+  if (!badgeEls.length && !releaseEls.length) return;
 
-  let repoCache = {};
+  let statsData = null;
   try {
-    repoCache = JSON.parse(sessionStorage.getItem('gh_stars_cache') || '{}');
+    const cached = sessionStorage.getItem('gh_stats_v2');
+    if (cached) statsData = JSON.parse(cached);
   } catch (e) {}
 
-  for (const badge of badgeEls) {
-    const repo = badge.dataset.repo;
-    if (!repo) continue;
-
-    const countEl = badge.querySelector('.star-count');
-    if (!countEl) continue;
-
-    // helper to hide badge if stars <10
-    const applyStars = (n) => {
-      if (typeof n !== 'number') return;
-      if (n < 10) {
-        badge.style.display = 'none';
-        return;
-      }
-      const stars = n.toLocaleString();
-      countEl.textContent = stars;
-      badge.style.display = '';
-      repoCache[repo] = n;
-      try { sessionStorage.setItem('gh_stars_cache', JSON.stringify(repoCache)); } catch (e) {}
-    };
-
-    if (repoCache[repo] !== undefined) {
-      const cached = repoCache[repo];
-      const num = typeof cached === 'number' ? cached : parseInt(String(cached).replace(/,/g,''),10);
-      if (!isNaN(num) && num < 10) badge.style.display = 'none';
-      else if (!isNaN(num)) countEl.textContent = typeof cached === 'number' ? num.toLocaleString() : cached;
-      else countEl.textContent = cached;
-      if (!isNaN(num) && num < 10) continue;
-      continue;
-    }
-
+  if (!statsData) {
     try {
-      const res = await fetch(`https://api.github.com/repos/${repo}`);
+      const res = await fetch('/api/github-stats');
       if (res.ok) {
-        const data = await res.json();
-        if (typeof data.stargazers_count === 'number') applyStars(data.stargazers_count);
+        statsData = await res.json();
+        try { sessionStorage.setItem('gh_stats_v2', JSON.stringify(statsData)); } catch (e) {}
       }
     } catch (e) {}
   }
+
+  // Update star badges
+  badgeEls.forEach(badge => {
+    const repo = badge.dataset.repo;
+    const countEl = badge.querySelector('.star-count');
+    if (!repo || !countEl) return;
+
+    if (statsData && statsData[repo] && typeof statsData[repo].stars === 'number') {
+      const n = statsData[repo].stars;
+      if (n < 10) {
+        badge.style.display = 'none';
+      } else {
+        countEl.textContent = n.toLocaleString();
+        badge.style.display = '';
+      }
+    }
+  });
+
+  // Update release badges
+  releaseEls.forEach(badge => {
+    const repo = badge.dataset.repo;
+    const tagEl = badge.querySelector('.release-tag');
+    if (!repo || !tagEl) return;
+
+    if (statsData && statsData[repo] && statsData[repo].release) {
+      tagEl.textContent = statsData[repo].release;
+      if (statsData[repo].releaseUrl) {
+        badge.href = statsData[repo].releaseUrl;
+      }
+      badge.innerHTML = `<span class="release-dot"></span> <span class="release-tag">${statsData[repo].release}</span>`;
+      badge.style.display = 'inline-flex';
+    }
+  });
 }
 
 // --- Copy Command Snippets ---
@@ -476,21 +481,157 @@ function initListSearch(config) {
   let currentTag = 'all';
   let searchQuery = '';
 
+  function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function highlightTokens(text, tokens) {
+    if (!tokens || !tokens.length || !text) return text;
+    const pattern = new RegExp(`(${tokens.map(escapeRegex).join('|')})`, 'gi');
+    return text.replace(pattern, '<mark class="search-highlight">$1</mark>');
+  }
+
+  function getMatchSnippet(lines, fallbackText, tokens) {
+    if (!tokens || !tokens.length) return fallbackText;
+
+    let matchedLine = '';
+    if (lines && lines.length) {
+      for (const line of lines) {
+        const lower = line.toLowerCase();
+        if (tokens.some(t => lower.includes(t))) {
+          matchedLine = line;
+          break;
+        }
+      }
+    }
+
+    const target = matchedLine || fallbackText || '';
+    if (!target) return '';
+
+    const lower = target.toLowerCase();
+    let firstIdx = -1;
+    let matchLen = 0;
+    for (const t of tokens) {
+      const idx = lower.indexOf(t);
+      if (idx !== -1 && (firstIdx === -1 || idx < firstIdx)) {
+        firstIdx = idx;
+        matchLen = t.length;
+      }
+    }
+
+    if (firstIdx === -1) return target;
+
+    // Window around match
+    const start = Math.max(0, firstIdx - 50);
+    const end = Math.min(target.length, firstIdx + matchLen + 75);
+    let snippet = target.slice(start, end).trim();
+    if (start > 0) snippet = '...' + snippet;
+    if (end < target.length) snippet = snippet + '...';
+
+    return snippet;
+  }
+
+  // Preload & index lines for search
+  items.forEach(item => {
+    const titleEl = item.querySelector('.writing-title, .rant-title');
+    const excerptEl = item.querySelector('.writing-excerpt');
+    const bodyEl = item.querySelector('.rant-body');
+
+    item._titleEl = titleEl;
+    item._excerptEl = excerptEl;
+    item._bodyEl = bodyEl;
+
+    item._originalTitle = titleEl ? titleEl.textContent : '';
+    item._originalExcerpt = excerptEl ? excerptEl.textContent : (item.dataset.excerpt || '');
+    item._originalParagraphs = bodyEl ? Array.from(bodyEl.querySelectorAll('p')).map(p => p.textContent) : [];
+
+    item._contentLines = [];
+    if (item._originalParagraphs.length) {
+      item._contentLines = [...item._originalParagraphs];
+    }
+
+    const link = item.tagName === 'A' ? item : item.querySelector('a');
+    if (link && link.href) {
+      fetch(link.href)
+        .then(res => res.ok ? res.text() : '')
+        .then(html => {
+          if (!html) return;
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const postBody = doc.querySelector('.post-body');
+          if (postBody) {
+            item._contentLines = Array.from(postBody.querySelectorAll('p, h2, li'))
+              .map(el => el.textContent.trim())
+              .filter(Boolean);
+            item.dataset.fullContent = item._contentLines.join(' ').toLowerCase();
+          } else {
+            item.dataset.fullContent = doc.body.textContent.toLowerCase();
+          }
+          if (searchQuery.trim()) {
+            filter();
+          }
+        })
+        .catch(() => {});
+    }
+  });
+
   function filter() {
     let visibleCount = 0;
     const query = searchQuery.trim().toLowerCase();
+    const queryTokens = query ? query.split(/\s+/).filter(Boolean) : [];
 
     items.forEach(item => {
       const tags = (item.dataset.tags || '').toLowerCase();
       const text = (item.textContent || '').toLowerCase();
+      const fullContent = item.dataset.fullContent || '';
+      const haystack = tags + ' ' + text + ' ' + fullContent;
 
       const matchesTag = currentTag === 'all' || tags.includes(currentTag);
-      const matchesSearch = !query || text.includes(query);
+      const matchesSearch = queryTokens.length === 0 || queryTokens.every(token => haystack.includes(token));
 
       if (matchesTag && matchesSearch) {
         item.classList.remove('hidden');
         item.style.display = '';
         visibleCount++;
+
+        if (queryTokens.length > 0) {
+          // Highlight title
+          if (item._titleEl) {
+            item._titleEl.innerHTML = highlightTokens(escapeHtml(item._originalTitle), queryTokens);
+          }
+          // Highlight excerpt / show matching line
+          if (item._excerptEl) {
+            const snippet = getMatchSnippet(item._contentLines, item._originalExcerpt, queryTokens);
+            item._excerptEl.innerHTML = highlightTokens(escapeHtml(snippet), queryTokens);
+          }
+          // Highlight paragraphs for rants
+          if (item._bodyEl && item._originalParagraphs.length) {
+            const pEls = item._bodyEl.querySelectorAll('p');
+            pEls.forEach((p, idx) => {
+              const orig = item._originalParagraphs[idx] || p.textContent;
+              p.innerHTML = highlightTokens(escapeHtml(orig), queryTokens);
+            });
+          }
+        } else {
+          // Restore original state
+          if (item._titleEl) item._titleEl.textContent = item._originalTitle;
+          if (item._excerptEl) item._excerptEl.textContent = item._originalExcerpt;
+          if (item._bodyEl && item._originalParagraphs.length) {
+            const pEls = item._bodyEl.querySelectorAll('p');
+            pEls.forEach((p, idx) => {
+              p.textContent = item._originalParagraphs[idx] || p.textContent;
+            });
+          }
+        }
       } else {
         item.classList.add('hidden');
         item.style.display = 'none';
@@ -534,6 +675,7 @@ function initPostUtilities() {
   document.querySelectorAll('.post-action-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const action = btn.dataset.action;
+      if (!action) return;
       const labelSpan = btn.querySelector('span');
       const originalText = labelSpan ? labelSpan.textContent : '';
 
@@ -603,6 +745,53 @@ function initPrefetch() {
 // --- GitHub Recent Activity (removed - duplicate with activity graph) ---
 async function initGitHubActivity() {}
 
+// --- Dynamic Latest Essay (auto-syncs from RSS feed) ---
+async function initLatestEssay() {
+  const card = document.querySelector('.latest-note-card');
+  if (!card) return;
+
+  try {
+    const res = await fetch('/rss.xml');
+    if (!res.ok) return;
+    const text = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, 'text/xml');
+    const firstItem = xml.querySelector('channel > item');
+    if (!firstItem) return;
+
+    const title = firstItem.querySelector('title')?.textContent?.trim();
+    const link = firstItem.querySelector('link')?.textContent?.trim();
+    const desc = firstItem.querySelector('description')?.textContent?.trim();
+    const pubDateStr = firstItem.querySelector('pubDate')?.textContent?.trim();
+
+    if (!title || !link) return;
+
+    const dateEl = card.querySelector('.latest-note-date');
+    const linkEl = card.querySelector('.latest-note-link');
+    const titleEl = card.querySelector('.latest-note-title');
+    const excerptEl = card.querySelector('.latest-note-excerpt');
+
+    if (pubDateStr && dateEl) {
+      const d = new Date(pubDateStr);
+      if (!isNaN(d.getTime())) {
+        dateEl.textContent = d.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+      }
+    }
+
+    if (linkEl) {
+      try {
+        const url = new URL(link, window.location.origin);
+        linkEl.href = url.pathname.replace(/^\//, '');
+      } catch (_) {
+        linkEl.href = link;
+      }
+    }
+
+    if (titleEl) titleEl.textContent = title;
+    if (excerptEl && desc) excerptEl.textContent = desc;
+  } catch (_) {}
+}
+
 // --- Dynamic Year + Now Updated ---
 const yearEl = document.querySelector('#year');
 if (yearEl) {
@@ -626,6 +815,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initPrefetch();
   initActiveNav();
   initGitHubStats();
+  initLatestEssay();
   initCopyButtons();
   initActivityGraph();
   initReadingProgress();
@@ -633,3 +823,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initWallClock();
   initGitHubActivity();
 });
+
+
+

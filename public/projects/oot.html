@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Oot case study: a code governance engine resolving intent disputes, visibility policies, and semantic merge conflicts for multi-agent workflows.">
+  <meta name="theme-color" content="#000000">
+  <meta name="author" content="Kriday Dave">
+  <meta property="og:title" content="Oot: a court for code · Kriday Dave">
+  <meta property="og:description" content="Intent locks, visibility policies, and semantic merge verdicts for multi-agent repos. Git and Jujutsu track lines. Oot holds history so it can govern it.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://kridaydave.com/projects/oot.html">
+  <meta property="og:image" content="https://kridaydave.com/og/projects/oot.svg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Kriday Dave">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Oot: a court for code · Kriday Dave">
+  <meta name="twitter:description" content="Intent locks, visibility policies, and semantic merge verdicts for multi-agent repos.">
+  <meta name="twitter:image" content="https://kridaydave.com/og/projects/oot.svg">
+  <title>Oot · Case Study · Kriday Dave</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="../assets/epoch-mark.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="Kriday Dave · Blog" href="/rss.xml">
+  <link rel="stylesheet" href="../styles.css">
+  <script>
+    try {
+      var savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+    } catch (e) {}
+  </script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Oot: a court for code","author":{"@type":"Person","name":"Kriday Dave","url":"https://kridaydave.com"},"url":"https://kridaydave.com/projects/oot.html","image":"https://kridaydave.com/og/projects/oot.svg","keywords":"code governance, Rust, VCS, multi-agent"}</script>
+</head>
+<body>
+  <div class="reading-progress-bar" aria-hidden="true"></div>
+
+  <!-- Vertical frame lines -->
+  <div class="frame-lines" aria-hidden="true">
+    <div class="frame-line frame-line--left"></div>
+    <div class="frame-line frame-line--right"></div>
+  </div>
+
+  <!-- Fixed Navigation -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="../index.html" class="navbar-logo">Kriday</a>
+      <nav class="navbar-links" aria-label="Main navigation">
+        <a href="../index.html" class="nav-link active">Home</a>
+        <a href="../now.html" class="nav-link">Now</a>
+        <a href="../blog.html" class="nav-link">Blog</a>
+        <a href="../rants.html" class="nav-link">Rants</a>
+        <a href="../favorites.html" class="nav-link">Favorites</a>
+      </nav>
+      <div class="navbar-actions">
+        <button class="theme-toggle" type="button" aria-label="Toggle theme">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+        <div class="navbar-divider"></div>
+        <button class="menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a href="../index.html" class="nav-link active">Home</a>
+      <a href="../now.html" class="nav-link">Now</a>
+      <a href="../blog.html" class="nav-link">Blog</a>
+      <a href="../rants.html" class="nav-link">Rants</a>
+      <a href="../favorites.html" class="nav-link">Favorites</a>
+    </nav>
+  </header>
+
+  <!-- Floating Back Pill -->
+  <a href="../index.html#projects" class="floating-back-btn" aria-label="Back to projects">
+    <span class="btn-icon-wrap" aria-hidden="true">
+      <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </span>
+    <span>All projects</span>
+  </a>
+
+  <main id="top">
+    <article class="section post-section">
+      <header class="post-header">
+        <div class="post-meta-row">
+          <span class="post-tag">OOT · CASE STUDY</span>
+          <span class="post-date">RUST · VCS · 2026</span>
+        </div>
+        <h1 class="post-title">A court for code</h1>
+        <div class="post-actions-row">
+          <a class="post-action-btn" href="https://github.com/Epoch-AI-Lab/oot" target="_blank" rel="noopener noreferrer" aria-label="View Oot on GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+            <span>GitHub</span>
+          </a>
+          <button class="post-action-btn" data-action="copy-link" type="button" aria-label="Copy page link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span>Copy Link</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="post-body">
+        <p>Oot is a governance engine for repos where multiple agents write code. The one-line pitch: <strong>git and Jujutsu track lines. Oot holds history so it can govern it.</strong></p>
+
+        <pre><code>git clone https://github.com/Epoch-AI-Lab/oot</code></pre>
+
+        <h2>The problem</h2>
+
+        <p>Agents now write many of the merges. Research Oot's README cites claims code from semantic conflicts is 26x more likely to be buggy. Meanwhile git's permissions are repo-wide (file-level privacy is awkward), branches and PRs are heavyweight for machine-speed work, and text-based merges can't catch conflicts about meaning rather than lines. Two agents can edit adjacent lines without a textual conflict and still produce a program that does neither thing either of them claimed.</p>
+
+        <h2>Changes, not commits</h2>
+
+        <p>The core abstraction is the <strong>change</strong>: a delta between two snapshots, judged without a checkout or working tree. History lives natively in <code>.oot/</code>, a bare git object database plus a change-id DAG, with parents referenced by change IDs, not commit SHAs.</p>
+
+        <p>On top of that sit the governance primitives:</p>
+
+        <ul>
+          <li><strong>Visibility policy.</strong> Path- or branch-level rules like <code>private-to</code>, <code>embargo-until</code>, <code>public</code>. Privacy is treated as policy, not crypto.</li>
+          <li><strong>Intent.</strong> What a change claims to mean, checked against its actual effects.</li>
+          <li><strong>Dispute.</strong> Either visibility (a private path was touched) or meaning (two changes clash on intent).</li>
+          <li><strong>Docket.</strong> The record of the dispute, verdict, visibility, and embargo.</li>
+          <li><strong>Verdicts.</strong> <code>adjudicated</code>, <code>blocked</code>, <code>embargoed</code>, or <code>cloaked</code>.</li>
+        </ul>
+
+        <h2>How adjudication works</h2>
+
+        <p>Meaning disputes come from a structural engine built on tree-sitter parse trees across Rust, Go, JavaScript, TypeScript, TSX, and Python. Because it needs no working tree, the engine can run inside an agent's memory isolate.</p>
+
+        <p>Git stays the interchange format. A change arrives from a human on git, an agent on Jujutsu, or a model in memory; Oot checks it and prints a docket. Export is byte-identical on round-trip, and GitHub is reached through that export, not a fork of git. Embargoed security fixes follow the pattern git and GitHub already use manually, per OSSF guidance.</p>
+
+        <pre><code>oot adjudicate --base-ref main --head-ref feature/auth --repo .
+oot adjudicate --source jj --base-ref main --head-ref '@-'
+oot update --dry-run
+oot docket</code></pre>
+
+        <p>Exit code 0 means adjudicated; anything else is nonzero, so CI can gate on it the same way it gates on tests.</p>
+
+        <h2>Status</h2>
+
+        <p>Oot is a working seed that dogfoods itself: the repo's own changes are governed by Oot. Already shipped: git and Jujutsu ingestion, visibility policy with embargoes, meaning disputes, dockets, the native store, and import / record / log / status / update / gc / export with byte-identical round-trip and visibility filtering.</p>
+
+        <p>On the roadmap, deliberately held back until there are real users: hosted intent scoring (a model comparing claimed intent against the actual diff effect), quiet delivery of embargo notices to maintainers, and signature reuse on rewritten commits.</p>
+
+        <p>Repo: <a href="https://github.com/Epoch-AI-Lab/oot" class="post-link" target="_blank" rel="noopener noreferrer">github.com/Epoch-AI-Lab/oot</a></p>
+
+        <p>Related essay: <a href="../posts/multi-agent-git-chaos.html" class="post-link">Multi-agent coding loops will wreck your git history</a></p>
+      </div>
+
+      <footer class="post-footer">
+        <a href="../index.html#projects" class="post-back">&larr; All projects</a>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>Designed & Developed by <strong>Kriday Dave</strong></p>
+    <p>&copy; <span id="year"></span> All rights reserved.</p>
+  </footer>
+
+  <script src="../script.js" defer></script>
+</body>
+</html>

@@ -31,6 +31,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://kridaydave.com/posts/v5-0-0-is-live.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://kridaydave.com/posts/simplicity-is-the-new-sophistication.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -42,6 +47,21 @@
   </url>
   <url>
     <loc>https://kridaydave.com/posts/blueline-v0-2-0.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://kridaydave.com/projects/blueline.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://kridaydave.com/projects/oot.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://kridaydave.com/projects/file-organizer-mcp.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

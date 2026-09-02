@@ -1,4 +1,9 @@
 const OG_POSTS = {
+  "v5-0-0-is-live": {
+    tag: "DEV · RELEASE",
+    title: "v5.0.0 is live",
+    desc: "How a flood of stealth Ox-Alpha tokens turned into a fat-to-fit rewrite of File-Organizer-MCP.",
+  },
   "simplicity-is-the-new-sophistication": {
     tag: "DEV · ARCHITECTURE",
     title: "Simplicity is the new sophistication",
@@ -22,6 +27,24 @@ const OG_PAGES = {
   "work": { tag: "LAB NOTES", title: "Work & Lab Notes", desc: "Engineering notes and architecture decisions from the repos." },
   "rants": { tag: "RANTS", title: "Rants · Kriday Dave", desc: "Unfiltered dev takes and engineering gripes." },
   "favorites": { tag: "FAVORITES", title: "Favorites · Kriday Dave", desc: "Video games I keep coming back to." },
+};
+
+const OG_PROJECTS = {
+  "projects/blueline": {
+    tag: "CASE STUDY · BLUELINE",
+    title: "Approve the change, not the download",
+    desc: "Sandboxed installs, delta reviews against verified baselines, and a fail-closed supply chain scanner in Rust.",
+  },
+  "projects/oot": {
+    tag: "CASE STUDY · OOT",
+    title: "A court for code",
+    desc: "Intent locks, visibility policies, and semantic merge verdicts for multi-agent repos.",
+  },
+  "projects/file-organizer-mcp": {
+    tag: "CASE STUDY · MCP",
+    title: "One call instead of twenty",
+    desc: "Atomic organize_files() with dry-run gates, rollback, and 8-layer path validation for LLM agents.",
+  },
 };
 
 function esc(s) {
@@ -79,7 +102,7 @@ function ogSvg({ tag, title, desc }) {
 
 function handleOg(url) {
   const slug = url.pathname.replace(/^\/og\//, "").replace(/\.(svg|png|jpg)$/, "");
-  let data = OG_POSTS[slug] || OG_PAGES[slug];
+  let data = OG_POSTS[slug] || OG_PAGES[slug] || OG_PROJECTS[slug];
   if (!data && slug === "og-card") data = OG_PAGES["home"];
   if (!data) return null;
   const svg = ogSvg(data);
@@ -92,6 +115,76 @@ function handleOg(url) {
   });
 }
 
+const TRACKED_REPOS = [
+  "Epoch-AI-Lab/blueline",
+  "Epoch-AI-Lab/oot",
+  "kridaydave/File-Organizer-MCP",
+];
+
+async function handleGithubStats(request) {
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
+  }
+
+  const results = {};
+  await Promise.all(
+    TRACKED_REPOS.map(async (repo) => {
+      try {
+        const repoRes = await fetch(`https://api.github.com/repos/${repo}`, {
+          headers: {
+            "User-Agent": "KridayDave-Portfolio",
+            "Accept": "application/vnd.github.v3+json",
+          },
+          cf: { cacheTtl: 3600, cacheEverything: true },
+        });
+
+        let stars = null;
+        let forks = null;
+        if (repoRes.ok) {
+          const data = await repoRes.json();
+          stars = data.stargazers_count;
+          forks = data.forks_count;
+        }
+
+        let release = null;
+        let releaseUrl = null;
+        try {
+          const relRes = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
+            headers: {
+              "User-Agent": "KridayDave-Portfolio",
+              "Accept": "application/vnd.github.v3+json",
+            },
+            cf: { cacheTtl: 3600, cacheEverything: true },
+          });
+          if (relRes.ok) {
+            const relData = await relRes.json();
+            release = relData.tag_name || null;
+            releaseUrl = relData.html_url || null;
+          }
+        } catch (_) {}
+
+        results[repo] = { stars, forks, release, releaseUrl };
+      } catch (_) {
+        results[repo] = { stars: null, release: null, error: true };
+      }
+    })
+  );
+
+  return new Response(JSON.stringify(results), {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+      "Cache-Control": "public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400",
+    },
+  });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -100,6 +193,11 @@ export default {
     if (url.pathname.startsWith("/og/")) {
       const res = handleOg(url);
       if (res) return res;
+    }
+
+    // GitHub stats proxy with edge caching
+    if (url.pathname === "/api/github-stats") {
+      return handleGithubStats(request);
     }
 
     // Serve RSS with correct content-type
