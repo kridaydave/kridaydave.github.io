@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="How an accidental flood of stealth Ox-Alpha tokens turned into a fat-to-fit rewrite of File-Organizer-MCP, deleting thousands of lines into v5.0.0.">
+  <meta name="theme-color" content="#000000">
+  <meta name="author" content="Kriday Dave">
+  <meta property="og:title" content="v5.0.0 is live · Kriday Dave">
+  <meta property="og:description" content="How an accidental flood of stealth Ox-Alpha tokens turned into a fat-to-fit rewrite of File-Organizer-MCP, deleting thousands of lines into v5.0.0.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://kridaydave.com/posts/v5-0-0-is-live.html">
+  <meta property="og:image" content="https://kridaydave.com/og/v5-0-0-is-live.svg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Kriday Dave">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="v5.0.0 is live · Kriday Dave">
+  <meta name="twitter:description" content="How an accidental flood of stealth Ox-Alpha tokens turned into a fat-to-fit rewrite of File-Organizer-MCP, deleting thousands of lines into v5.0.0.">
+  <meta name="twitter:image" content="https://kridaydave.com/og/v5-0-0-is-live.svg">
+  <title>v5.0.0 is live · Kriday Dave</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="../assets/epoch-mark.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="Kriday Dave · Blog" href="/rss.xml">
+  <link rel="stylesheet" href="../styles.css">
+  <script>
+    try {
+      var savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+    } catch (e) {}
+  </script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"v5.0.0 is live","author":{"@type":"Person","name":"Kriday Dave","url":"https://kridaydave.com"},"datePublished":"2026-09-01","url":"https://kridaydave.com/posts/v5-0-0-is-live.html","image":"https://kridaydave.com/og/v5-0-0-is-live.svg","keywords":"DEV RELEASE MCP"}</script>
+</head>
+<body>
+  <div class="reading-progress-bar" aria-hidden="true"></div>
+
+  <!-- Vertical frame lines -->
+  <div class="frame-lines" aria-hidden="true">
+    <div class="frame-line frame-line--left"></div>
+    <div class="frame-line frame-line--right"></div>
+  </div>
+
+  <!-- Fixed Navigation -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="../index.html" class="navbar-logo">Kriday</a>
+      <nav class="navbar-links" aria-label="Main navigation">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../now.html" class="nav-link">Now</a>
+        <a href="../blog.html" class="nav-link active">Blog</a>
+        <a href="../rants.html" class="nav-link">Rants</a>
+        <a href="../favorites.html" class="nav-link">Favorites</a>
+      </nav>
+      <div class="navbar-actions">
+        <button class="theme-toggle" type="button" aria-label="Toggle theme">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+        <div class="navbar-divider"></div>
+        <button class="menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="../now.html" class="nav-link">Now</a>
+      <a href="../blog.html" class="nav-link active">Blog</a>
+      <a href="../rants.html" class="nav-link">Rants</a>
+      <a href="../favorites.html" class="nav-link">Favorites</a>
+    </nav>
+  </header>
+
+  <!-- Floating Back Pill -->
+  <a href="../blog.html" class="floating-back-btn" aria-label="Back to blog">
+    <span class="btn-icon-wrap" aria-hidden="true">
+      <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </span>
+    <span>Back to blog</span>
+  </a>
+
+  <main id="top">
+    <article class="section post-section">
+      <header class="post-header">
+        <div class="post-meta-row">
+          <span class="post-tag">DEV · RELEASE</span>
+          <span class="post-date">SEP 1, 2026</span>
+          <span class="post-read-time">7 min read</span>
+        </div>
+        <h1 class="post-title">v5.0.0 is live</h1>
+        <div class="post-actions-row">
+          <button class="post-action-btn" data-action="copy-link" type="button" aria-label="Copy post link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span>Copy Link</span>
+          </button>
+          <button class="post-action-btn" data-action="copy-markdown" type="button" aria-label="Copy post text">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span>Copy Text</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="post-body">
+        <p>v5.0.0 of <a href="https://github.com/kridaydave/File-Organizer-MCP" class="post-link" target="_blank" rel="noopener noreferrer">File-Organizer-MCP</a> is officially live on npm. But the real reason this release exists is basically an accident of timing.</p>
+
+        <p>A few days ago, Z.ai quietly dropped their GLM-5.3-Flash model under stealth as Ox-Alpha. Along with it came a massive flood of free tokens. At the time, I was locked in on building <a href="https://github.com/Epoch-AI-Lab/blueline" class="post-link" target="_blank" rel="noopener noreferrer">Blueline</a> in Rust, but when you are sitting on a mountain of free inference, it starts burning a hole in your pocket. I wanted an excuse to see what the model could actually do on messy, real-world code.</p>
+
+        <p>Around the same time, the whole timeline was losing its mind over Bun using Claude to rewrite 500,000 lines of Zig into Rust for $165,000. I looked at that and thought, why shouldn't I do a rewrite of my own? Except I did not need a $165,000 bill or a Rust ego trip nor did i have that. What I actually needed was to open up my first real open-source repo and aggressively gut the over-engineered TypeScript Frankenstein I built when I was first learning.</p>
+
+        <h2>Joining the cool kids club</h2>
+
+        <p>There is this running joke in tech that senior engineers measure their value by how much code they delete. You hear people talk about PRs with negative ten thousand lines like it is the official gateway into the cool kids club.</p>
+
+        <p>Except in my case, there was no 20-year staff engineer carefully pruning a monorepo. It was just a degenerate vibe-coder larping as a dev, feeding messy prompts into Ox-Alpha at 2 AM and watching thousands of lines of boilerplate get deleted in real time.</p>
+
+        <p>And honestly, it felt incredible. The original repo had ballooned into nearly 35,000 lines spread across 27 separate services. When you are learning Node and TypeScript on the fly, your immediate instinct is to create a brand new service class for every single shower thought. You wrap basic filesystem calls in three layers of architecture because you think that is what serious software looks like. Deleting whole directories of that fluff and watching the codebase shrink down to raw, focused tools was pure relief.</p>
+
+        <h2>Fuck around and find out, carefully</h2>
+
+        <p>I didn't have a bunch of users ready with machetes on my neck. It was just a fat-to-fit transformation for the codebase.</p>
+
+        <p>At the same time, this isn't a frontend web app where a bug just means a button renders funny. An MCP server has permission to move real files on your actual hard drive. It was mainly the fear of me being responsible for someone running a <code>rm -rf /*</code> on their machine, basically. If a filesystem tool glitches, it eats your documents or overwrites a project you spent three months building.</p>
+
+        <p>I was so paranoid about security and regressions that I had automated path traversal fuzzing and race-condition gates running on every change. I am one of the 7% gigachads who use Linux (arch btw) so people on Mac and Windows might not get the same native love, but that's what GitHub issues are for :/</p>
+
+        <h2>The anticlimactic npm saga</h2>
+
+        <p>Right before shipping, I thought I had hit a genuine wall. During my migration from Windows to Linux, I managed to lose access to my original npm account. I had already accepted my fate. I assumed the account was gone forever, that I would have to fork my own package, publish v5 under some garbage alternate name, and strand existing users on 3.4.2.</p>
+
+        <p>I had mentally prepared for a whole administrative headache. Then I hit "forgot password", checked my email, and got the account back in thirty seconds lol. No drama, no fork, same package name.</p>
+
+        <h2>Your code isn't as important as you think</h2>
+
+        <p>If there is one piece of advice I took away from this whole rewrite, it is that your code isn't as important as you think.</p>
+
+        <p>When you start out, you fall in love with your own complexity. You get emotionally attached to your 27 services, your clever helper classes, and your shiny abstractions. You convince yourself that writing more lines of code means you are doing real engineering. But nobody is framing your TypeScript files on their wall.</p>
+
+        <p>Your agents don't think that your 15 abstractions for a simple <code>read_file()</code> are cool, they'll shame you if they had access to social media. The question you should ask isn't "Can I afford to make my code simpler", the question is "Can you afford not to?"</p>
+
+        <p>v5.0.0 is live on npm. 22 tools, zero session baggage, and a codebase lean enough that I can actually read it without getting a headache.</p>
+
+        <div class="project-cmd" data-copy="npm install -g file-organizer-mcp" title="Click to copy">
+          <code>npm install -g file-organizer-mcp</code>
+          <button class="copy-btn" type="button" aria-label="Copy install command">
+            <svg class="icon-copy" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <svg class="icon-check" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
+
+        <p>Point your client at it and go clean something up.</p>
+      </div>
+
+      <footer class="post-footer">
+        <a href="../blog.html" class="post-back">&larr; Back to blog</a>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>Designed & Developed by <strong>Kriday Dave</strong></p>
+    <p>&copy; <span id="year"></span> All rights reserved.</p>
+  </footer>
+
+  <script src="../script.js" defer></script>
+</body>
+</html>

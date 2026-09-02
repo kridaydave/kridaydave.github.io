@@ -14,6 +14,15 @@
       <link>https://kridaydave.com/</link>
     </image>
     <item>
+      <title>v5.0.0 is live</title>
+      <description>How an accidental flood of stealth Ox-Alpha tokens turned into a fat-to-fit rewrite of File-Organizer-MCP, deleting thousands of lines into v5.0.0.</description>
+      <link>https://kridaydave.com/posts/v5-0-0-is-live.html</link>
+      <guid isPermaLink="true">https://kridaydave.com/posts/v5-0-0-is-live.html</guid>
+      <pubDate>Tue, 01 Sep 2026 00:00:00 GMT</pubDate>
+      <category>DEV · RELEASE</category>
+      <content:encoded><![CDATA[How an accidental flood of stealth Ox-Alpha tokens turned into a fat-to-fit rewrite of File-Organizer-MCP, deleting thousands of lines into v5.0.0. Full post at https://kridaydave.com/posts/v5-0-0-is-live.html]]></content:encoded>
+    </item>
+    <item>
       <title>Simplicity is the new sophistication</title>
       <description>How an 8GB downloads folder turned into a bloated 27-service server, and how the v5 rewrite stripped it back to raw primitives.</description>
       <link>https://kridaydave.com/posts/simplicity-is-the-new-sophistication.html</link>

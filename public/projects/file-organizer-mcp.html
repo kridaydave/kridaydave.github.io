@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="File Organizer MCP case study: one atomic organize call with dry-run safety gates, rollback, and 8-layer path validation for LLM agents.">
+  <meta name="theme-color" content="#000000">
+  <meta name="author" content="Kriday Dave">
+  <meta property="og:title" content="File Organizer MCP: one call instead of twenty · Kriday Dave">
+  <meta property="og:description" content="Atomic organize_files() with dry-run gates, rollback, and 8-layer path validation for LLM agents.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://kridaydave.com/projects/file-organizer-mcp.html">
+  <meta property="og:image" content="https://kridaydave.com/og/projects/file-organizer-mcp.svg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Kriday Dave">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="File Organizer MCP: one call instead of twenty · Kriday Dave">
+  <meta name="twitter:description" content="Atomic organize_files() with dry-run gates, rollback, and 8-layer path validation for LLM agents.">
+  <meta name="twitter:image" content="https://kridaydave.com/og/projects/file-organizer-mcp.svg">
+  <title>File Organizer MCP · Case Study · Kriday Dave</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="../assets/epoch-mark.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="Kriday Dave · Blog" href="/rss.xml">
+  <link rel="stylesheet" href="../styles.css">
+  <script>
+    try {
+      var savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+    } catch (e) {}
+  </script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"File Organizer MCP: one call instead of twenty","author":{"@type":"Person","name":"Kriday Dave","url":"https://kridaydave.com"},"url":"https://kridaydave.com/projects/file-organizer-mcp.html","image":"https://kridaydave.com/og/projects/file-organizer-mcp.svg","keywords":"MCP, TypeScript, filesystem, LLM agents"}</script>
+</head>
+<body>
+  <div class="reading-progress-bar" aria-hidden="true"></div>
+
+  <!-- Vertical frame lines -->
+  <div class="frame-lines" aria-hidden="true">
+    <div class="frame-line frame-line--left"></div>
+    <div class="frame-line frame-line--right"></div>
+  </div>
+
+  <!-- Fixed Navigation -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="../index.html" class="navbar-logo">Kriday</a>
+      <nav class="navbar-links" aria-label="Main navigation">
+        <a href="../index.html" class="nav-link active">Home</a>
+        <a href="../now.html" class="nav-link">Now</a>
+        <a href="../blog.html" class="nav-link">Blog</a>
+        <a href="../rants.html" class="nav-link">Rants</a>
+        <a href="../favorites.html" class="nav-link">Favorites</a>
+      </nav>
+      <div class="navbar-actions">
+        <button class="theme-toggle" type="button" aria-label="Toggle theme">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+        <div class="navbar-divider"></div>
+        <button class="menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a href="../index.html" class="nav-link active">Home</a>
+      <a href="../now.html" class="nav-link">Now</a>
+      <a href="../blog.html" class="nav-link">Blog</a>
+      <a href="../rants.html" class="nav-link">Rants</a>
+      <a href="../favorites.html" class="nav-link">Favorites</a>
+    </nav>
+  </header>
+
+  <!-- Floating Back Pill -->
+  <a href="../index.html#projects" class="floating-back-btn" aria-label="Back to projects">
+    <span class="btn-icon-wrap" aria-hidden="true">
+      <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </span>
+    <span>All projects</span>
+  </a>
+
+  <main id="top">
+    <article class="section post-section">
+      <header class="post-header">
+        <div class="post-meta-row">
+          <span class="post-tag">FILE ORGANIZER MCP · CASE STUDY</span>
+          <span class="post-date">TYPESCRIPT · MCP · V5.0.0</span>
+        </div>
+        <h1 class="post-title">One call instead of twenty</h1>
+        <div class="post-actions-row">
+          <a class="post-action-btn" href="https://github.com/kridaydave/File-Organizer-MCP" target="_blank" rel="noopener noreferrer" aria-label="View File Organizer MCP on GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+            <span>GitHub</span>
+          </a>
+          <button class="post-action-btn" data-action="copy-link" type="button" aria-label="Copy page link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span>Copy Link</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="post-body">
+        <p>File Organizer MCP is a local-first filesystem server for LLM agents, and my most-used open source project with 43 stars, six forks, and enough real usage to force four major versions. Its core bet: generic filesystem MCP servers make assistants chain twenty primitive calls (read, write, rename, mkdir…), and every extra call costs tokens and invites a path error. This server replaces the chain with one atomic operation.</p>
+
+        <pre><code>npx file-organizer-mcp --setup</code></pre>
+
+        <h2>One atomic call</h2>
+
+        <p>The centerpiece is <code>organize_files()</code>: a single call that runs the whole scan → categorize → plan → move pipeline atomically. If something fails partway, the operation rolls back instead of leaving your Downloads folder half-shuffled. Conflict strategies are explicit: <code>rename</code>, <code>skip</code>, or <code>overwrite</code> with backup, and dry-run previews show the plan before anything moves.</p>
+
+        <p>The organization itself is smarter than folder shuffling:</p>
+
+        <ul>
+          <li>12+ file type categories, with per-type strategies</li>
+          <li>Photos organized by EXIF date into <code>YYYY/MM/DD</code> folders; music by ID3 tags into <code>Artist/Album/Title</code></li>
+          <li>Duplicate detection via SHA-256 content hashing, scored by location, name quality, and age before you choose what to delete</li>
+          <li>A security-screening workflow that flags sensitive metadata, like GPS coordinates in photos, for redaction</li>
+        </ul>
+
+        <h2>The safety model</h2>
+
+        <p>Handing an agent filesystem access is the whole point and the whole risk, so the server is paranoid by construction:</p>
+
+        <ul>
+          <li>Whitelist-based directory access; external drives require an explicit <code>allowExternalVolumes</code> opt-in</li>
+          <li>System paths always blocked, with 8-layer path validation, symlink attack protection, and TOCTOU mitigation</li>
+          <li>Resource limits so a runaway agent can't DoS the machine</li>
+          <li>Undo and history tools, so mistakes are reversible</li>
+        </ul>
+
+        <h2>What v5 taught me</h2>
+
+        <p>v5.0.0 was a ground-up rewrite: stateless MCP protocol, 22 tools, a registry where adding a tool means one file and one line. The interesting lessons weren't about files. They were about shipping: a case-collision bug that ate files, a dead error branch, and required checks pointing at a deleted workflow, all caught in merge week. I wrote the full shipping log in the essays below.</p>
+
+        <p>There's also a companion <code>file-organizer-watch</code> daemon for cron-based scheduled organizing, keeping the stdio server itself stateless.</p>
+
+        <h2>Try it</h2>
+
+        <pre><code>npm i -g file-organizer-mcp
+npx file-organizer-mcp --setup</code></pre>
+
+        <p>The setup wizard auto-detects Claude Desktop, Cursor, Windsurf, and Cline. Then just ask your assistant to "organize my Downloads folder". Requires Node.js 18+. Windows, macOS, and Linux.</p>
+
+        <p>Repo and docs: <a href="https://github.com/kridaydave/File-Organizer-MCP" class="post-link" target="_blank" rel="noopener noreferrer">github.com/kridaydave/File-Organizer-MCP</a></p>
+
+        <p>Related essays: <a href="../posts/simplicity-is-the-new-sophistication.html" class="post-link">Simplicity is the new sophistication</a> · <a href="../posts/v5-0-0-is-live.html" class="post-link">v5.0.0 is live</a></p>
+      </div>
+
+      <footer class="post-footer">
+        <a href="../index.html#projects" class="post-back">&larr; All projects</a>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>Designed & Developed by <strong>Kriday Dave</strong></p>
+    <p>&copy; <span id="year"></span> All rights reserved.</p>
+  </footer>
+
+  <script src="../script.js" defer></script>
+</body>
+</html>
