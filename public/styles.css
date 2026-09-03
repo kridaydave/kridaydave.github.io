@@ -2692,3 +2692,35 @@ html:not(.dark) .floating-back-btn {
   display: inline-block;
 }
 
+/* --- Uses inline logo pairs (name + mark, light chips for dark-mode legibility) --- */
+.uses-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.logo-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  background: #fff;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  flex-shrink: 0;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 7px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: 0.02em;
+}
+.logo-chip img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  display: block;
+}
+

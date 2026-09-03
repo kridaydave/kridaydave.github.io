@@ -27,6 +27,7 @@ const OG_PAGES = {
   "work": { tag: "LAB NOTES", title: "Work & Lab Notes", desc: "Engineering notes and architecture decisions from the repos." },
   "rants": { tag: "RANTS", title: "Rants · Kriday Dave", desc: "Unfiltered dev takes and engineering gripes." },
   "favorites": { tag: "FAVORITES", title: "Favorites · Kriday Dave", desc: "Video games I keep coming back to." },
+  "uses": { tag: "USES", title: "Uses · Kriday Dave", desc: "Tools, stack, and setup I use to build." },
 };
 
 const OG_PROJECTS = {
