@@ -36,6 +36,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://kridaydave.com/posts/t4-cuda-update-01.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://kridaydave.com/posts/v5-0-0-is-live.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

@@ -306,18 +306,26 @@ async function initActivityGraph() {
     cell.dataset.date = formattedDate;
     cell.dataset.count = String(item.count);
 
-    cell.addEventListener('mouseenter', () => {
+    const showTooltip = () => {
       const c = item.count;
       tooltip.textContent = `${c === 0 ? 'No' : c} contribution${c === 1 ? '' : 's'} on ${formattedDate}`;
       const cellRect = cell.getBoundingClientRect();
       const wrapRect = wrap.getBoundingClientRect();
-      tooltip.style.left = `${cellRect.left - wrapRect.left + (cellRect.width / 2)}px`;
+      // left is relative to the wrap's content box, which shifts with horizontal scroll
+      tooltip.style.left = `${cellRect.left - wrapRect.left + wrap.scrollLeft + (cellRect.width / 2)}px`;
       tooltip.style.top = `${cellRect.top - wrapRect.top - 8}px`;
       tooltip.classList.add('visible');
-    });
-
-    cell.addEventListener('mouseleave', () => {
+    };
+    const hideTooltip = () => {
       tooltip.classList.remove('visible');
+    };
+
+    cell.addEventListener('mouseenter', showTooltip);
+    cell.addEventListener('mouseleave', hideTooltip);
+    // Touch: tap toggles the tooltip, tapping elsewhere dismisses it
+    cell.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showTooltip();
     });
 
     cellsFragment.appendChild(cell);
@@ -325,6 +333,13 @@ async function initActivityGraph() {
 
   grid.innerHTML = '';
   grid.appendChild(cellsFragment);
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.activity-cell')) tooltip.classList.remove('visible');
+  });
+  wrap.addEventListener('scroll', () => {
+    tooltip.classList.remove('visible');
+  }, { passive: true });
 
   requestAnimationFrame(() => {
     wrap.scrollLeft = wrap.scrollWidth;

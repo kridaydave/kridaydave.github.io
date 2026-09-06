@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Five weeks of CUDA kernel research on free Colab T4s: measured wins, a falsified hypothesis, and a 0.5B model that learned to say I don't know.">
+  <meta name="theme-color" content="#000000">
+  <meta name="author" content="Kriday Dave">
+  <meta property="og:title" content="The t4, the tea and a bumble-bee · Kriday Dave">
+  <meta property="og:description" content="Measured kernels, a dead hypothesis, and a 0.5B model that learned to say I don't know. All on free Colab T4s.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://kridaydave.com/posts/t4-cuda-update-01.html">
+  <meta property="og:image" content="https://kridaydave.com/og/t4-cuda-update-01.svg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Kriday Dave">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The t4, the tea and a bumble-bee · Kriday Dave">
+  <meta name="twitter:description" content="Measured kernels, a dead hypothesis, and a 0.5B model that learned to say I don't know. All on free Colab T4s.">
+  <meta name="twitter:image" content="https://kridaydave.com/og/t4-cuda-update-01.svg">
+  <title>The t4, the tea and a bumble-bee · Kriday Dave</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="../assets/epoch-mark.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="Kriday Dave · Blog" href="/rss.xml">
+  <link rel="stylesheet" href="../styles.css">
+  <script>
+    try {
+      var savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+    } catch (e) {}
+  </script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"The t4, the tea and a bumble-bee","author":{"@type":"Person","name":"Kriday Dave","url":"https://kridaydave.com"},"datePublished":"2026-09-06","url":"https://kridaydave.com/posts/t4-cuda-update-01.html","image":"https://kridaydave.com/og/t4-cuda-update-01.svg","keywords":"CUDA T4 kernels quantization RL training"}</script>
+</head>
+<body>
+  <div class="reading-progress-bar" aria-hidden="true"></div>
+
+  <!-- Vertical frame lines -->
+  <div class="frame-lines" aria-hidden="true">
+    <div class="frame-line frame-line--left"></div>
+    <div class="frame-line frame-line--right"></div>
+  </div>
+
+  <!-- Fixed Navigation -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="../index.html" class="navbar-logo">Kriday</a>
+      <nav class="navbar-links" aria-label="Main navigation">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../now.html" class="nav-link">Now</a>
+        <a href="../blog.html" class="nav-link active">Blog</a>
+        <a href="../rants.html" class="nav-link">Rants</a>
+        <a href="../favorites.html" class="nav-link">Favorites</a>
+      </nav>
+      <div class="navbar-actions">
+        <button class="theme-toggle" type="button" aria-label="Toggle theme">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+        <div class="navbar-divider"></div>
+        <button class="menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="../now.html" class="nav-link">Now</a>
+      <a href="../blog.html" class="nav-link active">Blog</a>
+      <a href="../rants.html" class="nav-link">Rants</a>
+      <a href="../favorites.html" class="nav-link">Favorites</a>
+    </nav>
+  </header>
+
+  <!-- Floating Back Pill -->
+  <a href="../blog.html" class="floating-back-btn" aria-label="Back to blog">
+    <span class="btn-icon-wrap" aria-hidden="true">
+      <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </span>
+    <span>Back to blog</span>
+  </a>
+
+  <main id="top">
+    <article class="section post-section">
+      <header class="post-header">
+        <div class="post-meta-row">
+          <span class="post-tag">CUDA · RESEARCH</span>
+          <span class="post-date">SEP 6, 2026</span>
+          <span class="post-read-time">9 min read</span>
+        </div>
+        <h1 class="post-title">The t4, the tea and a bumble-bee</h1>
+        <div class="post-actions-row">
+          <button class="post-action-btn" data-action="copy-link" type="button" aria-label="Copy post link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span>Copy Link</span>
+          </button>
+          <button class="post-action-btn" data-action="copy-markdown" type="button" aria-label="Copy post text">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span>Copy Text</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="post-body">
+        <p>Modern inference engines have a type. vLLM, Marlin, FlashInfer, they all assume Ampere or newer. They hardcode hardware primitives that Turing never had, things like <code>cp.async</code> for async memory copies and matrix shapes built for third-generation <span class="term" tabindex="0" data-term="Specialized matrix-math units inside the SM. A T4 carries 320 of them, but only second-generation ones.">tensor cores</span>. Run them on a Tesla T4 and you get a crash, or worse, a silent fallback to plain PyTorch.</p>
+
+        <p>Meanwhile, the T4 is everywhere. Google Colab hands you one for free. AWS g4dn, GCP, Azure all rent them by the hour. It's a 2018 card: 40 <span class="term" tabindex="0" data-term="The GPU's repeating compute units. A T4 has 40 of them; everything you run is spread across these.">SMs</span>, 320 tensor cores, 16 GB of GDDR6.</p>
+
+        <p>So the question we gave ourselves at Epoch was blunt: is a free, old datacenter card, oblivious to what we'd do with it, enough for real kernel research and real training? Not toy benchmarks. Measured kernels, honest baselines, results you can replicate. Five weeks in, with a bunch of procrastination and coffee, we have an answer, and it's mostly yes with two interesting exceptions.</p>
+
+        <h2>House rules</h2>
+
+        <p>Before any numbers, the house rules. Every number we print gets a tag at birth: MEASURED means a CUDA event on real silicon, ESTIMATED means a model applied to measured inputs, ARITHMETIC means pure byte counting where no kernel exists yet. Benchmarks stay blocked until correctness tests pass, because a fast kernel that computes wrong answers is just wrong, quickly. And every comparison prints its clock state, so a speedup can't hide inside a fan curve.</p>
+
+        <p>Everything we ran falls under a numbered hypothesis. The full register, so you can hold us to it:</p>
+
+        <table>
+          <thead>
+            <tr><th>#</th><th>Hypothesis</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>H1</td><td>128-bit vector loads and swizzle math</td></tr>
+            <tr><td>H2</td><td>Register double-buffering software pipeline</td></tr>
+            <tr><td>H3</td><td>Fused FlashAttention-2 sub-tile FP16 kernel</td></tr>
+            <tr><td>H4</td><td>Signed INT4 two's-complement LOP3 unpacking</td></tr>
+            <tr><td>H5</td><td>70W power-aware occupancy capping</td></tr>
+            <tr><td>H6</td><td>Fused backward GEMM + inline AdamW</td></tr>
+            <tr><td>H7</td><td>Signed INT3 LOP3 dequantization</td></tr>
+            <tr><td>H8</td><td>Software warp specialization split-K</td></tr>
+            <tr><td>H9</td><td>FP8 emulation on FP16 tensor cores</td></tr>
+            <tr><td>H10&ndash;16</td><td>Extended microarchitecture frontiers (parked)</td></tr>
+            <tr><td>H17</td><td>Fused INT3 dequant + GEMV mega-kernel</td></tr>
+            <tr><td>H20</td><td>Speculative decoding with an INT3 0.5B draft</td></tr>
+            <tr><td>H22</td><td>INT3/INT4 QAT pipeline for Turing</td></tr>
+            <tr><td>H23</td><td>1.58-bit ternary bit-serial LOP3 accumulation</td></tr>
+            <tr><td>H24</td><td>In-register persistent KV-cache stashing</td></tr>
+            <tr><td>H25</td><td>Constant-bank scale streaming for sub-byte dequant</td></tr>
+            <tr><td>H27</td><td>Rotation-fused MXFP4 weights / FP16 activations GEMV</td></tr>
+            <tr><td>H28</td><td>Position-aware speculative tree shaping</td></tr>
+            <tr><td>H29</td><td>Ternary weights &times; INT4 activations serving kernels</td></tr>
+            <tr><td>H30</td><td>Compiler-generated warp specialization for pre-async GPUs</td></tr>
+          </tbody>
+        </table>
+
+        <h2>What worked</h2>
+
+        <p>Two ideas carried the whole stack, and both survived contact with real hardware.</p>
+
+        <p>The first is how you turn a 4-bit weight into a number a GPU can multiply. <span class="term" tabindex="0" data-term="Recovering the original float values from quantized integers. Quantization packs weights into 4-bit integers to save memory; dequantization unpacks them at compute time.">Dequantization</span> is normally dull: unpack the nibble, convert integer to float, multiply by a scale. That integer-to-float conversion costs about 20 <span class="term" tabindex="0" data-term="The GPU's actual assembly language: the machine instructions that physically execute on the card.">SASS</span> instructions. H4, our signed INT4 path, uses a trick instead: take the packed nibble and OR it into the <span class="term" tabindex="0" data-term="The part of a floating-point number that stores the significant digits. Stuffing bits here makes them appear as a usable value.">mantissa</span> of a half-float preloaded with a magic exponent, 0x6400. The nibble wakes up inside a ready-made float, 1024 plus q, no conversion pipe involved. Twenty instructions drop to eight. The signed case is prettier: one <span class="term" tabindex="0" data-term="A single CUDA instruction that computes any bitwise function of three inputs, chosen by a lookup table. One cycle.">LOP3</span> with lookup table 0x6A flips the sign bit and inserts the exponent in the same instruction. Bit-exact against known-answer vectors, 23 of 23 tests passing, and the INT3 variant pushes ~332 GB/s against the card's 320 GB/s spec. That last number is the sound of a kernel limited by physics, not by us.</p>
+
+        <p>The second, H6, is a training kernel. A normal backward pass writes gradients to <span class="term" tabindex="0" data-term="The GPU's main memory, 16 GB of GDDR6 here. Big but slow next to on-chip storage.">DRAM</span>, the optimizer reads them back, updates the weights, writes them again. Count the bytes and every parameter costs 28 bytes of memory traffic per step. H6 keeps the gradient accumulator in <span class="term" tabindex="0" data-term="Storage physically inside the SM. Orders of magnitude faster than main memory, and tiny.">registers</span> while the <span class="term" tabindex="0" data-term="General matrix multiply. The operation neural networks are made of.">GEMM</span>'s inner loop runs, then applies <span class="term" tabindex="0" data-term="The standard optimizer that updates network weights during training.">AdamW</span> in-register before anything touches memory. 22 bytes per parameter, a 21.4% cut, measured at 1.94x against eager PyTorch on the first card, and a compiled baseline is a gate we still owe this kernel. Then, because one T4 proving something proves nothing, we re-ran the whole suite on a second physical card. 2.02x. Same result, different silicon.</p>
+
+        <h2>The bug the tests missed</h2>
+
+        <p>Then came the bug that taught us more than any speedup did.</p>
+
+        <p>We wired the INT4 kernel into real generation and the model produced garbage. Not slightly worse text. Garbage. Token agreement with the fp16 model was 12%, which for a language model is a coin flip with extra steps.</p>
+
+        <p>Here's the confusing part: the kernel passed every test. Bit-exact against known answers, error gates green. The tests compared the kernel against a Python reference implementation, and the Python reference did the same math the kernel did. In the <span class="term" tabindex="0" data-term="The final stage of a kernel, where results are finalized after the main compute loop.">epilogue</span>, we had folded the (&minus;1024 &minus; zero-point) &times; scale correction into an <span class="term" tabindex="0" data-term="Fused multiply-add: one instruction computing a&times;b+c, with no rounding between the multiply and the add.">fp16 FMA</span>. That means (1024 + q) &times; scale gets rounded to fp16 before the 1024 ever cancels out. At magnitude 1024, fp16's <span class="term" tabindex="0" data-term="Unit in the last place: the gap between two adjacent floating-point numbers at a given magnitude. At 1024, fp16's gap is exactly 1.0.">ulp</span> is 1.0, so every weight carries about 1.0 of absolute noise no matter how small its scale is. Across an inner dimension of 896 with real activations, the noise is the signal. The tests never caught it because the reference made the same rounding mistake. Same blind spot on both sides of the comparison.</p>
+
+        <p>The fix takes two sentences to describe. First, keep the unpack exact: accumulate S1 = &Sigma;(1024+q)&middot;a and S2 = &Sigma;a in fp32, then reconstruct the correction in the epilogue instead of folding it in early. Second, do the multiply in fp32, not fp16, because products at magnitude 1024 round with ulp &asymp; 1.0 and that noise survives the cancellation. The first change alone still left 13% error. After the second, 0.04% relative error against the exact reference.</p>
+
+        <p>The lesson is one we keep re-learning: a test is only as good as the independence of its reference. Ours wasn't.</p>
+
+        <h2>The hypothesis we loved</h2>
+
+        <p>Every lab has the hypothesis it loves. H5 was ours.</p>
+
+        <p>The idea was clean. A T4 is passively cooled on a 70W budget, and if you launch kernels at 100% <span class="term" tabindex="0" data-term="How much of the SM's compute resources are actively in use. More is not always better.">occupancy</span>, the card heats, clocks sag from 1590 MHz toward 950, and you lose throughput to the fan curve. So cap occupancy at 25% during heavy prefill, let the card breathe, and the <span class="term" tabindex="0" data-term="The GPU's maximum designed clock speed, reached when power and thermal headroom allow.">boost clock</span> stays locked. In July this verified beautifully. A microbenchmark at full occupancy sagged to 1193 MHz; the capped version held 1590 and finished sooner. We were sure we'd found a free lunch specific to power-starved cards.</p>
+
+        <p>Five weeks later, under real <span class="term" tabindex="0" data-term="Group Relative Policy Optimization. A reinforcement learning method where the model generates several answers per question and learns from the spread of their rewards.">GRPO</span> training load, it died. We locked the clock at 1590 with nvidia-smi, started training, and watched the card's own sensors report 1485 MHz at 66 of 70 watts, throttle reason SW_POWER_CAP. The driver accepted our lock and then couldn't honor it, because the card didn't have the watts. The moment we killed the training process, clocks snapped back to 1590 at 44W idle. The villain was never thermals. It's the power budget itself.</p>
+
+        <p>Did the capping at least help? Step time with the lock: 13.1 seconds. Without: 12.9 to 13.2. Statistically identical. For sustained training on Colab T4s, H5 is dead. It might still hold for bursty kernels, and it might hold on hosts with different power profiles, so the register entry says exactly that instead of a flat "false". But the version of H5 we loved, the one that made our microbenchmarks look brilliant, is gone.</p>
+
+        <p>This is the part of the method we'd defend even though it cost us our favorite idea. The register doesn't grade on effort. The hypothesis made a promise about real workloads, real workloads said no, and the entry now says falsified, with a scope note. Negative results are cheap to skip and expensive to fake.</p>
+
+        <h2>Where INT4 breaks</h2>
+
+        <p>The second exception starts with a boring profiling number. Generation is 85.4% of a GRPO training step. Quantize the <span class="term" tabindex="0" data-term="The generation phase of RL training, where the model produces answers that later get scored.">rollouts</span> and training gets cheaper, obviously. The kernel was already verified, so we wired a scope that quantizes the weights when rollout starts and hands everything back to fp16 before the backward pass. Thirty steps on <span class="term" tabindex="0" data-term="Grade-school math word problems. The standard benchmark for RL with checkable answers.">GSM8K</span> ran clean: zero out-of-memory errors, 13.36 GB peak. Mechanically, a triumph.</p>
+
+        <p>Then we looked at the <span class="term" tabindex="0" data-term="The score a generated answer earns. For math, usually just: was the final number right?">rewards</span>. The fp16 baseline averaged 0.292 over 30 steps. The INT4 run averaged 0.025, roughly a twelfth of that. The model didn't crash and didn't ramble. It produced fluent answers to math problems and got them wrong at a rate that ended the experiment.</p>
+
+        <p>Here's what happened. In greedy decoding, the model picks the single most likely token, and if quantization noise is small, that pick usually stays the same. That's the regime our 1.20x speedup lived in. RL training is different: rollouts <span class="term" tabindex="0" data-term="Sampling from the model's probability distribution with added randomness, so it explores instead of always taking the top token.">sample with temperature</span>, deliberately exploring the distribution instead of riding its peak. Quantization noise doesn't just nudge the peak, it reshapes the whole distribution, and the rollout explores the reshaped one. The reward function scores answers from a model that only exists during training. Naive <span class="term" tabindex="0" data-term="Each weight snaps to its nearest 4-bit level, with no error correction. The simplest quantization there is.">round-to-nearest</span> quantization is fine for chat and fatal for chain-of-thought math.</p>
+
+        <p>A quieter finding hid in the same run. Single-sequence decode, batch size one, was 1.20x faster in INT4. Batched rollouts at 64 completions went the other way: 19.5 seconds per step versus 13.0 for fp16. At batch 64, <span class="term" tabindex="0" data-term="NVIDIA's hand-tuned matrix math library. It gets to use the tensor cores, which our custom GEMV path cannot.">cuBLAS</span> gets the tensor cores, and our <span class="term" tabindex="0" data-term="Matrix-vector multiply: the batch-size-1 case of GEMM. Our kernel's home turf.">GEMV</span> threadblocks, which parallelize along the batch, have no tensor cores and serialize across 40 SMs. Small batch: our kernel wins. Large batch: silicon wins. The regime split isn't a bug, it's the shape of the card.</p>
+
+        <p>This is the finding we'd put on the lab's door, if we had a door. Quantization papers evaluate with perplexity and greedy accuracy. Quantize a policy, and the metric that matters is reward under exploration, a metric that can collapse while every conventional one looks green. Nobody hits this failure on an H100, because nobody has to care about rollout cost there. The T4 forced the question, and the question had a real answer: quantized rollouts need calibration or a hybrid that keeps sensitive layers in fp16 before they go anywhere near RL.</p>
+
+        <h2>Speculative decoding, twice</h2>
+
+        <p><span class="term" tabindex="0" data-term="A small model quickly guesses several tokens ahead and the big model checks all the guesses in one pass. Correct guesses are free speed.">Speculative decoding</span> is the oldest idea in the stack, and it took us two builds to get right.</p>
+
+        <p>The first build was textbook. A 0.5B draft model in our INT4 format proposes up to K tokens, the 1.5B target verifies them in one forward pass, and both fit in the T4's 16 GB at the same time. The algorithm worked: at K=3, 64.2% of drafts were accepted, 2.93 tokens per target forward pass, with 100% output fidelity, the target model certifies every token so the answers can't drift. Wall-clock speedup: 0.97x. Slower than doing nothing.</p>
+
+        <p>The gap between 2.93 tokens per pass and 0.97x wall clock was glue. Each round made K+1 separate kernel calls from Python, and host-side launch overhead cost about 25 milliseconds per round, on a card where the actual math took less. The GPU was never the bottleneck. Our plumbing was.</p>
+
+        <p>So we rebuilt it as one engine. A preallocated static <span class="term" tabindex="0" data-term="The model's running memory of past tokens. Ours rolls back with a pointer instead of copying tensors.">KV cache</span> that rolls back with an O(1) pointer move instead of tensor slicing, about 14,000x faster on that operation. A prompt-lookup drafter that reuses the user's own text to propose tokens, zero forward passes, 0.0062 milliseconds per proposal. A draft head that borrows the target model's own output layer, 98% fewer parameters to store. One loop, explicit positioning, no round trips.</p>
+
+        <p>Measured on the same card: 26.6 tok/s alone, 39.3 tok/s with the engine. A 1.48x wall-clock speedup, and per-prompt it ranged from 1.14x to 2.16x depending on how predictable the text was. The lesson generalizes further than this project: an algorithmic win is not a wall-clock win until the glue is gone, and on cheap hardware, glue is most of what you have.</p>
+
+        <h2>The demo</h2>
+
+        <p>All of that rides on one question: does the stack train anything real? For the demo we picked a behavior instead of a benchmark. We wanted the smallest model that knows when it doesn't know.</p>
+
+        <p>The recipe: <span class="term" tabindex="0" data-term="A 0.5-billion-parameter model, small enough to run on a phone. Our test subject.">Qwen2.5-0.5B</span>, 30 GRPO steps, and a balanced dataset: half answerable arithmetic and facts, half impossible-premise traps. Who was president of the Atlantic Ocean in 1850? What year did Atlantis fall on Venus? The base model hallucinated through 93.3% of the traps. It would invent an answer to anything, confidently.</p>
+
+        <p>Thirty steps later: abstention jumped from 6.7% to 53.3%, an 8x increase in saying "I don't know" to impossible questions. Hallucinations cut in half. Factual accuracy on the answerable questions held, 73.3% versus 76.7% before. And the whole run cost 103 seconds of wall clock and 8.47 GB of VRAM. Under 9 GB, on a free card, in under two minutes, a model learned a behavior people usually reserve for alignment budgets.</p>
+
+        <p>It's a small result and we're proud of it anyway. Not because 53.3% abstention is a record, but because every part of it ran on the kernels described above. The stack isn't decoration. It trained the thing.</p>
+
+        <aside class="post-note">
+          <p>A note on the ones that didn't make it. Early on we planned three persona models: Albert at roughly 30B, Theo at 12B, and Eli at 4B. Only Eli was ever realistically in scope, and even that died fast, for two unglamorous reasons. The team is busy students and AI agents, and a taste judge needs a human with our taste, which the agents don't have and the students don't have time for. And we pivoted to kernel research instead, because we like math and the kernels were winning. Every week someone ships a new open model trained on hardware we will never touch, and it's hard not to wonder what we would have found in that track if we weren't compute and fund bound. We survive off of free tiers but strive ever the further to make a difference and prove a point.</p>
+        </aside>
+
+        <h2>So, do you need an H100?</h2>
+
+        <p>For some things, yes. The persona track died of compute, and no amount of cleverness fixes that. But for kernel research, the answer we found is no. The T4 can't hide anything. No headroom to waste, no thermal mass to absorb sloppy kernels, no budget to outsource your thinking to. Every inefficiency shows up on the meter, which makes it a strange and honest teacher. The big cards let you skip questions. This one makes you answer them.</p>
+
+        <p>Five weeks, two physical cards, one dead hypothesis, one dead model track, and a 0.5B model that learned to say "I don't know." The register is public, the numbers are tagged, and the repo is linked below. Turns out the bumblebee flies fine.</p>
+
+        <p><a href="https://github.com/Epoch-AI-Lab/t4-cuda" class="post-link" target="_blank" rel="noopener noreferrer">Epoch-AI-Lab/t4-cuda on GitHub</a></p>
+      </div>
+
+      <footer class="post-footer">
+        <a href="../blog.html" class="post-back">&larr; Back to blog</a>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>Designed & Developed by <strong>Kriday Dave</strong></p>
+    <p>&copy; <span id="year"></span> All rights reserved.</p>
+  </footer>
+
+  <script src="../script.js" defer></script>
+</body>
+</html>
