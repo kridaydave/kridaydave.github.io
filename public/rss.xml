@@ -6,13 +6,22 @@
     <link>https://kridaydave.com/blog.html</link>
     <atom:link href="https://kridaydave.com/rss.xml" rel="self" type="application/rss+xml" />
     <language>en-us</language>
-    <lastBuildDate>Sun, 31 Aug 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 06 Sep 2026 00:00:00 GMT</lastBuildDate>
     <generator>kridaydave.com</generator>
     <image>
       <url>https://kridaydave.com/assets/epoch-mark.svg</url>
       <title>Kriday Dave</title>
       <link>https://kridaydave.com/</link>
     </image>
+    <item>
+      <title>The t4, the tea and a bumble-bee</title>
+      <description>Five weeks of CUDA kernel research on free Colab T4s: measured wins, a falsified hypothesis, and a 0.5B model that learned to say I don't know.</description>
+      <link>https://kridaydave.com/posts/t4-cuda-update-01.html</link>
+      <guid isPermaLink="true">https://kridaydave.com/posts/t4-cuda-update-01.html</guid>
+      <pubDate>Sun, 06 Sep 2026 00:00:00 GMT</pubDate>
+      <category>CUDA · RESEARCH</category>
+      <content:encoded><![CDATA[Five weeks of CUDA kernel research on free Colab T4s: measured wins, a falsified hypothesis, and a 0.5B model that learned to say I don't know. Full post at https://kridaydave.com/posts/t4-cuda-update-01.html]]></content:encoded>
+    </item>
     <item>
       <title>v5.0.0 is live</title>
       <description>How an accidental flood of stealth Ox-Alpha tokens turned into a fat-to-fit rewrite of File-Organizer-MCP, deleting thousands of lines into v5.0.0.</description>

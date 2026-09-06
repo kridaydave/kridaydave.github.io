@@ -22,6 +22,7 @@ Kriday Dave builds developer tools and security governance systems for autonomou
   - GitHub: https://github.com/Epoch-AI-Lab
 
 ## Essays & Writing
+- [The t4, the tea and a bumble-bee](https://kridaydave.com/posts/t4-cuda-update-01.html): Five weeks of CUDA kernel research on free Colab T4s: measured wins, a falsified hypothesis, and a 0.5B model that learned to say I don't know.
 - [v5.0.0 is live](https://kridaydave.com/posts/v5-0-0-is-live.html): The v5.0.0 shipping log, covering the stateless MCP protocol, 22 tools, and the bugs caught right before merge.
 - [Simplicity is the new sophistication](https://kridaydave.com/posts/simplicity-is-the-new-sophistication.html): Architectural lessons from stripping a 27-service bloated system back to raw primitives.
 - [Multi-agent git chaos](https://kridaydave.com/posts/multi-agent-git-chaos.html): Why line-based git rebase loops fail with multi-agent swarms and how AST intent locks fix it.

@@ -1198,6 +1198,94 @@ html:not(.dark) .search-highlight {
   left: 4px;
   color: var(--text-tertiary);
 }
+.post-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+.post-body th,
+.post-body td {
+  border: 1px dashed var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+.post-body th {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+.post-body td:first-child {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  width: 76px;
+}
+.post-note {
+  border-left: 1px dashed var(--border-strong);
+  padding: 4px 0 4px 22px;
+  margin: 36px 0;
+}
+.post-note p {
+  font-style: italic;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+}
+.term {
+  position: relative;
+  border-bottom: 1px dashed var(--border-strong);
+  cursor: help;
+  outline: none;
+}
+.term::after {
+  content: attr(data-term);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  max-width: 78vw;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px dashed var(--border-strong);
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-style: normal;
+  line-height: 1.55;
+  letter-spacing: 0;
+  color: var(--text-secondary);
+  text-align: left;
+  white-space: normal;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 60;
+}
+.term::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--border-strong);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 60;
+}
+.term:hover::after,
+.term:focus::after,
+.term:hover::before,
+.term:focus::before {
+  opacity: 1;
+}
 .post-link {
   color: var(--text-primary);
   text-decoration: underline;
@@ -1799,6 +1887,12 @@ html:not(.dark) .media-filter-btn.active {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+@media (max-width: 639px) {
+  .contact-label { display: inline; font-size: 14px; }
+  .contact-arrow { display: none; }
+  .contact-link { padding: 14px 10px; }
+}
 
 /* --- Responsive --- */
 @media (min-width: 640px) {

@@ -1,4 +1,9 @@
 const OG_POSTS = {
+  "t4-cuda-update-01": {
+    tag: "CUDA · RESEARCH",
+    title: "The t4, the tea and a bumble-bee",
+    desc: "Measured kernels, a dead hypothesis, and a 0.5B model that learned to say I don't know. All on free Colab T4s.",
+  },
   "v5-0-0-is-live": {
     tag: "DEV · RELEASE",
     title: "v5.0.0 is live",
