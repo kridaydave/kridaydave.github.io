@@ -1,4 +1,9 @@
 const OG_POSTS = {
+  "em-dashes-suck": {
+    tag: "DEV · ESSAY",
+    title: "Asur, Shaitaan, Lucifer and the em-dash",
+    desc: "Why em-dashes suck, how models fell in love with them, and how AI slop broke online writing.",
+  },
   "t4-cuda-update-01": {
     tag: "CUDA · RESEARCH",
     title: "The t4, the tea and a bumble-bee",

@@ -6,13 +6,22 @@
     <link>https://kridaydave.com/blog.html</link>
     <atom:link href="https://kridaydave.com/rss.xml" rel="self" type="application/rss+xml" />
     <language>en-us</language>
-    <lastBuildDate>Sun, 06 Sep 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 19 Sep 2026 00:00:00 GMT</lastBuildDate>
     <generator>kridaydave.com</generator>
     <image>
       <url>https://kridaydave.com/assets/epoch-mark.svg</url>
       <title>Kriday Dave</title>
       <link>https://kridaydave.com/</link>
     </image>
+    <item>
+      <title>Asur, Shaitaan, Lucifer and the em-dash</title>
+      <description>Why em-dashes suck, how Claude and ChatGPT poisoned modern prose, and how AI slop writing broke our collective attention.</description>
+      <link>https://kridaydave.com/posts/em-dashes-suck.html</link>
+      <guid isPermaLink="true">https://kridaydave.com/posts/em-dashes-suck.html</guid>
+      <pubDate>Sat, 19 Sep 2026 00:00:00 GMT</pubDate>
+      <category>DEV · ESSAY</category>
+      <content:encoded><![CDATA[Why em-dashes suck, how Claude and ChatGPT poisoned modern prose, and how AI slop writing broke our collective attention. Full essay at https://kridaydave.com/posts/em-dashes-suck.html]]></content:encoded>
+    </item>
     <item>
       <title>The t4, the tea and a bumble-bee</title>
       <description>Five weeks of CUDA kernel research on free Colab T4s: measured wins, a falsified hypothesis, and a 0.5B model that learned to say I don't know.</description>
