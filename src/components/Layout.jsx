@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
+import { ArrowLeft, Menu, Moon, Sun, X } from "lucide-react";
 import { prefersReducedMotion } from "../lib/browser";
+import { cn } from "../lib/utils";
 import ReadingProgress from "./ReadingProgress";
+
+const NAV_LINK =
+  "relative py-1 text-sm font-medium text-ink-3 transition-colors hover:text-ink";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", href: "/index.html" },
@@ -27,100 +32,55 @@ const REVEAL_GROUPS = [
   ".rants-list",
 ];
 
-/** Pill in the top-left gutter: an arrow that flips to an X on hover. */
+/**
+ * Pill in the top-left gutter: an arrow that flips to an X on hover. Stays put
+ * under 640px, where it hugs the viewport edge instead of the column.
+ */
 function BackPill({ href, label }) {
   return (
-    <a href={href} className="floating-back-btn" aria-label={label}>
-      <span className="btn-icon-wrap" aria-hidden="true">
-        <svg
-          className="icon-arrow"
-          xmlns="http://www.w3.org/2000/svg"
-          width="13"
-          height="13"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <line x1="19" y1="12" x2="5" y2="12" />
-          <polyline points="12 19 5 12 12 5" />
-        </svg>
-        <svg
-          className="icon-close"
-          xmlns="http://www.w3.org/2000/svg"
-          width="13"
-          height="13"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
+    <a
+      href={href}
+      aria-label={label}
+      className="group fixed top-[60px] left-[max(14px,calc(50%-400px+16px))] z-[9999] inline-flex items-center gap-2 rounded-full border border-white/22 bg-[rgba(14,14,14,0.85)] px-3 py-1.5 font-mono text-xs tracking-[0.05em] text-white shadow-[0_4px_20px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.4)] backdrop-blur-xl backdrop-saturate-[180%] transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-px hover:border-sky-400/70 hover:bg-[rgba(26,26,26,0.95)] hover:text-sky-400 hover:shadow-[0_6px_24px_rgba(0,0,0,0.8),0_0_16px_rgba(56,189,248,0.3),inset_0_1px_1px_rgba(255,255,255,0.6)] max-[640px]:top-14 max-[640px]:left-3.5 max-[640px]:px-3 max-[640px]:py-1 max-[640px]:text-[11px] not-dark:bg-[rgba(255,255,255,0.9)] not-dark:text-[#111111] not-dark:border-black/20 not-dark:shadow-[0_4px_16px_rgba(0,0,0,0.15),inset_0_1px_1px_rgba(255,255,255,0.9)]"
+    >
+      <span className="relative inline-flex size-[13px] items-center justify-center" aria-hidden="true">
+        <ArrowLeft className="absolute inset-0 scale-100 rotate-0 opacity-100 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-50 group-hover:rotate-90 group-hover:opacity-0" />
+        <X className="absolute inset-0 scale-50 -rotate-90 text-sky-400 opacity-0 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-100 group-hover:rotate-0 group-hover:opacity-100" />
       </span>
       <span>{label}</span>
     </a>
   );
 }
 
+/**
+ * Two dashed rules framing the 800px column. The max() collapses them to the
+ * viewport edge on narrow screens, which is what the old 768px media query
+ * was doing by hand.
+ */
 function FrameLines() {
   return (
-    <div className="frame-lines" aria-hidden="true">
-      <div className="frame-line frame-line--left"></div>
-      <div className="frame-line frame-line--right"></div>
+    <div className="pointer-events-none fixed inset-0 z-[1]" aria-hidden="true">
+      <div className="absolute inset-y-0 left-[max(0px,calc(50%-400px))] w-px border-l border-dashed border-hair" />
+      <div className="absolute inset-y-0 right-[max(0px,calc(50%-400px))] w-px border-r border-dashed border-hair" />
     </div>
   );
 }
 
 function ThemeToggle({ onToggle }) {
   return (
-    <button className="theme-toggle" type="button" aria-label="Toggle theme" onClick={onToggle}>
-      <svg
-        className="icon-sun"
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="12" cy="12" r="4" />
-        <path d="M12 2v2" />
-        <path d="M12 20v2" />
-        <path d="m4.93 4.93 1.41 1.41" />
-        <path d="m17.66 17.66 1.41 1.41" />
-        <path d="M2 12h2" />
-        <path d="M20 12h2" />
-        <path d="m6.34 17.66-1.41 1.41" />
-        <path d="m19.07 4.93-1.41 1.41" />
-      </svg>
-      <svg
-        className="icon-moon"
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-      </svg>
+    <button
+      className="grid size-9 place-items-center rounded-md text-ink transition-colors hover:bg-surface-2"
+      type="button"
+      aria-label="Toggle theme"
+      onClick={onToggle}
+    >
+      <Sun className="dark:hidden" />
+      <Moon className="hidden dark:block" />
     </button>
   );
 }
 
-function Navbar({ active, homeMode }) {
+function Navbar({ active, homeMode, spyHash }) {
   const [dark, setDark] = useState(() =>
     document.documentElement.classList.contains("dark")
   );
@@ -135,56 +95,51 @@ function Navbar({ active, homeMode }) {
     setDark(next);
   };
 
+  // A plain page highlights its own nav item. On the home page the scroll spy
+  // takes over, because the hash links point at sections within one document.
+  // The nav only carries one hash link (#top), so a spy hit on #about or
+  // #contact matches nothing; fall back to Home rather than dropping the dot.
   const links = NAV_ITEMS.map((item) => {
-    const isActive = active === item.key;
-    const href =
-      homeMode && item.key === "home" ? "#top" : item.href;
+    const href = homeMode && item.key === "home" ? "#top" : item.href;
+    const isActive = homeMode ? spyHash === href || href === "#top" : active === item.key;
     return (
-      <a key={item.key} href={href} className={`nav-link${isActive ? " active" : ""}`}>
+      <a key={item.key} href={href} className={cn(NAV_LINK, isActive && "text-ink")}>
         {item.label}
+        {isActive && (
+          <span className="absolute bottom-[-2px] left-1/2 size-1 -translate-x-1/2 rounded-full bg-ink" />
+        )}
       </a>
     );
   });
 
   return (
-    <header className="navbar">
-      <div className="navbar-inner">
-        <a href={homeMode ? "#top" : "/index.html"} className="navbar-logo">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-dashed border-hair-strong bg-background backdrop-blur-[12px] animate-[slideDown_0.5s_cubic-bezier(0.2,0.8,0.2,1)_both] motion-reduce:animate-none">
+      <div className="mx-auto flex h-12 w-full max-w-column items-center justify-between border-x border-dashed border-hair px-4">
+        <a href={homeMode ? "#top" : "/index.html"} className="font-serif text-[28px] leading-none text-ink">
           Kriday
         </a>
-        <nav className="navbar-links" aria-label="Main navigation">
+        <nav className="hidden items-center gap-5 md:flex" aria-label="Main navigation">
           {links}
         </nav>
-        <div className="navbar-actions">
+        <div className="flex items-center gap-2">
           <ThemeToggle onToggle={toggleTheme} />
-          <div className="navbar-divider"></div>
+          <div className="hidden h-5 w-px bg-hair md:block" />
           <button
-            className="menu-toggle"
+            className="grid size-9 place-items-center rounded-md text-ink transition-colors hover:bg-surface-2 md:hidden"
             type="button"
             aria-label="Toggle menu"
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
+            <Menu />
           </button>
         </div>
       </div>
       <nav
-        className={`mobile-nav${open ? " open" : ""}`}
+        className={cn(
+          "flex-col border-x border-b border-dashed border-hair bg-background px-4 pt-3 pb-4 md:hidden",
+          open ? "flex" : "hidden"
+        )}
         aria-label="Mobile navigation"
         onClick={() => setOpen(false)}
       >
@@ -197,7 +152,7 @@ function Navbar({ active, homeMode }) {
 function Footer({ showUses }) {
   const year = new Date().getFullYear();
   return (
-    <footer className="site-footer">
+    <footer className="relative z-[2] mx-auto w-full max-w-column border-x border-t border-dashed border-hair bg-column px-4 pt-6 pb-8 text-center text-[13px] text-ink-3 backdrop-blur-[14px] [&_p+p]:mt-1 [&_strong]:font-semibold [&_strong]:text-ink-2">
       <p>
         Designed &amp; Developed by <strong>Kriday Dave</strong>
       </p>
@@ -273,38 +228,43 @@ function initPrefetch() {
   };
 }
 
-/* --- Active nav link on scroll (port of initActiveNav, hash links only) --- */
+/**
+ * Which hash section the reader is looking at. Returns the hash so the Navbar
+ * can render the active dot from state, rather than the old version poking
+ * classList on the DOM behind React's back.
+ */
 function useScrollSpy(enabled) {
+  const [activeHash, setActiveHash] = useState("#top");
+
   useEffect(() => {
     if (!enabled) return;
-    function updateActiveNav() {
+
+    function update() {
       const scrollPos = window.scrollY;
-      const isAtBottom =
+      const atBottom =
         scrollPos + window.innerHeight >= document.documentElement.scrollHeight - 80;
-      let activeHash = "#top";
 
-      if (isAtBottom) {
-        activeHash = "#contact";
-      } else {
-        const contactEl = document.querySelector("#contact");
-        const aboutEl = document.querySelector("#about");
-        if (contactEl && scrollPos + 180 >= contactEl.offsetTop) {
-          activeHash = "#contact";
-        } else if (aboutEl && scrollPos + 180 >= aboutEl.offsetTop) {
-          activeHash = "#about";
-        }
+      if (atBottom) {
+        setActiveHash("#contact");
+        return;
       }
-
-      document
-        .querySelectorAll('.nav-link[href^="#"]')
-        .forEach((link) =>
-          link.classList.toggle("active", link.getAttribute("href") === activeHash)
-        );
+      const contactEl = document.querySelector("#contact");
+      const aboutEl = document.querySelector("#about");
+      if (contactEl && scrollPos + 180 >= contactEl.offsetTop) {
+        setActiveHash("#contact");
+      } else if (aboutEl && scrollPos + 180 >= aboutEl.offsetTop) {
+        setActiveHash("#about");
+      } else {
+        setActiveHash("#top");
+      }
     }
-    window.addEventListener("scroll", updateActiveNav, { passive: true });
-    updateActiveNav();
-    return () => window.removeEventListener("scroll", updateActiveNav);
+
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+    return () => window.removeEventListener("scroll", update);
   }, [enabled]);
+
+  return activeHash;
 }
 
 export default function Layout({
@@ -316,19 +276,22 @@ export default function Layout({
   back = null,
   children,
 }) {
+  const spyHash = useScrollSpy(scrollSpy);
+
   useEffect(() => {
     initScrollReveal();
     return initPrefetch();
   }, []);
-  useScrollSpy(scrollSpy);
 
   return (
     <>
       {progress && <ReadingProgress />}
       <FrameLines />
-      <Navbar active={active} homeMode={homeMode} />
+      <Navbar active={active} homeMode={homeMode} spyHash={spyHash} />
       {back && <BackPill href={back.href} label={back.label} />}
-      <main id="top">{children}</main>
+      <main id="top" className="relative z-[2] mx-auto flex w-full max-w-column flex-col border-x border-dashed border-hair bg-column px-4 pt-12 shadow-[0_0_0_1px_var(--column-bg)] backdrop-blur-[14px] max-[480px]:px-4">
+        {children}
+      </main>
       <Footer showUses={showUses} />
     </>
   );

@@ -2,6 +2,9 @@
 @import "./styles/site.css" layer(base);
 
 @custom-variant dark (&:where(.dark, .dark *));
+/* Inverse of `dark`. Needed because a few elements (the back pill, the theme
+   toggle icons) hardcode a light-mode look that dark mode has to undo. */
+@custom-variant not-dark (&:where(:not(.dark, .dark *)));
 
 /*
  * shadcn/ui theme tokens.
@@ -58,6 +61,18 @@ html:not(.dark) {
 /* Tailwind v4 theme bridge: exposes the tokens above as color utilities
    (bg-background, text-foreground, border-border, ...). */
 @theme inline {
+  /* Blueprint tokens (defined in styles/site.css). Exposed here so Tailwind
+     generates matching utilities while the legacy class rules keep working
+     during the port. Both read the same custom property, so they cannot drift. */
+  --color-column: var(--column-bg);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--text-primary);
+  --color-ink-2: var(--text-secondary);
+  --color-ink-3: var(--text-tertiary);
+  --color-hair: var(--border);
+  --color-hair-strong: var(--border-strong);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -85,4 +100,8 @@ html:not(.dark) {
 
   --font-sans: var(--font-body);
   --font-serif: var(--font-heading);
+  --font-mono: var(--font-mono);
+
+  /* The 800px content column, shared by main, the navbar, and the footer. */
+  --container-column: 800px;
 }
