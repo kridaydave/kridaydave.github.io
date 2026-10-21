@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Menu, Moon, Sun, X } from "lucide-react";
-import { prefersReducedMotion } from "../lib/browser";
 import { cn } from "../lib/utils";
+import useScrollReveal from "../hooks/useScrollReveal.js";
 import ReadingProgress from "./ReadingProgress";
 
 const NAV_LINK =
-  "relative py-1 text-sm font-medium text-ink-3 transition-colors hover:text-ink";
+  "relative py-1 text-[14px] font-medium text-ink-3 transition-colors hover:text-ink";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", href: "/index.html" },
@@ -13,23 +13,6 @@ const NAV_ITEMS = [
   { key: "blog", label: "Blog", href: "/blog.html" },
   { key: "rants", label: "Rants", href: "/rants.html" },
   { key: "favorites", label: "Favorites", href: "/favorites.html" },
-];
-
-const REVEAL_GROUPS = [
-  ".about-content",
-  ".contact-grid",
-  ".projects-grid",
-  ".latest-note-card",
-  ".timeline",
-  ".writing-list",
-  ".tech-filters",
-  ".tech-grid",
-  ".quote-section",
-  ".cta-section",
-  ".goat-card",
-  ".media-grid",
-  ".activity-graph-wrap",
-  ".rants-list",
 ];
 
 /**
@@ -74,8 +57,8 @@ function ThemeToggle({ onToggle }) {
       aria-label="Toggle theme"
       onClick={onToggle}
     >
-      <Sun className="dark:hidden" />
-      <Moon className="hidden dark:block" />
+      <Sun className="hidden size-[18px] dark:block" />
+      <Moon className="block size-[18px] dark:hidden" />
     </button>
   );
 }
@@ -113,7 +96,7 @@ function Navbar({ active, homeMode, spyHash }) {
   });
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-dashed border-hair-strong bg-background backdrop-blur-[12px] animate-[slideDown_0.5s_cubic-bezier(0.2,0.8,0.2,1)_both] motion-reduce:animate-none">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-dashed border-hair-strong bg-background backdrop-blur-[12px] animate-[slideDown_0.5s_cubic-bezier(0.2,0.8,0.2,1)_both]">
       <div className="mx-auto flex h-12 w-full max-w-column items-center justify-between border-x border-dashed border-hair px-4">
         <a href={homeMode ? "#top" : "/index.html"} className="font-serif text-[28px] leading-none text-ink">
           Kriday
@@ -158,7 +141,10 @@ function Footer({ showUses }) {
       </p>
       {showUses && (
         <p>
-          <a href="/uses.html" className="about-link">
+          <a
+            href="/uses.html"
+            className="text-ink-2 underline decoration-dashed underline-offset-[3px] transition-colors hover:text-ink"
+          >
             Uses
           </a>
         </p>
@@ -168,33 +154,6 @@ function Footer({ showUses }) {
       </p>
     </footer>
   );
-}
-
-/* --- Scroll reveal (port of script.js initScrollReveal) --- */
-function initScrollReveal() {
-  REVEAL_GROUPS.forEach((selector) => {
-    document.querySelectorAll(selector).forEach((el, i) => {
-      el.classList.add("reveal");
-      el.dataset.delay = String(Math.min(i, 2));
-    });
-  });
-
-  if (prefersReducedMotion || !("IntersectionObserver" in window)) {
-    document.querySelectorAll(".reveal").forEach((el) => el.classList.add("visible"));
-    return;
-  }
-
-  const observer = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add("visible");
-        obs.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.1, rootMargin: "0px 0px -4% 0px" }
-  );
-  document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 }
 
 /* --- Instant prefetch on hover / touch (port of initPrefetch) --- */
@@ -277,9 +236,11 @@ export default function Layout({
   children,
 }) {
   const spyHash = useScrollSpy(scrollSpy);
+  const mainRef = useRef(null);
+
+  useScrollReveal(mainRef);
 
   useEffect(() => {
-    initScrollReveal();
     return initPrefetch();
   }, []);
 
@@ -289,7 +250,7 @@ export default function Layout({
       <FrameLines />
       <Navbar active={active} homeMode={homeMode} spyHash={spyHash} />
       {back && <BackPill href={back.href} label={back.label} />}
-      <main id="top" className="relative z-[2] mx-auto flex w-full max-w-column flex-col border-x border-dashed border-hair bg-column px-4 pt-12 shadow-[0_0_0_1px_var(--column-bg)] backdrop-blur-[14px] max-[480px]:px-4">
+      <main id="top" ref={mainRef} className="relative z-[2] mx-auto flex w-full max-w-column flex-col border-x border-dashed border-hair bg-column px-4 pt-12 shadow-[0_0_0_1px_var(--column-bg)] backdrop-blur-[14px] max-[480px]:px-4">
         {children}
       </main>
       <Footer showUses={showUses} />

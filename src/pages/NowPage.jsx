@@ -1,4 +1,8 @@
 import Layout from "../components/Layout.jsx";
+import InfoBlock from "../components/InfoBlock.jsx";
+import { SECTION, UPDATED_LABEL_CLASS } from "../lib/styles.js";
+import { STATUS_DOT } from "../lib/routine.js";
+import { cn } from "../lib/utils.js";
 import { useWallClock } from "../hooks/useClock.js";
 
 const UPDATED_LABEL = `Last updated: ${new Date().toLocaleString("en-US", {
@@ -6,28 +10,49 @@ const UPDATED_LABEL = `Last updated: ${new Date().toLocaleString("en-US", {
   year: "numeric",
 })}`;
 
+/* Dot colour per routine slot comes from lib/routine.js. */
+
+const TICK = "stroke-ink-3 [stroke-width:1.5] [stroke-linecap:round]";
+const TICK_MAJOR = "stroke-ink [stroke-width:2]";
+
+/* Twelve ticks on 15-degree steps around a 110,110 origin, with the four
+   cardinal ones drawn heavier. */
+const TICKS = [
+  ["110", "18", "110", "30", true],
+  ["160", "23.4", "155", "32.1", false],
+  ["196.6", "60", "187.9", "65", false],
+  ["202", "110", "190", "110", true],
+  ["196.6", "160", "187.9", "155", false],
+  ["160", "196.6", "155", "187.9", false],
+  ["110", "202", "110", "190", true],
+  ["60", "196.6", "65", "187.9", false],
+  ["23.4", "160", "32.1", "155", false],
+  ["18", "110", "30", "110", true],
+  ["23.4", "60", "32.1", "65", false],
+  ["60", "23.4", "65", "32.1", false],
+];
+
 function ClockFace({ hourDeg, minuteDeg, secondDeg }) {
   return (
-    <svg className="now-clock-face" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-      {/* Dashed ring */}
-      <circle className="now-clock-ring" cx="110" cy="110" r="100" />
-      {/* Hour ticks */}
-      <line className="now-clock-tick now-clock-tick-major" x1="110" y1="18" x2="110" y2="30" />
-      <line className="now-clock-tick" x1="160" y1="23.4" x2="155" y2="32.1" />
-      <line className="now-clock-tick" x1="196.6" y1="60" x2="187.9" y2="65" />
-      <line className="now-clock-tick now-clock-tick-major" x1="202" y1="110" x2="190" y2="110" />
-      <line className="now-clock-tick" x1="196.6" y1="160" x2="187.9" y2="155" />
-      <line className="now-clock-tick" x1="160" y1="196.6" x2="155" y2="187.9" />
-      <line className="now-clock-tick now-clock-tick-major" x1="110" y1="202" x2="110" y2="190" />
-      <line className="now-clock-tick" x1="60" y1="196.6" x2="65" y2="187.9" />
-      <line className="now-clock-tick" x1="23.4" y1="160" x2="32.1" y2="155" />
-      <line className="now-clock-tick now-clock-tick-major" x1="18" y1="110" x2="30" y2="110" />
-      <line className="now-clock-tick" x1="23.4" y1="60" x2="32.1" y2="65" />
-      <line className="now-clock-tick" x1="60" y1="23.4" x2="65" y2="32.1" />
-      {/* Hands */}
+    <svg className="size-full" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle
+        className="fill-none stroke-hair [stroke-width:1.5] [stroke-dasharray:4_4]"
+        cx="110"
+        cy="110"
+        r="100"
+      />
+      {TICKS.map(([x1, y1, x2, y2, major], i) => (
+        <line
+          key={i}
+          className={major ? `${TICK} ${TICK_MAJOR}` : TICK}
+          x1={x1}
+          y1={y1}
+          x2={x2}
+          y2={y2}
+        />
+      ))}
       <line
-        className="now-clock-hand now-clock-hand--hour"
-        id="now-hand-hour"
+        className="stroke-ink [stroke-width:3.5] [stroke-linecap:round]"
         x1="110"
         y1="120"
         x2="110"
@@ -35,8 +60,7 @@ function ClockFace({ hourDeg, minuteDeg, secondDeg }) {
         transform={`rotate(${hourDeg ?? 0}, 110, 110)`}
       />
       <line
-        className="now-clock-hand now-clock-hand--minute"
-        id="now-hand-minute"
+        className="stroke-ink [stroke-width:2.5] [stroke-linecap:round]"
         x1="110"
         y1="124"
         x2="110"
@@ -44,16 +68,14 @@ function ClockFace({ hourDeg, minuteDeg, secondDeg }) {
         transform={`rotate(${minuteDeg ?? 0}, 110, 110)`}
       />
       <line
-        className="now-clock-hand now-clock-hand--second"
-        id="now-hand-second"
+        className="stroke-[#22c55e] [stroke-width:1.5] [stroke-linecap:round]"
         x1="110"
         y1="126"
         x2="110"
         y2="28"
         transform={`rotate(${secondDeg ?? 0}, 110, 110)`}
       />
-      {/* Center dot */}
-      <circle className="now-clock-center" cx="110" cy="110" r="4" />
+      <circle className="fill-ink" cx="110" cy="110" r="4" />
     </svg>
   );
 }
@@ -119,43 +141,39 @@ export default function NowPage() {
 
   return (
     <Layout active="now">
-      {/* Clock hero */}
-      <section className="section now-hero">
-        <div className="now-clock-wrap">
+      <section className={`${SECTION} flex flex-col items-center gap-4 pt-30 pb-8 max-[480px]:pt-30 max-[480px]:pb-8`}>
+        <div className="relative size-[220px]">
           <ClockFace
             hourDeg={clock?.hourDeg}
             minuteDeg={clock?.minuteDeg}
             secondDeg={clock?.secondDeg}
           />
         </div>
-        <p className="now-clock-label">AHMEDABAD, INDIA</p>
-        <p className="now-digital" id="now-digital-time">
+        <p className="mt-1 text-center font-mono text-[11px] tracking-[0.1em] text-ink-3">
+          AHMEDABAD, INDIA
+        </p>
+        <p className="font-mono text-[28px] font-semibold tracking-[0.04em] text-ink">
           {clock ? clock.time : "--:--:-- IST"}
         </p>
-        <div className="now-activity-pill">
+        <div className="inline-flex items-center gap-2 rounded-full border border-dotted border-hair bg-surface-1 px-3.5 py-1.5 font-mono text-[12px] text-ink-2">
           <span
-            className={`now-dot${clock ? ` ${clock.statusClass}` : ""}`}
-            id="now-dot"
-          ></span>
-          <span id="now-activity-text">{clock ? clock.activity : "Loading..."}</span>
+            className={cn("size-[7px] rounded-full bg-[#22c55e]", clock && STATUS_DOT[clock.statusClass])}
+            aria-hidden="true"
+          />
+          <span>{clock ? clock.activity : "Loading..."}</span>
         </div>
       </section>
 
-      {/* Content blocks */}
-      <section className="section">
-        <div className="now-blocks">
-          {BLOCKS.map((block) => (
-            <div key={block.title} className="now-block">
-              <p className="now-block-title">{block.title}</p>
-              <div className="now-block-content">
-                <ul>{block.items}</ul>
-              </div>
-            </div>
-          ))}
-        </div>
-        <p className="now-updated" id="now-updated">
-          {UPDATED_LABEL}
-        </p>
+      <section className={SECTION}>
+        {BLOCKS.map((block, i) => (
+          <InfoBlock
+            key={block.title}
+            title={block.title}
+            items={block.items}
+            last={i === BLOCKS.length - 1}
+          />
+        ))}
+        <p className={UPDATED_LABEL_CLASS}>{UPDATED_LABEL}</p>
       </section>
     </Layout>
   );

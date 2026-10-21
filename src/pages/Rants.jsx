@@ -1,6 +1,9 @@
 import { useMemo, useState } from "react";
 import Layout from "../components/Layout.jsx";
-import { escapeRegex, stripTags } from "../lib/text.js";
+import FilterBar, { EmptyFilterState } from "../components/FilterBar.jsx";
+import { highlight } from "../lib/highlight.jsx";
+import { stripTags } from "../lib/text.js";
+import { SECTION, SECTION_TITLE } from "../lib/styles.js";
 
 const RANTS = [
   {
@@ -13,7 +16,7 @@ const RANTS = [
       "Open any tech blog today, hit Ctrl+F, and count sixty em-dashes. Claude and ChatGPT turned an obscure punctuation mark into the undisputed calling card of synthetic slop.",
     paras: [
       'Open any tech blog today, hit <code>Ctrl+F</code>, and count sixty em-dashes. Claude and ChatGPT turned a punctuation mark into the undisputed calling card of synthetic slop.',
-      'Why do models do it? Cowardice. An em-dash lets an LLM bolt a hedge clause onto the end of an assertion without committing to a sentence structure or having an actual opinion. Add in negative parallelisms, artificial triads, and jargon words like \'substrate\' and \'tapestry\', and human writing has plunged through Dante\'s seven gates of hell straight into Satan\'s private holding pen. End the sentence with a period. Read the <a href="posts/em-dashes-suck.html" class="post-link">full essay</a>.',
+      'Why do models do it? Cowardice. An em-dash lets an LLM bolt a hedge clause onto the end of an assertion without committing to a sentence structure or having an actual opinion. Add in negative parallelisms, artificial triads, and jargon words like \'substrate\' and \'tapestry\', and human writing has plunged through Dante\'s seven gates of hell straight into Satan\'s private holding pen. End the sentence with a period. Read the <a href="posts/em-dashes-suck.html" class="text-ink underline decoration-dotted underline-offset-[3px] transition-colors hover:text-ink-2">full essay</a>.',
     ],
   },
   {
@@ -50,24 +53,12 @@ const TAGS = [
   { value: "dev", label: "Dev" },
 ];
 
-function highlightText(text, tokens) {
-  if (!tokens.length) return text;
-  const pattern = new RegExp(`(${tokens.map(escapeRegex).join("|")})`, "gi");
-  const parts = [];
-  let last = 0;
-  let m;
-  while ((m = pattern.exec(text)) !== null) {
-    if (m.index > last) parts.push(text.slice(last, m.index));
-    parts.push(
-      <mark key={m.index} className="search-highlight">
-        {m[0]}
-      </mark>
-    );
-    last = m.index + m[0].length;
-  }
-  if (last < text.length) parts.push(text.slice(last));
-  return parts;
-}
+const CARD =
+  "flex flex-col gap-3 rounded-[6px] border border-dotted border-hair bg-surface-1 p-6 transition-[background,border-color] duration-200 hover:border-hair-strong hover:bg-surface-2";
+
+/* Paragraphs in a rant arrive as HTML strings, so their spacing is applied
+   from the container. */
+const BODY = "text-[14.5px] leading-[1.65] text-ink-2 [&_p]:mb-2.5 [&_p:last-child]:mb-0";
 
 export default function Rants() {
   const [query, setQuery] = useState("");
@@ -91,74 +82,44 @@ export default function Rants() {
 
   return (
     <Layout active="rants">
-      <section className="section rants-section">
-        <h1 className="section-title">Rants</h1>
-        <p className="rants-desc">
+      <section className={SECTION}>
+        <h1 className={SECTION_TITLE}>Rants</h1>
+        <p className="mb-6 text-[16px] text-ink-2">
           Quick, unfiltered thoughts on developer tooling, frameworks, and things that bother me in
           tech.
         </p>
 
-        {/* Search & Filters */}
-        <div className="content-filter-bar" id="rants-filter-bar">
-          <div className="search-input-wrap">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="text"
-              className="search-input"
-              id="rants-search"
-              placeholder="Search rants..."
-              aria-label="Search rants"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </div>
-          <div className="filter-tags-row">
-            {TAGS.map((t) => (
-              <button
-                key={t.value}
-                className={`filter-pill${tag === t.value ? " active" : ""}`}
-                type="button"
-                onClick={() => setTag(t.value)}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <FilterBar
+          query={query}
+          onQueryChange={setQuery}
+          placeholder="Search rants..."
+          label="Search rants"
+          tags={TAGS}
+          tag={tag}
+          onTagChange={setTag}
+        />
 
-        <div className="rants-list">
+        <div className="flex flex-col gap-4" data-reveal>
           {visible.map(({ rant, plainParas, visible: shown }) => (
             <article
               key={rant.key}
-              className="rant-card"
-              data-tags={rant.tags}
-              data-title={rant.title}
-              data-excerpt={rant.excerpt}
+              className={CARD}
               style={shown ? undefined : { display: "none" }}
             >
-              <div className="rant-header">
-                <span className="rant-tag">{rant.tag}</span>
-                <span className="rant-date">{rant.date}</span>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="rounded-[3px] border border-[rgba(239,68,68,0.25)] bg-[rgba(239,68,68,0.1)] px-2 py-[3px] font-mono text-[11px] tracking-[0.08em] text-[#ef4444] uppercase">
+                  {rant.tag}
+                </span>
+                <span className="font-mono text-[11.5px] text-ink-3">{rant.date}</span>
               </div>
-              <h2 className="rant-title">{highlightText(rant.title, tokens)}</h2>
-              <div className="rant-body">
+              <h2 className="font-serif text-2xl leading-[1.2] font-normal text-ink">
+                {highlight(rant.title, tokens)}
+              </h2>
+              <div className={BODY}>
                 {rant.paras.map((para, i) => (
                   <p key={i}>
                     {searching ? (
-                      highlightText(plainParas[i], tokens)
+                      highlight(plainParas[i], tokens)
                     ) : (
                       <span dangerouslySetInnerHTML={{ __html: para }} />
                     )}
@@ -169,13 +130,7 @@ export default function Rants() {
           ))}
         </div>
 
-        <div
-          className="empty-filter-state"
-          id="rants-empty-state"
-          style={{ display: visibleCount === 0 ? "block" : "none" }}
-        >
-          No matching rants found.
-        </div>
+        {visibleCount === 0 && <EmptyFilterState>No matching rants found.</EmptyFilterState>}
       </section>
     </Layout>
   );

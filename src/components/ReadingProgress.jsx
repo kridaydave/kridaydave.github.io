@@ -21,5 +21,11 @@ export default function ReadingProgress() {
     return () => window.removeEventListener("scroll", update);
   }, []);
 
-  return <div ref={barRef} className="reading-progress-bar" aria-hidden="true"></div>;
+  return (
+    <div
+      ref={barRef}
+      className="pointer-events-none fixed top-0 left-0 z-[100] h-0.5 w-0 bg-ink transition-[width] duration-[50ms] ease-linear"
+      aria-hidden="true"
+    />
+  );
 }

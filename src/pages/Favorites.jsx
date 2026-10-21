@@ -1,4 +1,6 @@
 import Layout from "../components/Layout.jsx";
+import { SECTION, SECTION_TITLE } from "../lib/styles.js";
+import { cn } from "../lib/utils.js";
 
 const STAR_ICON = (
   <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
@@ -166,34 +168,49 @@ const GOATS = [
   },
 ];
 
+const TYPE_TAG =
+  "rounded-[3px] border bg-surface-2 px-[7px] py-[2px] font-mono text-[10px] font-bold tracking-[0.12em] text-ink-2";
+/* Only the games grid and the two hero picks label a type. */
+const TYPE_TONES = {
+  game: "border-[rgba(249,115,22,0.4)] text-[#fdba74]",
+  show: "border-[rgba(168,85,247,0.4)] text-[#e9d5ff]",
+};
+
+const POSTER_WRAP =
+  "relative flex h-[200px] w-full items-center justify-center overflow-hidden border-b border-dashed border-hair bg-surface-2 max-[480px]:h-[180px]";
+
 function Poster({ pick }) {
   return (
-    <div className="media-poster-wrap">
+    <div className={POSTER_WRAP}>
       <img
         src={`assets/favorites/${pick.poster}`}
         alt={pick.title}
-        className="media-poster"
+        className="size-full object-cover transition-transform duration-[350ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
         loading="lazy"
       />
-      {pick.overlay && <div className="media-hover-overlay">{pick.overlay}</div>}
+      {pick.overlay && (
+        <div className="pointer-events-none absolute inset-0 z-[2] flex items-center justify-center bg-[rgba(0,0,0,0.35)] opacity-0 transition-opacity duration-[350ms] group-hover:opacity-100 [&_svg]:text-white [&_svg]:opacity-70">
+          {pick.overlay}
+        </div>
+      )}
     </div>
   );
 }
 
-function MediaCard({ pick, typeLabel, typeClass, status }) {
+function MediaCard({ pick, typeLabel, tone, status }) {
   return (
-    <article className="media-card">
+    <article className="group flex flex-col overflow-hidden bg-[var(--bg)] transition-colors hover:bg-surface-1">
       <Poster pick={pick} />
-      <div className="media-card-body">
+      <div className="flex flex-1 flex-col gap-1.5 px-5 py-[18px]">
         {typeLabel && (
-          <div className="media-card-top">
-            <span className={`media-type-tag ${typeClass}`}>{typeLabel}</span>
-            {status && <span className="media-status-tag">{status}</span>}
+          <div className="flex items-center justify-between gap-2">
+            <span className={cn(TYPE_TAG, tone && TYPE_TONES[tone])}>{typeLabel}</span>
+            {status && <span className="font-mono text-[10px] tracking-[0.08em] text-ink-3">{status}</span>}
           </div>
         )}
-        <h3 className="media-card-title">{pick.title}</h3>
-        <p className="media-card-meta">{pick.meta}</p>
-        <p className="media-card-note">{pick.note}</p>
+        <h3 className="text-lg leading-[1.25] font-semibold text-ink">{pick.title}</h3>
+        <p className="font-mono text-[11.5px] tracking-[0.02em] text-ink-3">{pick.meta}</p>
+        <p className="mt-1 text-[14.5px] leading-[1.55] text-ink-2">{pick.note}</p>
       </div>
     </article>
   );
@@ -201,71 +218,70 @@ function MediaCard({ pick, typeLabel, typeClass, status }) {
 
 function GroupHeader({ title, count }) {
   return (
-    <section className="section media-group-header">
-      <h2 className="media-group-title">{title}</h2>
-      <span className="media-group-count">{count}</span>
+    <section className="flex items-baseline justify-between border-t border-dashed border-hair px-4 pt-8 pb-3.5">
+      <h2 className="font-serif text-[34px] leading-none font-normal text-ink">{title}</h2>
+      <span className="font-mono text-[11.5px] tracking-[0.1em] text-ink-3 uppercase">{count}</span>
     </section>
   );
 }
 
 function GoatCard({ pick }) {
   return (
-    <div className="goat-card">
-      <div className="goat-media">
+    <div
+      className="relative flex items-center gap-5 border-l-2 border-[#eab308] bg-surface-1 px-5 py-6 transition-colors hover:bg-surface-2 max-[480px]:flex-col max-[480px]:items-start max-[480px]:gap-4"
+      data-reveal
+    >
+      <div className="h-40 w-[120px] shrink-0 overflow-hidden rounded border border-[rgba(234,179,8,0.3)] shadow-[0_4px_16px_rgba(0,0,0,0.4)] max-[480px]:h-[220px] max-[480px]:w-full">
         <img
           src={`assets/favorites/${pick.poster}`}
           alt={pick.title}
-          className="goat-img"
+          className="size-full object-cover"
           loading="lazy"
         />
       </div>
-      <div className="goat-info">
-        <div className="goat-badge-row">
-          <span className="goat-pill">
+      <div className="flex flex-1 flex-col gap-1">
+        <div className="mb-1.5 flex items-center justify-between gap-3">
+          <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold tracking-[0.08em] text-[#eab308]">
             {STAR_ICON}
             {pick.pill}
           </span>
-          <span className="media-type-tag show-tag">TV SHOW</span>
+          <span className={cn(TYPE_TAG, TYPE_TONES.show)}>TV SHOW</span>
         </div>
-        <h2 className="goat-title">{pick.title}</h2>
-        <p className="goat-meta">{pick.meta}</p>
-        <p className="goat-quote">{pick.quote}</p>
+        <h2 className="font-serif text-[32px] leading-[1.15] font-normal text-ink">{pick.title}</h2>
+        <p className="mb-1.5 font-mono text-[11.5px] tracking-[0.02em] text-ink-3">{pick.meta}</p>
+        <p className="text-[15px] leading-[1.6] text-ink-2 italic">{pick.quote}</p>
       </div>
     </div>
   );
 }
+
+const GRID = "grid grid-cols-2 gap-px bg-hair max-[768px]:grid-cols-1";
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 export default function Favorites() {
   return (
     <Layout active="favorites">
-      <section className="section favorites-header-section">
-        <h1 className="section-title">Favorites</h1>
-        <p className="favorites-desc">Shit i like.</p>
+      <section className={cn(SECTION, "border-t-0 pt-4 max-[480px]:pt-4")}>
+        <h1 className={SECTION_TITLE}>Favorites</h1>
+        <p className="mb-5 text-[16px] text-ink-2">Shit i like.</p>
       </section>
 
-      <div className="media-section">
+      <div className="flex flex-col">
         <GroupHeader title="Video Games" count={plural(GAMES.length, "Pick")} />
-        <section className="section favorites-grid-section">
-          <div className="media-grid">
+        <section className="border-y border-dashed border-hair">
+          <div className={GRID} data-reveal>
             {GAMES.map((pick) => (
-              <MediaCard
-                key={pick.title}
-                pick={pick}
-                typeLabel="GAME"
-                typeClass="game-tag"
-                status={pick.status}
-              />
+              <MediaCard key={pick.title} pick={pick} typeLabel="GAME" tone="game" status={pick.status} />
             ))}
           </div>
         </section>
       </div>
 
-      <div className="media-section">
+      <div className="flex flex-col">
         <GroupHeader title="Anime" count={plural(ANIME.length, "Pick")} />
-        <section className="section favorites-grid-section">
-          <div className="media-grid">
+        <section className="border-y border-dashed border-hair">
+          <div className={GRID} data-reveal>
             {ANIME.map((pick) => (
               <MediaCard key={pick.title} pick={pick} />
             ))}
@@ -273,15 +289,15 @@ export default function Favorites() {
         </section>
       </div>
 
-      <div className="media-section">
+      <div className="flex flex-col">
         <GroupHeader title="TV Shows" count={plural(SHOWS.length + GOATS.length, "Pick")} />
         {GOATS.map((pick) => (
-          <section className="section goat-section" key={pick.title}>
+          <section className="border-t border-dashed border-hair" key={pick.title}>
             <GoatCard pick={pick} />
           </section>
         ))}
-        <section className="section favorites-grid-section">
-          <div className="media-grid">
+        <section className="border-y border-dashed border-hair">
+          <div className={GRID} data-reveal>
             {SHOWS.map((pick) => (
               <MediaCard key={pick.title} pick={pick} />
             ))}

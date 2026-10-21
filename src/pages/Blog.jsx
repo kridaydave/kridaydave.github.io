@@ -1,7 +1,11 @@
 import { useMemo, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
 import Layout from "../components/Layout.jsx";
+import FilterBar, { EmptyFilterState } from "../components/FilterBar.jsx";
 import { POSTS } from "../content/pages.js";
-import { linesFromHtml, plainFromHtml, escapeRegex } from "../lib/text.js";
+import { linesFromHtml, plainFromHtml } from "../lib/text.js";
+import { highlight } from "../lib/highlight.jsx";
+import { SECTION, SECTION_TITLE } from "../lib/styles.js";
 
 const POST_LIST = [
   {
@@ -85,25 +89,6 @@ const INDEX = Object.fromEntries(
   })
 );
 
-function highlight(text, tokens) {
-  if (!tokens.length) return text;
-  const pattern = new RegExp(`(${tokens.map(escapeRegex).join("|")})`, "gi");
-  const parts = [];
-  let last = 0;
-  let m;
-  while ((m = pattern.exec(text)) !== null) {
-    if (m.index > last) parts.push(text.slice(last, m.index));
-    parts.push(
-      <mark key={m.index} className="search-highlight">
-        {m[0]}
-      </mark>
-    );
-    last = m.index + m[0].length;
-  }
-  if (last < text.length) parts.push(text.slice(last));
-  return parts;
-}
-
 /** Port of script.js getMatchSnippet. */
 function getMatchSnippet(lines, fallbackText, tokens) {
   if (!tokens.length) return fallbackText;
@@ -139,6 +124,11 @@ function getMatchSnippet(lines, fallbackText, tokens) {
   return snippet;
 }
 
+/* Rows are a dashed box; each row owns its bottom rule so the last one can
+   drop it. Below 480px the meta column moves inline above the title. */
+const ITEM =
+  "group grid grid-cols-[120px_1fr_auto] items-center gap-4 border-b border-dashed border-hair p-4 transition-colors last:border-b-0 hover:bg-surface-1 max-[480px]:grid-cols-[1fr_auto] max-[480px]:gap-2.5";
+
 export default function Blog() {
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState("all");
@@ -160,103 +150,63 @@ export default function Blog() {
 
   return (
     <Layout active="blog">
-      <section className="section blog-section">
-        <h2 className="section-title">Blog</h2>
-        <p className="blog-desc">
+      <section className={SECTION}>
+        <h2 className={SECTION_TITLE}>Blog</h2>
+        <p className="mb-[22px] text-[16px] text-ink-2">
           Long-form writing on agentic engineering, AI research, and the developer memory layer.{" "}
-          <a href="/rss.xml" className="about-link" style={{ whiteSpace: "nowrap" }}>
-            RSS &nearr;
+          <a
+            href="/rss.xml"
+            className="whitespace-nowrap text-ink-2 underline decoration-dashed underline-offset-[3px] transition-colors hover:text-ink"
+          >
+            RSS ↗
           </a>
         </p>
 
-        {/* Search & Filters */}
-        <div className="content-filter-bar" id="blog-filter-bar">
-          <div className="search-input-wrap">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="text"
-              className="search-input"
-              id="blog-search"
-              placeholder="Search posts..."
-              aria-label="Search posts"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </div>
-          <div className="filter-tags-row">
-            {TAGS.map((t) => (
-              <button
-                key={t.value}
-                className={`filter-pill${tag === t.value ? " active" : ""}`}
-                type="button"
-                onClick={() => setTag(t.value)}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <FilterBar
+          query={query}
+          onQueryChange={setQuery}
+          placeholder="Search posts..."
+          label="Search posts"
+          tags={TAGS}
+          tag={tag}
+          onTagChange={setTag}
+        />
 
-        <div className="writing-list blog-list">
+        <div className="border border-dashed border-hair" data-reveal>
           {visible.map(({ item, indexed, visible: shown }) => (
             <a
               key={item.slug}
               href={item.href}
-              className="writing-item"
+              className={ITEM}
               data-tags={item.tags}
               data-title={item.title}
               data-excerpt={item.excerpt}
               style={shown ? undefined : { display: "none" }}
             >
-              <div className="writing-meta">
-                <span className="writing-num">{item.num}</span>
-                <span className="writing-tag">{item.tagLabel}</span>
+              <div className="flex flex-col gap-1.5 max-[480px]:flex-row max-[480px]:items-center max-[480px]:justify-between">
+                <span className="font-mono text-[12px] tracking-[0.1em] text-ink-3">{item.num}</span>
+                <span className="max-w-full self-start overflow-hidden rounded-[3px] border border-dotted border-hair bg-surface-1 px-[9px] py-[3px] font-mono text-[11px] text-ellipsis whitespace-nowrap text-ink-3">
+                  {item.tagLabel}
+                </span>
               </div>
               <div>
-                <h3 className="writing-title">{highlight(item.title, tokens)}</h3>
-                <p className="writing-excerpt">
+                <h3 className="mb-[5px] text-[18px] font-semibold text-ink transition-colors group-hover:text-ink-2">
+                  {highlight(item.title, tokens)}
+                </h3>
+                <p className="text-[15px] leading-[1.6] text-ink-2 max-[480px]:text-[13px]">
                   {highlight(getMatchSnippet(indexed.lines, item.excerpt, tokens), tokens)}
                 </p>
               </div>
-              <svg
-                className="writing-arrow"
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="7" y1="17" x2="17" y2="7" />
-                <polyline points="7 7 17 7 17 17" />
-              </svg>
+              <ArrowUpRight
+                className="shrink-0 text-ink-3 transition-[transform,color] duration-200 group-hover:-translate-y-[2px] group-hover:translate-x-[2px] group-hover:text-ink max-[480px]:col-start-2 max-[480px]:[grid-row:1/span_2]"
+                size={18}
+                aria-hidden="true"
+              />
             </a>
           ))}
         </div>
 
-        <div
-          className="empty-filter-state"
-          id="blog-empty-state"
-          style={{ display: visibleCount === 0 ? "block" : "none" }}
-        >
-          No matching posts found.
-        </div>
+        {visibleCount === 0 && <EmptyFilterState>No matching posts found.</EmptyFilterState>}
       </section>
     </Layout>
   );
