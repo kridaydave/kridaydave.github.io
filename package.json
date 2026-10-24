@@ -4,9 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "predev": "vite build",
     "dev": "wrangler dev",
-    "predeploy": "vite build",
     "deploy": "wrangler deploy"
   },
   "devDependencies": {

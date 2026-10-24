@@ -3,6 +3,11 @@ compatibility_date = "2026-06-13"
 compatibility_flags = ["nodejs_compat"]
 main = "worker/index.js"
 
+# Build before every deploy and dev run, so `wrangler deploy` always has a
+# fresh dist/ to upload no matter which command Cloudflare's build runs.
+[build]
+command = "npm run build"
+
 [assets]
 directory = "./dist"
 binding = "ASSETS"
