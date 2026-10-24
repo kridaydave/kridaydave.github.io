@@ -1,0 +1,118 @@
+/* ============================================
+   DESIGN SYSTEM: Blueprint / Wireframe Aesthetic
+   ============================================ */
+/* --- Reset & Base --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+button { border: 0; background: none; font: inherit; cursor: pointer; }
+ul, ol { list-style: none; }
+/* --- Theme Variables --- */
+:root {
+  --max-w: 800px;
+  --border: #3d3d3d;
+  --border-strong: #4d4d4d;
+  --bg: #000000;
+  --column-bg: rgba(255,255,255,0.022);
+  --text-primary: #ffffff;
+  --text-secondary: #ffffff;
+  --text-tertiary: #ffffff;
+  --surface-1: rgba(255,255,255,0.04);
+  --surface-2: rgba(255,255,255,0.07);
+  --card-bg: rgba(255,255,255,0.045);
+  --selection-bg: #4a4a4a;
+  --selection-text: #fff;
+  --verified: #1d9bf0;
+  --font-heading: 'Instrument Serif', Georgia, serif;
+  --font-body: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+html:not(.dark) {
+  --border: #d0d0d0;
+  --border-strong: #b5b5b5;
+  --bg: #ffffff;
+  --column-bg: rgba(0,0,0,0.018);
+  --text-primary: #111111;
+  --text-secondary: #3f3f3f;
+  --text-tertiary: #5a5a5a;
+  --surface-1: rgba(0,0,0,0.03);
+  --surface-2: rgba(0,0,0,0.055);
+  --card-bg: rgba(0,0,0,0.035);
+  --selection-bg: #d0d0d0;
+  --selection-text: #000;
+}
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+}
+::selection {
+  background: var(--selection-bg);
+  color: var(--selection-text);
+}
+/* --- Sections --- */
+.section {
+  padding: 24px 16px;
+  border-top: 1px dashed var(--border);
+}
+/* --- Main Content --- */
+main {
+  position: relative;
+  z-index: 2;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 48px 16px 0;
+  width: 100%;
+  border-left: 1px dashed var(--border);
+  border-right: 1px dashed var(--border);
+  background: var(--column-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 0 0 1px var(--column-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+/* --- Scrollbar --- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+@media (max-width: 480px) {
+  main { padding-left: 16px; padding-right: 16px; }
+  .section { padding: 20px 12px; }
+}
+/* --- Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* --- Page Load Animation --- */
+body {
+  opacity: 0;
+  animation: pageIn 0.6s ease-out 0.1s forwards;
+}
+@keyframes pageIn {
+  to { opacity: 1; }
+}
+/* The navbar's slide-down entrance lives on the header element in Layout.jsx
+   as animate-[slideDown_...]. The keyframes stay here for it to reference. */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

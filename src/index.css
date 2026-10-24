@@ -1,0 +1,107 @@
+@import "tailwindcss";
+@import "./styles/site.css" layer(base);
+
+@custom-variant dark (&:where(.dark, .dark *));
+/* Inverse of `dark`. Needed because a few elements (the back pill, the theme
+   toggle icons) hardcode a light-mode look that dark mode has to undo. */
+@custom-variant not-dark (&:where(:not(.dark, .dark *)));
+
+/*
+ * shadcn/ui theme tokens.
+ * Dark values sit on :root (html.dark is the default), light values on
+ * html:not(.dark) — the exact switch site.css already uses. --border is
+ * intentionally shared with the legacy token (same value) so shadcn
+ * components inherit the blueprint palette in both themes.
+ */
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: rgba(255, 255, 255, 0.045);
+  --card-foreground: #ffffff;
+  --popover: rgba(255, 255, 255, 0.07);
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+  --secondary: rgba(255, 255, 255, 0.07);
+  --secondary-foreground: #ffffff;
+  --muted: rgba(255, 255, 255, 0.04);
+  --muted-foreground: #8a8a8a;
+  --accent: rgba(255, 255, 255, 0.07);
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #3d3d3d;
+  --input: #3d3d3d;
+  --ring: rgba(255, 255, 255, 0.55);
+  --radius: 4px;
+}
+
+html:not(.dark) {
+  --background: #ffffff;
+  --foreground: #111111;
+  --card: rgba(0, 0, 0, 0.035);
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --primary: #111111;
+  --primary-foreground: #ffffff;
+  --secondary: rgba(0, 0, 0, 0.055);
+  --secondary-foreground: #111111;
+  --muted: rgba(0, 0, 0, 0.03);
+  --muted-foreground: #5a5a5a;
+  --accent: rgba(0, 0, 0, 0.05);
+  --accent-foreground: #111111;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #d0d0d0;
+  --input: #d0d0d0;
+  --ring: rgba(0, 0, 0, 0.45);
+}
+
+/* Tailwind v4 theme bridge: exposes the tokens above as color utilities
+   (bg-background, text-foreground, border-border, ...). */
+@theme inline {
+  /* Blueprint tokens (defined in styles/site.css). Exposed here so Tailwind
+     generates matching utilities while the legacy class rules keep working
+     during the port. Both read the same custom property, so they cannot drift. */
+  --color-column: var(--column-bg);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--text-primary);
+  --color-ink-2: var(--text-secondary);
+  --color-ink-3: var(--text-tertiary);
+  --color-hair: var(--border);
+  --color-hair-strong: var(--border-strong);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-heading);
+  --font-mono: var(--font-mono);
+
+  /* The 800px content column, shared by main, the navbar, and the footer. */
+  --container-column: 800px;
+}

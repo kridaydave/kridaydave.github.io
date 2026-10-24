@@ -1,9 +1,10 @@
 name = "kridaydavewebsite"
 compatibility_date = "2026-06-13"
+compatibility_flags = ["nodejs_compat"]
 main = "worker/index.js"
 
 [assets]
-directory = "./public"
+directory = "./dist"
 binding = "ASSETS"
 run_worker_first = ["/api/*"]
 
