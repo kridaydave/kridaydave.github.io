@@ -2,18 +2,17 @@ import { useEffect, useRef } from "react";
 
 /* ══ MoonGlobe ═════════════════════════════════════════════
    The Earth's companion, top-left: a small dithered grey sphere with
-   craters. Static by nature — the moon is tidally locked, so unlike
-   EarthGlobe there is nothing to animate and no loop to park. One
-   bake at resize, one paint.
-
-   The body is an OPAQUE grey disc (no glow behind it — a soft radial
-   fill reaches the canvas corners and the square shows against the
-   sky). The dither is the shading texture on top of that grey. */
+   craters. The grey body and its shading are baked once (the light is
+   fixed relative to the viewer), but the CRATERS are 3D points that
+   rotate with the surface — drag to spin, with inertia, same
+   mechanics as EarthGlobe. Idles at a barely-there drift. */
 
 const INK = [205, 214, 232]; /* light grey dots where the light lands */
 const SHADE_INK = [96, 106, 126]; /* darker grey dots for shade */
+const CRATER_INK = [16, 20, 30]; /* crater floors, darker than the body */
 
-/* craters, in unit-disc coords with radii — darker, sparser dots */
+/* craters, in unit-disc coords at the rest pose — converted to 3D
+   points so they ride the surface when the moon spins */
 const CRATERS = [
   { x: -0.32, y: -0.18, r: 0.16 },
   { x: 0.22, y: 0.3, r: 0.22 },
@@ -35,6 +34,41 @@ export default function MoonGlobe({ className }) {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     const bodyC = document.createElement("canvas");
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf = 0;
+    let alive = true;
+
+    let rotY = 0;
+    let velY = 0.000012; /* barely-there idle drift */
+    let dragging = false;
+    let lastX = 0;
+    let lastMoveT = 0;
+    const TILT = -0.2;
+
+    let craterDots = [];
+
+    function buildCraters() {
+      /* each crater scatters dots across its footprint; the footprint
+         sits on the sphere at the rest pose, then rotates like land */
+      const dots = [];
+      for (const c of CRATERS) {
+        const nz = Math.sqrt(Math.max(0, 1 - c.x * c.x - c.y * c.y));
+        for (let k = 0; k < 46; k++) {
+          /* denser toward the crater floor */
+          const d = Math.sqrt(Math.random()) * c.r;
+          const a = Math.random() * Math.PI * 2;
+          const ox = c.x + Math.cos(a) * d;
+          const oy = c.y + Math.sin(a) * d;
+          const oz = Math.sqrt(Math.max(0, 1 - ox * ox - oy * oy));
+          if (oz <= 0) continue;
+          const len = Math.hypot(ox, oy, oz);
+          dots.push([ox / len, oy / len, oz / len]);
+        }
+      }
+      craterDots = dots;
+    }
+    buildCraters();
 
     function resize() {
       const r = canvas.getBoundingClientRect();
@@ -82,18 +116,8 @@ export default function MoonGlobe({ className }) {
           let L = Math.max(0, dx * lx + dy * ly + nz * lz);
           let v = 0.15 + 0.55 * L;
           v = Math.min(0.75, v) * (1 - Math.pow(Math.sqrt(r2), 6) * 0.4);
-          /* craters: inside one, the surface dips — darker, sparser dots */
-          let inCrater = 0;
-          for (const c of CRATERS) {
-            const ddx = dx - c.x, ddy = dy - c.y;
-            const d = Math.sqrt(ddx * ddx + ddy * ddy);
-            if (d < c.r) inCrater = Math.max(inCrater, 1 - d / c.r);
-          }
-          v -= inCrater * 0.4;
           const th = BAYER[(y / cell) & 3][(x / cell) & 3];
           if (v <= th) continue;
-          /* fade dots out before the limb — lit dots reaching the edge
-             trace a bright arc that reads as a halo against the sky */
           const edge = Math.sqrt(r2);
           const limbFade = edge > 0.88 ? 1 - (edge - 0.88) / 0.12 : 1;
           const ink = v > 0.42 ? INK : SHADE_INK;
@@ -103,21 +127,88 @@ export default function MoonGlobe({ className }) {
       }
     }
 
-    function draw() {
+    function draw(t) {
+      if (!alive) return;
       ctx.clearRect(0, 0, size.w, size.h);
       ctx.drawImage(bodyC, 0, 0, size.w, size.h);
-      /* no limb ring: a bright hairline at the edge is a halo in waiting */
+
+      const cx = size.w / 2, cy = size.h / 2;
+      const R = Math.min(size.w, size.h) * 0.47;
+
+      if (!dragging) {
+        rotY += velY * Math.min(32, t - (draw.t || t));
+      }
+      draw.t = t;
+
+      const cy_ = Math.cos(rotY), sy_ = Math.sin(rotY);
+      const ct = Math.cos(TILT), st = Math.sin(TILT);
+
+      for (let i = 0; i < craterDots.length; i++) {
+        const p = craterDots[i];
+        const x = p[0] * cy_ + p[2] * sy_;
+        const z0 = -p[0] * sy_ + p[2] * cy_;
+        const y = p[1] * ct - z0 * st;
+        const z = p[1] * st + z0 * ct;
+        const front = z > 0;
+        const edge = Math.sqrt(x * x + y * y);
+        const limbFade = edge > 0.88 ? 1 - (edge - 0.88) / 0.12 : 1;
+        const a = (front ? 0.55 + 0.4 * z : 0.08 + 0.08 * z) * limbFade;
+        if (a <= 0.01) continue;
+        ctx.fillStyle = `rgba(${CRATER_INK[0]},${CRATER_INK[1]},${CRATER_INK[2]},${a.toFixed(3)})`;
+        const r = front ? 1.4 + 0.6 * z : 0.8;
+        ctx.fillRect(cx + x * R - r / 2, cy - y * R - r / 2, r, r);
+      }
+
+      if (!reduced) raf = requestAnimationFrame(draw);
     }
 
-    function paintAll() {
-      size = resize();
-      bake();
-      draw();
+    function wake() {
+      if (!raf && !reduced) raf = requestAnimationFrame(draw);
     }
-    paintAll();
-    window.addEventListener("resize", paintAll);
-    return () => window.removeEventListener("resize", paintAll);
+
+    function onDown(e) {
+      dragging = true;
+      lastX = e.clientX;
+      lastMoveT = performance.now();
+      canvas.setPointerCapture(e.pointerId);
+    }
+    function onMove(e) {
+      if (!dragging) return;
+      const now = performance.now();
+      const dx = e.clientX - lastX;
+      rotY += dx * 0.006;
+      velY = Math.max(-0.015, Math.min(0.015, (dx * 0.006) / Math.max(16, now - lastMoveT)));
+      lastX = e.clientX;
+      lastMoveT = now;
+      wake();
+    }
+    function onUp() {
+      dragging = false;
+      if (Math.abs(velY) < 0.000012) velY = 0.000012;
+      wake();
+    }
+    canvas.addEventListener("pointerdown", onDown);
+    canvas.addEventListener("pointermove", onMove);
+    canvas.addEventListener("pointerup", onUp);
+    canvas.addEventListener("pointercancel", onUp);
+
+    const onResize = () => { size = resize(); bake(); if (reduced) draw(performance.now()); };
+    window.addEventListener("resize", onResize);
+
+    size = resize();
+    bake();
+    draw(performance.now());
+
+    return () => {
+      alive = false;
+      cancelAnimationFrame(raf);
+      canvas.removeEventListener("pointerdown", onDown);
+      canvas.removeEventListener("pointermove", onMove);
+      canvas.removeEventListener("pointerup", onUp);
+      canvas.removeEventListener("pointercancel", onUp);
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
 
-  return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
+  return <canvas ref={canvasRef} className={className} aria-label="Cratered dot-matrix Moon" />;
 }

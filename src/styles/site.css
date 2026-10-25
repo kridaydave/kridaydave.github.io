@@ -636,8 +636,12 @@ main.home {
   left: clamp(16px, 4vw, 72px);
   width: clamp(120px, min(14vw, 22vh), 195px);
   aspect-ratio: 1 / 1;
-  pointer-events: none; /* static — never blocks the page */
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y; /* vertical scroll survives touch on the moon */
 }
+.moon-globe:active { cursor: grabbing; }
 @media (max-width: 860px) {
   .moon-globe { width: 78px; top: 76px; left: 16px; }
 }
