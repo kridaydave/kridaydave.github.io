@@ -615,7 +615,7 @@ main.home {
   right: clamp(24px, 5vw, 90px);
   /* capped by vh as well as vw: the globe must end above the hero
      copy on tall screens, where the copy sits higher than vh suggests */
-  width: clamp(210px, min(26vw, 34vh), 330px);
+  width: clamp(210px, min(28vw, 38vh), 380px);
   aspect-ratio: 1 / 1;
   cursor: grab;
   user-select: none;
@@ -632,7 +632,7 @@ main.home {
 /* ---- the moon, top-left, keeping the Earth company ---- */
 .moon-globe {
   position: absolute;
-  top: clamp(56px, 8vh, 116px);
+  top: clamp(70px, 10vh, 140px);
   left: clamp(16px, 4vw, 72px);
   width: clamp(120px, min(14vw, 22vh), 195px);
   aspect-ratio: 1 / 1;
