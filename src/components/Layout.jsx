@@ -5,7 +5,7 @@ import useScrollReveal from "../hooks/useScrollReveal.js";
 import ReadingProgress from "./ReadingProgress";
 
 const NAV_LINK =
-  "relative py-1 text-[14px] font-medium text-ink-3 transition-colors hover:text-ink";
+  "rounded-full px-3.5 py-1.5 text-[13px] font-medium text-ink-3 transition-colors hover:text-ink hover:bg-white/8 not-dark:hover:bg-black/6";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", href: "/index.html" },
@@ -63,6 +63,25 @@ function ThemeToggle({ onToggle }) {
   );
 }
 
+/**
+ * Persistent viewport-edge progressive blur: content dissolves as it
+ * leaves at the top of the screen and blurs as it enters at the bottom,
+ * on every page. The site's own --background tints the top feather so
+ * it reads in both themes.
+ */
+function EdgeBlurs() {
+  return (
+    <>
+      <div className="edge-blur top" aria-hidden="true">
+        <span /><span /><span /><span /><span />
+      </div>
+      <div className="edge-blur bottom" aria-hidden="true">
+        <span /><span /><span /><span /><span />
+      </div>
+    </>
+  );
+}
+
 function Navbar({ active, homeMode, spyHash }) {
   const [dark, setDark] = useState(() =>
     document.documentElement.classList.contains("dark")
@@ -86,41 +105,47 @@ function Navbar({ active, homeMode, spyHash }) {
     const href = homeMode && item.key === "home" ? "#top" : item.href;
     const isActive = homeMode ? spyHash === href || href === "#top" : active === item.key;
     return (
-      <a key={item.key} href={href} className={cn(NAV_LINK, isActive && "text-ink")}>
-        {item.label}
-        {isActive && (
-          <span className="absolute bottom-[-2px] left-1/2 size-1 -translate-x-1/2 rounded-full bg-ink" />
+      <a
+        key={item.key}
+        href={href}
+        className={cn(
+          NAV_LINK,
+          isActive && "bg-white/10 text-ink not-dark:bg-black/8"
         )}
+      >
+        {item.label}
       </a>
     );
   });
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-dashed border-hair-strong bg-background backdrop-blur-[12px] animate-[slideDown_0.5s_cubic-bezier(0.2,0.8,0.2,1)_both]">
-      <div className="mx-auto flex h-12 w-full max-w-column items-center justify-between border-x border-dashed border-hair px-4">
-        <a href={homeMode ? "#top" : "/index.html"} className="font-serif text-[28px] leading-none text-ink">
-          Kriday
-        </a>
-        <nav className="hidden items-center gap-5 md:flex" aria-label="Main navigation">
-          {links}
-        </nav>
-        <div className="flex items-center gap-2">
-          <ThemeToggle onToggle={toggleTheme} />
-          <div className="hidden h-5 w-px bg-hair md:block" />
-          <button
-            className="grid size-9 place-items-center rounded-md text-ink transition-colors hover:bg-surface-2 md:hidden"
-            type="button"
-            aria-label="Toggle menu"
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <Menu />
-          </button>
-        </div>
+    <header
+      className="fixed top-[14px] left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full border border-white/25 bg-[rgba(10,10,14,0.74)] px-2 py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.28)] backdrop-blur-[28px] backdrop-saturate-150 animate-[slideDown_0.5s_cubic-bezier(0.2,0.8,0.2,1)_both] not-dark:border-black/15 not-dark:bg-[rgba(255,255,255,0.85)] not-dark:shadow-[0_12px_36px_rgba(0,0,0,0.16)]"
+    >
+      <a
+        href={homeMode ? "#top" : "/index.html"}
+        className="mr-1 border-r border-white/15 px-3 py-1 font-serif text-[17px] italic leading-none text-ink not-dark:border-black/15"
+      >
+        Kriday
+      </a>
+      <nav className="hidden items-center gap-0.5 md:flex" aria-label="Main navigation">
+        {links}
+      </nav>
+      <div className="flex items-center gap-1">
+        <ThemeToggle onToggle={toggleTheme} />
+        <button
+          className="grid size-9 place-items-center rounded-full text-ink transition-colors hover:bg-white/8 not-dark:hover:bg-black/6 md:hidden"
+          type="button"
+          aria-label="Toggle menu"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <Menu />
+        </button>
       </div>
       <nav
         className={cn(
-          "flex-col border-x border-b border-dashed border-hair bg-background px-4 pt-3 pb-4 md:hidden",
+          "absolute right-0 top-[calc(100%+8px)] flex-col items-stretch gap-1 rounded-2xl border border-white/25 bg-[rgba(10,10,14,0.9)] p-3 backdrop-blur-[28px] not-dark:border-black/15 not-dark:bg-[rgba(255,255,255,0.94)] md:hidden",
           open ? "flex" : "hidden"
         )}
         aria-label="Mobile navigation"
@@ -247,10 +272,21 @@ export default function Layout({
   return (
     <>
       {progress && <ReadingProgress />}
+      <EdgeBlurs />
       <FrameLines />
       <Navbar active={active} homeMode={homeMode} spyHash={spyHash} />
       {back && <BackPill href={back.href} label={back.label} />}
-      <main id="top" ref={mainRef} className="relative z-[2] mx-auto flex w-full max-w-column flex-col border-x border-dashed border-hair bg-column px-4 pt-12 shadow-[0_0_0_1px_var(--column-bg)] backdrop-blur-[14px] max-[480px]:px-4">
+      <main
+        id="top"
+        ref={mainRef}
+        className={cn(
+          "relative z-[2] mx-auto flex w-full flex-col",
+          homeMode &&
+            "home bg-transparent",
+          !homeMode &&
+            "max-w-column border-x border-dashed border-hair bg-column px-4 pt-[76px] shadow-[0_0_0_1px_var(--column-bg)] backdrop-blur-[14px] max-[480px]:px-4"
+        )}
+      >
         {children}
       </main>
       <Footer showUses={showUses} />

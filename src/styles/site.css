@@ -116,3 +116,517 @@ body {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ══ Tilt ═══════════════════════════════════════════════════
+   A picture card that gives under the pointer. Almost nothing
+   is here: the rotation, both gradients and the shadow are
+   written per frame from the pointer's position, and a rule
+   in this file that also had an opinion about any of them
+   would be a second author. What is left is the things that
+   are true whatever the pointer is doing. (Bencho, MIT —
+   bencho.dev/licence)
+
+   Token mapping: Bencho's --surface-2 is the card's backing
+   surface while the picture loads. This file already defines
+   --surface-2 for exactly that job (dark + light values at
+   the top), so the component reads the site's own token and
+   nothing new is declared. */
+.tlt {
+  position: relative;
+  /* The frame is what the pointer is measured against and it
+     is deliberately the ONLY thing in here that never moves.
+     The perspective lives on it rather than on the card for
+     the usual reason: on the card itself, `perspective` is
+     applied per element and the vanishing point rides along
+     with the rotation instead of staying put in the room. */}
+
+.tlt-card {
+  position: absolute;
+  inset: 0;
+  background-color: var(--surface-2);
+  background-size: cover;
+  background-position: center;
+  /* `cover` and a fixed frame, so the crop is the one
+     scripts/butterfly.sh already made rather than a second
+     one on top of it */
+  overflow: hidden;
+  /* NO `will-change`. It would hold a composited layer for
+     every copy of this block on the wall, permanently, to
+     save one frame on a hover that may never come — the same
+     bookkeeping CLAUDE.md objects to for permanent rAF. The
+     browser promotes this on its own once the transform
+     starts moving. */}
+
+/* ── the dent and the rim ───────────────────────────────────
+   One element, two gradients, both placed from the pointer —
+   the dark one under it and the light one at its mirror. It
+   inherits the corner rather than being told one, so the knob
+   only has to reach the card. */
+.tlt-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;}
+
+/* ══ Hover card ═════════════════════════════════════════════
+   Essay-wall hover preview: a glass card with the essay's title
+   and summary chases the mouse. Same mechanic as ObsidianUI's
+   hover-img (gsap quickTo), but the words are the preview — no
+   image assets. Tokens mapped to the site's own vars, so light
+   and dark flip without a .dark override. */
+.hover-card-container {
+  font-family: inherit;
+  width: 100%;
+  position: relative;
+}
+
+.hover-card-wall {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.hover-card-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 1.6rem 1rem;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+  transition: opacity 0.5s ease;
+  text-decoration: none;
+}
+
+.hover-card-row:last-of-type {
+  border-bottom: 1px solid var(--border);
+}
+
+.hover-card-row h2 {
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  transition: transform 0.5s ease;
+  margin: 0;
+}
+
+.hover-card-row p {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  transition: transform 0.5s ease;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.hover-card-row:hover {
+  opacity: 0.45;
+}
+
+.hover-card-row:hover h2 {
+  transform: translateX(-15px);
+}
+
+.hover-card-row:hover p {
+  transform: translateX(15px);
+}
+
+/* the popup itself: dark absorption substrate, glass blur, 1px rim */
+.hover-card-pop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 320px;
+  padding: 15px 17px;
+  border-radius: 14px;
+  background: rgba(10, 10, 14, 0.8);
+  border-top: 1px solid rgba(255, 255, 255, 0.32);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+  pointer-events: none;
+  z-index: 100;
+}
+
+.hover-card-date {
+  display: block;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10.5px;
+  color: var(--text-tertiary);
+  margin-bottom: 6px;
+  letter-spacing: 0.03em;
+}
+
+.hover-card-title {
+  font-family: var(--font-heading, Georgia, serif);
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+.hover-card-summary {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  /* no mouse to follow: the popup never shows on touch */
+  .hover-card-pop { display: none; }
+  .hover-card-row { flex-direction: column; gap: 2px; align-items: flex-start; }
+  .hover-card-row p { white-space: normal; }
+}
+
+/* ══ Home scenes ════════════════════════════════════════════
+   The hero and the writing band are dark SCENES regardless of the
+   site theme — the descent narrative needs black. .scene-dark locally
+   pins the site's own custom properties to their dark values, so
+   every token-driven rule inside (borders, ink, surfaces, hover
+   cards) keeps working without a second stylesheet. */
+.scene-dark {
+  --background: #000000;
+  --text-primary: #ffffff;
+  --text-secondary: #c7c7cc;
+  --text-tertiary: #8e8e93;
+  --border: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.3);
+  --surface-1: rgba(255, 255, 255, 0.06);
+  --surface-2: rgba(255, 255, 255, 0.08);
+  color-scheme: dark;
+  color: var(--text-primary);
+}
+
+/* ---- hero ---- */
+.hero {
+  position: relative;
+  z-index: 2; /* paints over the writing band's top, which slides underneath */
+  height: min(104vh, 1020px);
+  min-height: 680px;
+}
+.hero-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: 50% 45%;
+  display: block;
+}
+.hero-shade {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(46% 58% at 72% 74%, rgba(0,0,0,0.58), transparent 100%),
+    radial-gradient(120% 90% at 50% 42%, transparent 46%, rgba(0,0,0,0.5) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,0.28), transparent 30%, transparent 62%);
+}
+
+/* progressive blur, bottom melt (hero) — five backdrop layers anchored
+   to the edge, each feathered with a mask so no banding shows */
+.pblur { position: absolute; inset: auto 0 0 0; height: 42%; pointer-events: none; }
+.pblur span {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  -webkit-backdrop-filter: blur(var(--b)) saturate(120%);
+  backdrop-filter: blur(var(--b)) saturate(120%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 34%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 34%);
+}
+.pblur span:nth-child(1) { --b: 2px;  height: 100%; }
+.pblur span:nth-child(2) { --b: 5px;  height: 82%; }
+.pblur span:nth-child(3) { --b: 10px; height: 64%; }
+.pblur span:nth-child(4) { --b: 18px; height: 46%; }
+.pblur span:nth-child(5) { --b: 30px; height: 28%; }
+@supports not (backdrop-filter: blur(1px)) {
+  .pblur { background: linear-gradient(to bottom, transparent, #000 85%); }
+  .pblur span { display: none; }
+}
+.hero-fade {
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 90px;
+  background: linear-gradient(to bottom, transparent, #000);
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: absolute; inset: 0;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 48px;
+  max-width: 1240px; margin: 0 auto;
+  /* clears the fixed bottom edge-blur band instead of fighting it */
+  padding: 0 40px 29vh;
+}
+.hero-side {
+  display: flex; align-items: flex-end;
+  flex-shrink: 0;
+  margin-bottom: clamp(28px, 6vh, 64px);
+}
+.hero-portrait-frame {
+  width: clamp(180px, 18vw, 250px);
+  aspect-ratio: 1 / 1;
+}
+.hero-copy {
+  display: flex; flex-direction: column; align-items: flex-start;
+  text-align: left; max-width: 520px;
+  min-width: 0;
+}
+.hero-copy h1 {
+  font-family: var(--font-serif); font-size: clamp(36px, 4.4vw, 56px); line-height: 1.08;
+  font-weight: 400; letter-spacing: -0.02em; margin: 0;
+  text-shadow: 0 2px 40px rgba(0,0,0,0.65);
+  min-height: 1.08em; /* the typewriter empties this; keep the line held */
+}
+.caret {
+  display: inline-block;
+  width: 0.055em; height: 0.82em;
+  margin-left: 0.09em;
+  background: var(--text-secondary);
+  vertical-align: -0.06em;
+  animation: caretBlink 1.1s steps(2, start) infinite;
+}
+@keyframes caretBlink { to { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) {
+  .caret { animation: none; }
+}
+.hero-copy p {
+  margin: 20px 0 0; max-width: 44ch; color: var(--text-secondary); font-size: 15.5px;
+  text-shadow: 0 1px 24px rgba(0,0,0,0.8);
+}
+.hero-links { display: flex; gap: 22px; }
+.hero-links a {
+  font-size: 13px; color: var(--text-tertiary); border-bottom: 1px solid rgba(255,255,255,0.22);
+  padding-bottom: 2px; transition: color 0.15s, border-color 0.15s;
+  text-shadow: 0 1px 16px rgba(0,0,0,0.8);
+}
+.hero-links a:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.5); }
+
+@media (max-width: 860px) {
+  .hero-inner {
+    flex-direction: column; align-items: flex-start; justify-content: flex-end;
+    gap: 34px; padding: 0 20px 16vh;
+  }
+  .hero-portrait-frame { width: 170px; }
+  .hero-side { margin-bottom: 0; }
+}
+
+/* ---- writing band: the page descends into a second scene ----
+   The band slides UNDER the hero's bottom melt (negative margin) so the
+   two progressive blurs meet inside one shared seam. */
+.writing { position: relative; margin-top: -150px; background: #000; }
+.writing .clouds-band {
+  position: relative;
+  height: min(88vh, 800px);
+  min-height: 600px;
+  overflow: hidden;
+}
+.writing .clouds-band > img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: 50% 62%;
+  display: block;
+}
+.writing .clouds-shade {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(to bottom, #000 0%, #000 24%, rgba(0,0,0,0.32) 42%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0.55) 100%);
+}
+/* blur thickening toward the TOP edge (mirror of the hero's melt) */
+.pblur-top { position: absolute; inset: 0 0 auto 0; height: 42%; pointer-events: none; }
+.pblur-top span {
+  position: absolute; left: 0; right: 0; top: 0;
+  -webkit-backdrop-filter: blur(var(--b)) saturate(120%);
+  backdrop-filter: blur(var(--b)) saturate(120%);
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 34%);
+  mask-image: linear-gradient(to top, transparent 0%, #000 34%);
+}
+.pblur-top span:nth-child(1) { --b: 2px;  height: 100%; }
+.pblur-top span:nth-child(2) { --b: 5px;  height: 82%; }
+.pblur-top span:nth-child(3) { --b: 10px; height: 64%; }
+.pblur-top span:nth-child(4) { --b: 18px; height: 46%; }
+.pblur-top span:nth-child(5) { --b: 30px; height: 28%; }
+@supports not (backdrop-filter: blur(1px)) {
+  .pblur-top { background: linear-gradient(to top, transparent, #000 85%); }
+  .pblur-top span { display: none; }
+}
+.writing .pblur { height: 42%; }
+.writing .hero-fade { height: 70px; }
+
+.writing-featured {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  z-index: 2;
+  max-width: 1240px; margin: 0 auto;
+  padding: 0 40px 56px;
+}
+.writing-tag {
+  font-family: var(--font-serif); font-size: 14px; color: var(--text-secondary);
+  font-style: italic;
+  margin-bottom: 14px;
+  text-shadow: 0 1px 16px rgba(0,0,0,0.8);
+}
+.essay-card {
+  display: block;
+  max-width: 560px;
+  padding: 22px 26px;
+  border-radius: 18px;
+  background: rgba(9, 9, 14, 0.8);
+  border-top: 1px solid rgba(255, 255, 255, 0.32);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  -webkit-backdrop-filter: blur(32px) saturate(120%) brightness(0.82);
+  backdrop-filter: blur(32px) saturate(120%) brightness(0.82);
+  transition: background .2s;
+}
+.essay-card:hover { background: rgba(14, 14, 20, 0.84); }
+.essay-card .date {
+  font-family: var(--font-mono);
+  font-size: 12px; color: #cfcfcf; margin-bottom: 8px;
+}
+.essay-card h3 {
+  font-family: var(--font-serif); font-weight: 400; font-size: 26px;
+  line-height: 1.25; letter-spacing: -0.01em; color: #fff; margin-bottom: 8px;
+  text-wrap: balance;
+}
+.essay-card p {
+  font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 12px;
+}
+.essay-card .read {
+  font-size: 13px; color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255,255,255,0.25); padding-bottom: 1px;
+}
+.essay-card:hover .read { color: #fff; border-color: rgba(255,255,255,0.55); }
+
+@media (max-width: 640px) {
+  .writing-featured { padding: 0 20px 40px; }
+  .essay-card { max-width: none; padding: 18px 20px; }
+  .essay-card h3 { font-size: 22px; }
+}
+
+/* ---- essay wall under the band ---- */
+.essay-wall {
+  max-width: 980px; margin: 0 auto; padding: 34px 40px 40px;
+  width: 100%;
+}
+.essay-wall .hover-card-row h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  font-weight: 400;
+  color: var(--text-secondary);
+  transition: transform 0.5s ease, color 0.3s ease;
+}
+.essay-wall .hover-card-row:hover h2 { color: var(--text-primary); }
+.essay-wall .writing-more {
+  display: inline-block; margin-top: 18px;
+  font-size: 13px; color: var(--text-tertiary);
+  border-bottom: 1px solid rgba(255,255,255,0.18); padding-bottom: 2px;
+  transition: color .15s, border-color .15s;
+}
+.essay-wall .writing-more:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.5); }
+@media (max-width: 640px) {
+  .essay-wall { padding: 26px 20px 32px; }
+}
+
+/* ---- persistent viewport-edge progressive blur ----
+   The same stack, fixed to the viewport: content blurs as it enters at
+   the bottom of the screen and dissolves as it leaves at the top,
+   everywhere on the site. */
+.edge-blur { position: fixed; left: 0; right: 0; pointer-events: none; z-index: 40; }
+.edge-blur.top { top: 0; height: 130px; }
+.edge-blur.bottom { bottom: 0; height: 90px; }
+.edge-blur span {
+  position: absolute; left: 0; right: 0;
+  -webkit-backdrop-filter: blur(var(--b)) saturate(120%);
+  backdrop-filter: blur(var(--b)) saturate(120%);
+}
+.edge-blur.top span {
+  top: 0;
+  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 62%, transparent 100%);
+}
+.edge-blur.bottom span {
+  bottom: 0;
+  -webkit-mask-image: linear-gradient(to top, #000 62%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 62%, transparent 100%);
+}
+.edge-blur span:nth-child(1) { --b: 2px;  height: 100%; }
+.edge-blur span:nth-child(2) { --b: 5px;  height: 80%; }
+.edge-blur span:nth-child(3) { --b: 10px; height: 60%; }
+.edge-blur span:nth-child(4) { --b: 18px; height: 42%; }
+.edge-blur span:nth-child(5) { --b: 30px; height: 26%; }
+.edge-blur.top::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--background) 42%, transparent), transparent);
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .edge-blur { display: none; }
+}
+
+/* The home page's hero and writing band are full-bleed scenes: the
+   element-level main frame above yields entirely, and .column-body
+   (in Home.jsx) re-creates the framed column for the sections below. */
+main.home {
+  max-width: none;
+  padding: 0;
+  border-left: 0;
+  border-right: 0;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ---- projects: editorial rows continuing the black ---- */
+.projects-rows {
+  max-width: 980px; margin: 0 auto;
+  padding: 90px 40px 110px;
+}
+.p-rows a {
+  display: grid; grid-template-columns: 1fr auto auto; gap: 8px 28px;
+  align-items: baseline;
+  padding: 20px 2px;
+  border-bottom: 1px dashed var(--border);
+  transition: opacity .15s;
+}
+.p-rows .t {
+  font-family: var(--font-serif); font-size: 22px; color: var(--text-secondary);
+  transition: color .15s;
+}
+.p-rows .desc { grid-column: 1 / -1; font-size: 14px; color: var(--text-tertiary); line-height: 1.55; }
+.p-rows .type { font-size: 12px; color: var(--text-tertiary); white-space: nowrap; }
+.p-rows .year { font-size: 12px; color: var(--text-tertiary); white-space: nowrap; }
+.p-rows a:hover .t { color: var(--text-primary); }
+@media (max-width: 640px) {
+  .projects-rows { padding: 70px 20px 90px; }
+  .p-rows a { grid-template-columns: 1fr auto; }
+  .p-rows .desc { grid-column: 1 / -1; }
+}
+
+/* ---- the dot-matrix Earth, floating in the hero's sky ---- */
+.earth-globe {
+  position: absolute;
+  top: clamp(96px, 15vh, 170px);
+  right: clamp(24px, 6vw, 100px);
+  width: clamp(230px, 29vw, 390px);
+  aspect-ratio: 1 / 1;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  /* pan-y: vertical page scroll still works from the globe on touch;
+     horizontal drags rotate the planet */
+  touch-action: pan-y;
+}
+.earth-globe:active { cursor: grabbing; }
+@media (max-width: 860px) {
+  .earth-globe { width: 150px; top: 84px; right: 16px; }
+}
+
+/* ---- the moon, top-left, keeping the Earth company ---- */
+.moon-globe {
+  position: absolute;
+  top: clamp(64px, 10vh, 122px);
+  left: clamp(16px, 4vw, 80px);
+  width: clamp(140px, 16vw, 215px);
+  aspect-ratio: 1 / 1;
+  pointer-events: none; /* static — never blocks the page */
+}
+@media (max-width: 860px) {
+  .moon-globe { width: 78px; top: 76px; left: 16px; }
+}
