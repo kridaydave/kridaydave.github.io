@@ -353,8 +353,11 @@ body {
   display: flex; align-items: flex-end; justify-content: space-between;
   gap: 48px;
   max-width: 1240px; margin: 0 auto;
-  /* clears the fixed bottom edge-blur band instead of fighting it */
-  padding: 0 40px 29vh;
+  /* clears the fixed bottom edge-blur band instead of fighting it.
+     Capped in px: the hero height caps at 1020px, so a vh-only pad
+     would keep inflating on tall screens and push content up into
+     the sky where the globe lives. */
+  padding: 0 40px min(29vh, 300px);
 }
 .hero-side {
   display: flex; align-items: flex-end;
@@ -407,6 +410,12 @@ body {
   }
   .hero-portrait-frame { width: 170px; }
   .hero-side { margin-bottom: 0; }
+}
+/* short viewports: the content band rises, so the sky bodies shrink */
+@media (max-height: 760px) {
+  .hero-portrait-frame { width: min(18vw, 200px); }
+  .earth-globe { width: min(24vw, 28vh); }
+  .moon-globe { width: min(12vw, 17vh); }
 }
 
 /* ---- writing band: the page descends into a second scene ----
@@ -602,9 +611,11 @@ main.home {
 /* ---- the dot-matrix Earth, floating in the hero's sky ---- */
 .earth-globe {
   position: absolute;
-  top: clamp(96px, 15vh, 170px);
-  right: clamp(24px, 6vw, 100px);
-  width: clamp(230px, 29vw, 390px);
+  top: clamp(80px, 9vh, 130px);
+  right: clamp(24px, 5vw, 90px);
+  /* capped by vh as well as vw: the globe must end above the hero
+     copy on tall screens, where the copy sits higher than vh suggests */
+  width: clamp(210px, min(26vw, 34vh), 330px);
   aspect-ratio: 1 / 1;
   cursor: grab;
   user-select: none;
@@ -621,9 +632,9 @@ main.home {
 /* ---- the moon, top-left, keeping the Earth company ---- */
 .moon-globe {
   position: absolute;
-  top: clamp(64px, 10vh, 122px);
-  left: clamp(16px, 4vw, 80px);
-  width: clamp(140px, 16vw, 215px);
+  top: clamp(56px, 8vh, 116px);
+  left: clamp(16px, 4vw, 72px);
+  width: clamp(120px, min(14vw, 22vh), 195px);
   aspect-ratio: 1 / 1;
   pointer-events: none; /* static — never blocks the page */
 }
