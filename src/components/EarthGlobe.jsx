@@ -35,7 +35,9 @@ export default function EarthGlobe({ className }) {
 
     /* rotation state: spin around the Y axis (+ drag), fixed axial tilt */
     let rotY = 0.6;
-    let velY = 0.00004; /* idle auto-rotation, rad per ms */
+    const IDLE = 0.00004; /* idle auto-rotation, rad per ms */
+    let decayTarget = IDLE; /* set at release: idle drift in the flung direction */
+    let velY = IDLE;
     let dragging = false;
     let lastX = 0;
     let lastMoveT = 0;
@@ -136,10 +138,9 @@ export default function EarthGlobe({ className }) {
       if (!dragging) {
         const dtMs = Math.min(32, t - (draw.t || t));
         rotY += velY * dtMs;
-        /* friction: a fling decays back to the idle drift within a
-           couple of seconds instead of spinning forever */
-        const idle = 0.00004;
-        velY = idle + (velY - idle) * Math.pow(0.9991, dtMs);
+        /* friction: a fling decays back to the idle drift in the direction
+           it was flung — never through zero, or the spin stalls mid-decay */
+        velY = decayTarget + (velY - decayTarget) * Math.pow(0.9985, dtMs);
       }
       draw.t = t;
 
@@ -213,6 +214,7 @@ export default function EarthGlobe({ className }) {
     }
     function onUp() {
       dragging = false;
+      decayTarget = (velY === 0 ? 1 : Math.sign(velY)) * IDLE;
       wake();
     }
     canvas.addEventListener("pointerdown", onDown);

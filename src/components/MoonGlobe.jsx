@@ -40,7 +40,10 @@ export default function MoonGlobe({ className }) {
     let alive = true;
 
     let rotY = 0;
-    let velY = 0.000012; /* barely-there idle drift */
+    /* visible quiet pace — too slow reads as "stopped" after friction */
+    const IDLE = 0.00003;
+    let decayTarget = IDLE; /* set at release: idle drift in the flung direction */
+    let velY = IDLE;
     let dragging = false;
     let lastX = 0;
     let lastMoveT = 0;
@@ -138,9 +141,10 @@ export default function MoonGlobe({ className }) {
       if (!dragging) {
         const dtMs = Math.min(32, t - (draw.t || t));
         rotY += velY * dtMs;
-        /* same friction as Earth: a fling settles to the idle drift */
-        const idle = 0.000012;
-        velY = idle + (velY - idle) * Math.pow(0.9991, dtMs);
+        /* same friction as Earth: a fling settles to the idle drift in
+           the direction it was flung — never through zero, or the moon
+           stalls motionless mid-decay */
+        velY = decayTarget + (velY - decayTarget) * Math.pow(0.9985, dtMs);
       }
       draw.t = t;
 
@@ -188,6 +192,7 @@ export default function MoonGlobe({ className }) {
     }
     function onUp() {
       dragging = false;
+      decayTarget = (velY === 0 ? 1 : Math.sign(velY)) * IDLE;
       wake();
     }
     canvas.addEventListener("pointerdown", onDown);
