@@ -136,7 +136,11 @@ export default function MoonGlobe({ className }) {
       const R = Math.min(size.w, size.h) * 0.47;
 
       if (!dragging) {
-        rotY += velY * Math.min(32, t - (draw.t || t));
+        const dtMs = Math.min(32, t - (draw.t || t));
+        rotY += velY * dtMs;
+        /* same friction as Earth: a fling settles to the idle drift */
+        const idle = 0.000012;
+        velY = idle + (velY - idle) * Math.pow(0.9991, dtMs);
       }
       draw.t = t;
 
@@ -177,14 +181,13 @@ export default function MoonGlobe({ className }) {
       const now = performance.now();
       const dx = e.clientX - lastX;
       rotY += dx * 0.006;
-      velY = Math.max(-0.015, Math.min(0.015, (dx * 0.006) / Math.max(16, now - lastMoveT)));
+      velY = Math.max(-0.005, Math.min(0.005, (dx * 0.006) / Math.max(16, now - lastMoveT)));
       lastX = e.clientX;
       lastMoveT = now;
       wake();
     }
     function onUp() {
       dragging = false;
-      if (Math.abs(velY) < 0.000012) velY = 0.000012;
       wake();
     }
     canvas.addEventListener("pointerdown", onDown);

@@ -134,7 +134,12 @@ export default function EarthGlobe({ className }) {
       const R = Math.min(size.w, size.h) * 0.46;
 
       if (!dragging) {
-        rotY += velY * Math.min(32, t - (draw.t || t));
+        const dtMs = Math.min(32, t - (draw.t || t));
+        rotY += velY * dtMs;
+        /* friction: a fling decays back to the idle drift within a
+           couple of seconds instead of spinning forever */
+        const idle = 0.00004;
+        velY = idle + (velY - idle) * Math.pow(0.9991, dtMs);
       }
       draw.t = t;
 
@@ -201,14 +206,13 @@ export default function EarthGlobe({ className }) {
       const now = performance.now();
       const dx = e.clientX - lastX;
       rotY += dx * 0.006;
-      velY = Math.max(-0.02, Math.min(0.02, (dx * 0.006) / Math.max(16, now - lastMoveT)));
+      velY = Math.max(-0.006, Math.min(0.006, (dx * 0.006) / Math.max(16, now - lastMoveT)));
       lastX = e.clientX;
       lastMoveT = now;
       wake();
     }
     function onUp() {
       dragging = false;
-      if (Math.abs(velY) < 0.00004) velY = 0.00004; /* never fully stalls */
       wake();
     }
     canvas.addEventListener("pointerdown", onDown);
