@@ -9,7 +9,7 @@ import { useEffect, useRef } from "react";
 
 const INK = [205, 214, 232]; /* light grey dots where the light lands */
 const SHADE_INK = [96, 106, 126]; /* darker grey dots for shade */
-const CRATER_INK = [16, 20, 30]; /* crater floors, darker than the body */
+const CRATER_INK = [10, 13, 22]; /* crater floors, darker than the body */
 
 /* craters, in unit-disc coords at the rest pose — converted to 3D
    points so they ride the surface when the moon spins */
@@ -40,8 +40,8 @@ export default function MoonGlobe({ className }) {
     let alive = true;
 
     let rotY = 0;
-    /* visible quiet pace — too slow reads as "stopped" after friction */
-    const IDLE = 0.00003;
+    /* clearly visible idle pace — anything slower reads as "stopped" */
+    const IDLE = 0.00006;
     let decayTarget = IDLE; /* set at release: idle drift in the flung direction */
     let velY = IDLE;
     let dragging = false;
@@ -57,7 +57,7 @@ export default function MoonGlobe({ className }) {
       const dots = [];
       for (const c of CRATERS) {
         const nz = Math.sqrt(Math.max(0, 1 - c.x * c.x - c.y * c.y));
-        for (let k = 0; k < 46; k++) {
+        for (let k = 0; k < 70; k++) {
           /* denser toward the crater floor */
           const d = Math.sqrt(Math.random()) * c.r;
           const a = Math.random() * Math.PI * 2;
@@ -160,10 +160,10 @@ export default function MoonGlobe({ className }) {
         const front = z > 0;
         const edge = Math.sqrt(x * x + y * y);
         const limbFade = edge > 0.88 ? 1 - (edge - 0.88) / 0.12 : 1;
-        const a = (front ? 0.55 + 0.4 * z : 0.08 + 0.08 * z) * limbFade;
+        const a = (front ? 0.75 + 0.25 * z : 0.08 + 0.08 * z) * limbFade;
         if (a <= 0.01) continue;
         ctx.fillStyle = `rgba(${CRATER_INK[0]},${CRATER_INK[1]},${CRATER_INK[2]},${a.toFixed(3)})`;
-        const r = front ? 1.4 + 0.6 * z : 0.8;
+        const r = front ? 1.9 + 0.8 * z : 0.8;
         ctx.fillRect(cx + x * R - r / 2, cy - y * R - r / 2, r, r);
       }
 
@@ -184,8 +184,8 @@ export default function MoonGlobe({ className }) {
       if (!dragging) return;
       const now = performance.now();
       const dx = e.clientX - lastX;
-      rotY += dx * 0.006;
-      velY = Math.max(-0.005, Math.min(0.005, (dx * 0.006) / Math.max(16, now - lastMoveT)));
+      rotY += dx * 0.009;
+      velY = Math.max(-0.008, Math.min(0.008, (dx * 0.009) / Math.max(16, now - lastMoveT)));
       lastX = e.clientX;
       lastMoveT = now;
       wake();
