@@ -358,6 +358,14 @@ body {
      would keep inflating on tall screens and push content up into
      the sky where the globe lives. */
   padding: 0 40px min(29vh, 300px);
+  /* the overlay covers the whole hero, so it must be click-through —
+     otherwise the Earth and Moon canvases beneath it never receive a
+     pointer. Only the actual content re-enables events. */
+  pointer-events: none;
+}
+.hero-inner .hero-copy,
+.hero-inner .hero-portrait-frame {
+  pointer-events: auto;
 }
 .hero-side {
   display: flex; align-items: flex-end;
