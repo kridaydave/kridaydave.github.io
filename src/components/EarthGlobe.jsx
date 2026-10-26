@@ -129,6 +129,9 @@ export default function EarthGlobe({ className }) {
 
     function draw(t) {
       if (!alive) return;
+      /* ~30fps cap: the idle drift doesn't need 120hz, and every
+         repaint invalidates the nav's backdrop-filter */
+      if (t - (draw.last || 0) < 28) { raf = requestAnimationFrame(draw); return; }
       ctx.clearRect(0, 0, size.w, size.h);
       if (!points.length) return;
 

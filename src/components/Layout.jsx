@@ -290,7 +290,6 @@ export default function Layout({
       {back && <BackPill href={back.href} label={back.label} />}
       <main
         id="top"
-        data-glisse-backdrop
         ref={mainRef}
         className={cn(
           "relative z-[2] mx-auto flex w-full flex-col",

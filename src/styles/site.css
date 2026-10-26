@@ -795,3 +795,70 @@ html.dark .nav-glass {
   --lg-fill: #0091ff;
   --lg-ring: rgb(255 255 255 / 0.5);
 }
+
+/* ---- projects: a dithered sun cropped by the left edge ----
+   Epoch AI Labs lives in the sun's core (dark text on amber); the
+   projects orbit it along a dashed ring. */
+.projects-scene {
+  position: relative;
+  background: #000;
+  overflow: hidden;
+  min-height: 960px;
+}
+.projects-sun {
+  position: absolute;
+  top: 50%; left: 0;
+  transform: translateY(-50%);
+  width: min(46vw, 660px);
+  height: min(46vw, 660px);
+  pointer-events: none;
+}
+.p-sun-head {
+  position: absolute;
+  left: clamp(24px, 3vw, 56px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(260px, 24vw);
+  z-index: 1;
+}
+.p-sun-head h2 {
+  font-family: var(--font-serif); font-weight: 400;
+  font-size: clamp(32px, 3.2vw, 44px); line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: #2a1204; margin: 0 0 12px;
+}
+.p-sun-head .p-lede {
+  font-size: 14.5px; line-height: 1.6; color: #4a2408; margin: 0;
+}
+.p-orbit-ring {
+  position: absolute;
+  top: 50%; left: 0;
+  transform: translate(-8%, -50%);
+  width: min(88vw, 1240px);
+  aspect-ratio: 1 / 1;
+  border: 1px dashed rgba(255, 213, 128, 0.22);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.projects-rows {
+  position: relative;
+  z-index: 1;
+  max-width: 980px; margin: 0 auto;
+  padding: 90px 40px 120px clamp(240px, 30vw, 430px);
+}
+.p-rows .badge {
+  display: inline-block; vertical-align: 3px;
+  margin-left: 10px; padding: 2px 8px;
+  border-radius: 999px; border: 1px solid rgba(255, 213, 128, 0.4);
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em;
+  color: #ffd58a; text-transform: uppercase;
+}
+@media (max-width: 1100px) {
+  .projects-scene { min-height: 0; }
+  .projects-sun { width: 340px; height: 340px; opacity: 0.55; }
+  .p-sun-head { position: static; width: auto; margin: 0 0 34px; }
+  .p-sun-head h2, .p-sun-head .p-lede { color: var(--text-primary); }
+  .p-sun-head .p-lede { color: var(--text-secondary); }
+  .p-orbit-ring { display: none; }
+  .projects-rows { padding: 80px 24px 100px; }
+}

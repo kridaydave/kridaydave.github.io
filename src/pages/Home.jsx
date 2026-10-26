@@ -4,6 +4,7 @@ import TiltCard from "../components/TiltCard.jsx";
 import HoverCard from "../components/HoverCard.jsx";
 import EarthGlobe from "../components/EarthGlobe.jsx";
 import MoonGlobe from "../components/MoonGlobe.jsx";
+import DitherSun from "../components/DitherSun.jsx";
 import ActivityGraph from "../components/ActivityGraph.jsx";
 import { useLatestEssay } from "../hooks/useLatestEssay.js";
 import { useActivityData } from "../hooks/useActivityData.js";
@@ -161,39 +162,37 @@ export default function Home() {
         </div>
       </section>
 
-      {/* projects: the hero's melt lands on the work */}
-      <section className="scene-dark bg-black" aria-label="Projects">
+      {/* projects: a dithered sun cropped by the edge, the work orbiting it */}
+      <section className="scene-dark bg-black projects-scene" aria-label="Projects">
+        <DitherSun className="projects-sun" />
+        <div className="p-sun-head">
+          <h2>Epoch AI Labs</h2>
+          <p className="p-lede">
+            I'm the founder of Epoch AI Labs, an independent lab testing how
+            model agents coordinate, break, and get broken.
+          </p>
+        </div>
         <div className="projects-rows">
           <p className="writing-tag">Projects</p>
-          <p className="p-lede">
-            I'm the founder of{" "}
-            <a href="https://theepoch.in" target="_blank" rel="noreferrer">Epoch AI Labs</a>, an
-            independent lab testing how model agents coordinate, break, and get
-            broken.
-          </p>
-          {PROJECT_GROUPS.map((group) => (
-            <div className="p-group" key={group.label}>
-              <p className="p-group-label">{group.label}</p>
-              <div className="p-rows">
-                {group.rows.map((row) => (
-                  <a
-                    key={row.name}
-                    href={row.href}
-                    target={row.external ? "_blank" : undefined}
-                    rel={row.external ? "noreferrer" : undefined}
-                  >
-                    <span className="t">
-                      {row.name}
-                      {row.badge && <span className="badge">{row.badge}</span>}
-                    </span>
-                    <span className="type">{row.type}</span>
-                    <span className="year">{row.year}</span>
-                    <span className="desc">{row.desc}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))}
+          <div className="p-orbit-ring" aria-hidden="true" />
+          <div className="p-rows">
+            {PROJECT_GROUPS.flatMap((g) => g.rows).map((row) => (
+              <a
+                key={row.name}
+                href={row.href}
+                target={row.external ? "_blank" : undefined}
+                rel={row.external ? "noreferrer" : undefined}
+              >
+                <span className="t">
+                  {row.name}
+                  {row.badge && <span className="badge">{row.badge}</span>}
+                </span>
+                <span className="type">{row.type}</span>
+                <span className="year">{row.year}</span>
+                <span className="desc">{row.desc}</span>
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 
