@@ -305,7 +305,6 @@ body {
 /* ---- hero ---- */
 .hero {
   position: relative;
-  z-index: 2; /* paints over the writing band's top, which slides underneath */
   height: min(104vh, 1020px);
   min-height: 680px;
 }
@@ -426,10 +425,11 @@ body {
   .moon-globe { width: min(12vw, 17vh); }
 }
 
-/* ---- writing band: the page descends into a second scene ----
-   The band slides UNDER the hero's bottom melt (negative margin) so the
-   two progressive blurs meet inside one shared seam. */
-.writing { position: relative; margin-top: -150px; background: #000; }
+/* ---- writing band: a dusk-coast scene between two blacks ----
+   No longer a hero appendage: it sits after the projects on black, and
+   its top shade (solid black for the first 24%) lets the coast emerge
+   out of the section above. */
+.writing { position: relative; margin-top: 0; background: #000; }
 .writing .clouds-band {
   position: relative;
   height: min(88vh, 800px);
@@ -590,10 +590,29 @@ main.home {
   backdrop-filter: none;
 }
 
-/* ---- projects: editorial rows continuing the black ---- */
+/* ---- projects: grouped editorial rows, first stop after the hero ----
+   The hero's bottom melt already fades to black, so these rows continue
+   the same black without a seam. */
 .projects-rows {
   max-width: 980px; margin: 0 auto;
-  padding: 90px 40px 110px;
+  padding: 96px 40px 110px;
+}
+.p-lede {
+  margin: 0 0 44px; max-width: 54ch;
+  font-size: 15px; line-height: 1.6; color: var(--text-secondary);
+}
+.p-lede a {
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  transition: border-color .15s;
+}
+.p-lede a:hover { border-color: rgba(255, 255, 255, 0.55); }
+.p-group + .p-group { margin-top: 46px; }
+.p-group-label {
+  font-family: var(--font-mono); font-size: 11.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 4px;
 }
 .p-rows a {
   display: grid; grid-template-columns: 1fr auto auto; gap: 8px 28px;
@@ -609,6 +628,13 @@ main.home {
 .p-rows .desc { grid-column: 1 / -1; font-size: 14px; color: var(--text-tertiary); line-height: 1.55; }
 .p-rows .type { font-size: 12px; color: var(--text-tertiary); white-space: nowrap; }
 .p-rows .year { font-size: 12px; color: var(--text-tertiary); white-space: nowrap; }
+.p-rows .badge {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-strong); border-radius: 999px;
+  padding: 2px 9px; margin-left: 12px; vertical-align: 3px;
+  white-space: nowrap;
+}
 .p-rows a:hover .t { color: var(--text-primary); }
 @media (max-width: 640px) {
   .projects-rows { padding: 70px 20px 90px; }
@@ -652,4 +678,76 @@ main.home {
 .moon-globe:active { cursor: grabbing; }
 @media (max-width: 860px) {
   .moon-globe { width: 78px; top: 76px; left: 16px; }
+}
+
+/* ---- now: signs of life ---- */
+.now-section { background: #000; }
+.now-inner {
+  max-width: 980px; margin: 0 auto;
+  padding: 40px 40px 60px;
+}
+.now-status {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--font-mono); font-size: 12.5px; color: var(--text-secondary);
+  margin-bottom: 26px;
+}
+.now-status .online-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: #30d158;
+  box-shadow: 0 0 8px rgba(48, 209, 88, 0.7);
+}
+.now-status .now-sep { color: var(--text-tertiary); }
+.now-status strong { color: var(--text-primary); font-weight: 500; }
+.now-graph { overflow-x: auto; padding-bottom: 6px; }
+.now-total {
+  margin: 18px 0 0; font-family: var(--font-mono); font-size: 12.5px;
+  color: var(--text-tertiary);
+}
+.now-total strong { color: var(--text-primary); font-weight: 500; }
+.now-total a {
+  color: var(--text-secondary); border-bottom: 1px solid rgba(255,255,255,0.2);
+  padding-bottom: 1px; transition: color .15s, border-color .15s;
+}
+.now-total a:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.5); }
+
+/* the contribution graph, re-voiced in the site's dot language:
+   GitHub's green squares become round blue dither dots */
+.now-section [data-cell] {
+  border-radius: 999px !important;
+  background: #0d1420 !important;
+}
+.now-section [data-level="1"] { background: #16243d !important; }
+.now-section [data-level="2"] { background: #24406b !important; }
+.now-section [data-level="3"] { background: #3b6ea8 !important; }
+.now-section [data-level="4"] { background: #7cb8ff !important; }
+@media (max-width: 640px) {
+  .now-inner { padding: 30px 20px 44px; }
+}
+
+/* ---- contact outro: the send-off ---- */
+.contact-outro {
+  background: #000;
+  text-align: center;
+  padding: 120px 40px 140px;
+}
+.contact-outro h2 {
+  font-family: var(--font-serif); font-weight: 400;
+  font-size: clamp(44px, 6vw, 76px); letter-spacing: -0.02em;
+  color: var(--text-primary); margin: 0;
+}
+.contact-outro .contact-lede {
+  margin: 18px auto 0; max-width: 46ch;
+  font-size: 15.5px; line-height: 1.6; color: var(--text-secondary);
+}
+.contact-row {
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: 16px 30px; margin-top: 38px;
+}
+.contact-row a {
+  font-size: 14px; color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255,255,255,0.22); padding-bottom: 2px;
+  transition: color .15s, border-color .15s;
+}
+.contact-row a:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.55); }
+@media (max-width: 640px) {
+  .contact-outro { padding: 90px 20px 110px; }
 }

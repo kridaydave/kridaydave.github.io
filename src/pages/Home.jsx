@@ -4,7 +4,10 @@ import TiltCard from "../components/TiltCard.jsx";
 import HoverCard from "../components/HoverCard.jsx";
 import EarthGlobe from "../components/EarthGlobe.jsx";
 import MoonGlobe from "../components/MoonGlobe.jsx";
+import ActivityGraph from "../components/ActivityGraph.jsx";
 import { useLatestEssay } from "../hooks/useLatestEssay.js";
+import { useActivityData } from "../hooks/useActivityData.js";
+import { useISTStatus } from "../hooks/useClock.js";
 import { POSTS } from "../content/pages.js";
 
 /* ---------- hero ---------- */
@@ -47,42 +50,55 @@ function TypeName() {
   );
 }
 
-/* ---------- projects: editorial rows under the essay wall ---------- */
+/* ---------- projects: grouped rows, first thing after the hero ---------- */
 
-const PROJECT_ROWS = [
+const PROJECT_GROUPS = [
   {
-    name: "Epoch AI Labs",
-    type: "Research Lab",
-    year: "2026",
-    desc: "Independent lab testing how model agents coordinate, break, and get broken.",
-    href: "https://theepoch.in",
-    external: true,
+    label: "Epoch AI Labs",
+    rows: [
+      {
+        name: "Blueline",
+        type: "Supply Chain Security",
+        year: "2026",
+        desc: "Approve the change, not the download. Sandboxed installs and release deltas for npm.",
+        href: "projects/blueline.html",
+      },
+      {
+        name: "Oot",
+        type: "Code Governance",
+        year: "2026",
+        desc: "A court for code: resolves intent disputes and merge conflicts between agents.",
+        href: "projects/oot.html",
+      },
+      {
+        name: "T4 CUDA Kernels",
+        type: "GPU Research",
+        year: "2026",
+        desc: "Inference and training kernels for a 2018 Tesla T4 — quantized decode, fused AdamW, speculative decoding. All numbers tagged MEASURED.",
+        href: "https://github.com/Epoch-AI-Lab/t4-cuda",
+        external: true,
+      },
+    ],
   },
   {
-    name: "Blueline",
-    type: "Supply Chain Security",
-    year: "2026",
-    desc: "Approve the change, not the download. Sandboxed installs and release deltas for npm.",
-    href: "projects/blueline.html",
-  },
-  {
-    name: "File Organizer MCP",
-    type: "Developer Tool",
-    year: "2025",
-    desc: "Local-first file management server for LLM agents, with dry-run safety gates.",
-    href: "projects/file-organizer-mcp.html",
-  },
-  {
-    name: "Oot",
-    type: "Code Governance",
-    year: "2026",
-    desc: "A court for code: resolves intent disputes and merge conflicts between agents.",
-    href: "projects/oot.html",
+    label: "Personal",
+    rows: [
+      {
+        name: "File Organizer MCP",
+        type: "Developer Tool",
+        year: "2025",
+        desc: "Local-first file management server for LLM agents, with dry-run safety gates.",
+        href: "projects/file-organizer-mcp.html",
+        badge: "Most popular",
+      },
+    ],
   },
 ];
 
 export default function Home() {
   const essay = useLatestEssay();
+  const activity = useActivityData();
+  const ist = useISTStatus();
 
   /* the three essays newest after the featured one, newest first */
   const wallEssays = useMemo(
@@ -145,7 +161,43 @@ export default function Home() {
         </div>
       </section>
 
-      {/* writing scene: the band slides under the hero's melt */}
+      {/* projects: the hero's melt lands on the work */}
+      <section className="scene-dark bg-black" aria-label="Projects">
+        <div className="projects-rows">
+          <p className="writing-tag">Projects</p>
+          <p className="p-lede">
+            I'm the founder of{" "}
+            <a href="https://theepoch.in" target="_blank" rel="noreferrer">Epoch AI Labs</a>, an
+            independent lab testing how model agents coordinate, break, and get
+            broken.
+          </p>
+          {PROJECT_GROUPS.map((group) => (
+            <div className="p-group" key={group.label}>
+              <p className="p-group-label">{group.label}</p>
+              <div className="p-rows">
+                {group.rows.map((row) => (
+                  <a
+                    key={row.name}
+                    href={row.href}
+                    target={row.external ? "_blank" : undefined}
+                    rel={row.external ? "noreferrer" : undefined}
+                  >
+                    <span className="t">
+                      {row.name}
+                      {row.badge && <span className="badge">{row.badge}</span>}
+                    </span>
+                    <span className="type">{row.type}</span>
+                    <span className="year">{row.year}</span>
+                    <span className="desc">{row.desc}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* writing scene: a dusk coast between two blacks */}
       <section className="writing scene-dark" aria-label="Writing">
         <div className="clouds-band">
           <img src="assets/hero/coast.webp" alt="" aria-hidden="true" />
@@ -175,25 +227,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* projects: editorial rows on the same black */}
-      <section className="scene-dark bg-black" aria-label="Projects">
-        <div className="projects-rows">
-          <p className="writing-tag">Projects</p>
-          <div className="p-rows">
-            {PROJECT_ROWS.map((row) => (
-              <a
-                key={row.name}
-                href={row.href}
-                target={row.external ? "_blank" : undefined}
-                rel={row.external ? "noreferrer" : undefined}
-              >
-                <span className="t">{row.name}</span>
-                <span className="type">{row.type}</span>
-                <span className="year">{row.year}</span>
-                <span className="desc">{row.desc}</span>
-              </a>
-            ))}
+      {/* now: signs of life */}
+      <section className="scene-dark now-section" aria-label="Now">
+        <div className="now-inner">
+          <p className="writing-tag">Now</p>
+          <div className="now-status">
+            <span className="online-dot" aria-hidden="true" />
+            <strong>{ist ? ist.time : "--:--:--"}</strong>
+            <span className="now-sep">·</span>
+            <span>{ist ? ist.activity : "Loading…"}</span>
           </div>
+          <div className="now-graph">
+            <ActivityGraph data={activity} />
+          </div>
+          <p className="now-total">
+            <strong>
+              {activity?.total?.lastYear != null
+                ? Number(activity.total.lastYear).toLocaleString()
+                : "—"}
+            </strong>{" "}
+            contributions in the last year ·{" "}
+            <a href="https://github.com/kridaydave" target="_blank" rel="noreferrer">
+              @kridaydave
+            </a>
+          </p>
+        </div>
+      </section>
+
+      {/* contact: the send-off */}
+      <section className="scene-dark contact-outro" aria-label="Contact">
+        <h2>Say hi.</h2>
+        <p className="contact-lede">
+          Research ideas, open-source collaboration, or thoughtful conversations
+          about AI — my inbox is open.
+        </p>
+        <div className="contact-row">
+          <a href="mailto:davekriday@gmail.com">davekriday@gmail.com</a>
+          <a href="https://github.com/kridaydave" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://linkedin.com/in/kriday-dave-0169a83b5" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href="https://twitter.com/KridayTop" target="_blank" rel="noreferrer">X / Twitter</a>
         </div>
       </section>
     </Layout>
