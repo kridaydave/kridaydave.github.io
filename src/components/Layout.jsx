@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Menu, Moon, Sun, X } from "lucide-react";
+import { TabBar } from "glisse";
+import "glisse/styles.css";
 import { cn } from "../lib/utils";
 import useScrollReveal from "../hooks/useScrollReveal.js";
 import ReadingProgress from "./ReadingProgress";
 
 const NAV_LINK =
-  "rounded-full px-3.5 py-1.5 text-[13px] font-medium text-ink-3 transition-colors hover:text-ink hover:bg-white/8 not-dark:hover:bg-black/6";
+  "block w-full text-left rounded-full px-3.5 py-1.5 text-[13px] font-medium text-ink-3 transition-colors hover:text-ink hover:bg-white/8 not-dark:hover:bg-black/6";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", href: "/index.html" },
@@ -101,26 +103,32 @@ function Navbar({ active, homeMode, spyHash }) {
   // takes over, because the hash links point at sections within one document.
   // The nav only carries one hash link (#top), so a spy hit on #about or
   // #contact matches nothing; fall back to Home rather than dropping the dot.
+  // A plain page highlights its own nav item. On the home page the scroll spy
+  // takes over, because the hash links point at sections within one document.
+  // The nav only carries one hash link (#top), so a spy hit on #about or
+  // #contact matches nothing; fall back to Home rather than dropping the dot.
   const links = NAV_ITEMS.map((item) => {
     const href = homeMode && item.key === "home" ? "#top" : item.href;
     const isActive = homeMode ? spyHash === href || href === "#top" : active === item.key;
     return (
-      <a
-        key={item.key}
-        href={href}
-        className={cn(
-          NAV_LINK,
-          isActive && "bg-white/10 text-ink not-dark:bg-black/8"
-        )}
-      >
+      <a key={item.key} href={href} className={cn(NAV_LINK, isActive && "bg-white/10 text-ink not-dark:bg-black/8")}>
         {item.label}
       </a>
     );
   });
 
+  /* glisse's TabBar carries the liquid-glass lens. It follows the OS theme
+     on its own, so nav-glass tokens in site.css pin it to the site theme. */
+  const tabItems = NAV_ITEMS.map((item) => ({
+    value: item.key,
+    label: item.label,
+    href: homeMode && item.key === "home" ? "#top" : item.href,
+  }));
+  const tabValue = homeMode ? "home" : active;
+
   return (
     <header
-      className="fixed top-[14px] left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full border border-white/25 bg-[rgba(10,10,14,0.74)] px-2 py-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.28)] backdrop-blur-[28px] backdrop-saturate-150 animate-[slideDown_0.5s_cubic-bezier(0.2,0.8,0.2,1)_both] not-dark:border-black/15 not-dark:bg-[rgba(255,255,255,0.85)] not-dark:shadow-[0_12px_36px_rgba(0,0,0,0.16)]"
+      className="nav-glass fixed top-[14px] left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/25 bg-[rgba(10,10,14,0.55)] px-2.5 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-[20px] animate-[slideDown_0.5s_cubic-bezier(0.2,0.8,0.2,1)_both] not-dark:border-black/12 not-dark:bg-[rgba(255,255,255,0.55)] not-dark:shadow-[0_12px_36px_rgba(0,0,0,0.14)]"
     >
       <a
         href={homeMode ? "#top" : "/index.html"}
@@ -128,9 +136,13 @@ function Navbar({ active, homeMode, spyHash }) {
       >
         Kriday
       </a>
-      <nav className="hidden items-center gap-0.5 md:flex" aria-label="Main navigation">
-        {links}
-      </nav>
+      <TabBar
+        aria-label="Main navigation"
+        className="hidden md:flex"
+        items={tabItems}
+        value={tabValue}
+        style={{ "--lg-tab-width": "72px", "--lg-tab-height": "30px" }}
+      />
       <div className="flex items-center gap-1">
         <ThemeToggle onToggle={toggleTheme} />
         <button
@@ -278,6 +290,7 @@ export default function Layout({
       {back && <BackPill href={back.href} label={back.label} />}
       <main
         id="top"
+        data-glisse-backdrop
         ref={mainRef}
         className={cn(
           "relative z-[2] mx-auto flex w-full flex-col",

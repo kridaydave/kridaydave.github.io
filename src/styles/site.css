@@ -751,3 +751,47 @@ main.home {
 @media (max-width: 640px) {
   .contact-outro { padding: 90px 20px 110px; }
 }
+
+/* ---- glisse (liquid-glass nav): pin its tokens to the site theme ----
+   glisse follows the OS color scheme on its own; the site theme is a
+   .dark class, so redeclare its token set scoped to the navbar. */
+.nav-glass {
+  --lg-foreground: rgb(0 0 0 / 0.88);
+  --lg-muted: rgb(60 60 67 / 0.6);
+  --lg-glass: rgb(255 255 255 / 0.55);
+  --lg-glass-active: rgb(236 236 240 / 0.85);
+  --lg-edge: rgb(0 0 0 / 0.08);
+  --lg-drop: rgb(0 0 0 / 0.06);
+  --lg-selection: rgb(0 0 0 / 0.1);
+  --lg-lens: rgb(255 255 255 / 0.3);
+  --lg-surface: rgb(250 250 252 / 0.86);
+  --lg-surface-edge: rgb(0 0 0 / 0.08);
+  --lg-shadow: rgb(25 25 35 / 0.12);
+  --lg-highlight: rgb(60 60 67 / 0.09);
+  --lg-separator: rgb(60 60 67 / 0.15);
+  --lg-track: rgb(59 59 66 / 0.3);
+  --lg-rail: rgb(0 0 0 / 0.1);
+  --lg-on: #34c759;
+  --lg-fill: #0088ff;
+  --lg-ring: rgb(0 0 0 / 0.4);
+}
+html.dark .nav-glass {
+  --lg-foreground: rgb(255 255 255);
+  --lg-muted: rgb(235 235 245 / 0.6);
+  --lg-glass: rgb(40 40 40 / 0.5);
+  --lg-glass-active: rgb(70 70 70 / 0.62);
+  --lg-edge: rgb(255 255 255 / 0.08);
+  --lg-drop: transparent;
+  --lg-selection: rgb(255 255 255 / 0.145);
+  --lg-lens: rgb(255 255 255 / 0.07);
+  --lg-surface: rgb(28 28 31 / 0.86);
+  --lg-surface-edge: rgb(255 255 255 / 0.13);
+  --lg-shadow: rgb(0 0 0 / 0.38);
+  --lg-highlight: rgb(235 235 245 / 0.13);
+  --lg-separator: rgb(235 235 245 / 0.16);
+  --lg-track: rgb(235 235 245 / 0.3);
+  --lg-rail: rgb(255 255 255 / 0.1);
+  --lg-on: #30d158;
+  --lg-fill: #0091ff;
+  --lg-ring: rgb(255 255 255 / 0.5);
+}
