@@ -167,10 +167,6 @@ export default function Home() {
         <DitherSun className="projects-sun" />
         <div className="p-sun-head">
           <h2>Epoch AI Labs</h2>
-          <p className="p-lede">
-            I'm the founder of Epoch AI Labs, an independent lab testing how
-            model agents coordinate, break, and get broken.
-          </p>
         </div>
         <div className="projects-rows">
           <p className="writing-tag">Projects</p>

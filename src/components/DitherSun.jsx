@@ -46,7 +46,7 @@ export default function DitherSun({ className }) {
     /* fibonacci lattice: even dot coverage of the sphere */
     const pts = [];
     {
-      const N = 6200;
+      const N = 12400;
       const golden = Math.PI * (3 - Math.sqrt(5));
       for (let i = 0; i < N; i++) {
         const y = 1 - (i / (N - 1)) * 2;
@@ -150,7 +150,7 @@ export default function DitherSun({ className }) {
           lum > 0.5 ? [240, 160, 60] :
           lum > 0.3 ? [180, 105, 32] : [110, 58, 16];
         ctx.fillStyle = `rgba(${ink[0]},${ink[1]},${ink[2]},${(0.95 * limbFade).toFixed(3)})`;
-        const r = 2.3 + 1.3 * z;
+        const r = 2 + 1.1 * z;
         ctx.fillRect(cx + x * R - r / 2, cy - y * R - r / 2, r, r);
       }
 
