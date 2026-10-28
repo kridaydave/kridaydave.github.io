@@ -5,6 +5,7 @@ import HoverCard from "../components/HoverCard.jsx";
 import EarthGlobe from "../components/EarthGlobe.jsx";
 import MoonGlobe from "../components/MoonGlobe.jsx";
 import DitherSun from "../components/DitherSun.jsx";
+import MiniPlanet from "../components/MiniPlanet.jsx";
 import ActivityGraph from "../components/ActivityGraph.jsx";
 import { useLatestEssay } from "../hooks/useLatestEssay.js";
 import { useActivityData } from "../hooks/useActivityData.js";
@@ -51,48 +52,52 @@ function TypeName() {
   );
 }
 
-/* ---------- projects: grouped rows, first thing after the hero ---------- */
+/* ---------- projects: four theses, first thing after the hero ----------
+   Each entry leads with the sentence Kriday wrote about the project,
+   quoted from its own case study. The T4 numbers are MEASURED register
+   numbers, not decoration. */
 
-const PROJECT_GROUPS = [
+const PROJECT_THESES = [
   {
-    label: "Epoch AI Labs",
-    rows: [
-      {
-        name: "Blueline",
-        type: "Supply Chain Security",
-        year: "2026",
-        desc: "Approve the change, not the download. Sandboxed installs and release deltas for npm.",
-        href: "projects/blueline.html",
-      },
-      {
-        name: "Oot",
-        type: "Code Governance",
-        year: "2026",
-        desc: "A court for code: resolves intent disputes and merge conflicts between agents.",
-        href: "projects/oot.html",
-      },
-      {
-        name: "T4 CUDA Kernels",
-        type: "GPU Research",
-        year: "2026",
-        desc: "Inference and training kernels for a 2018 Tesla T4 — quantized decode, fused AdamW, speculative decoding. All numbers tagged MEASURED.",
-        href: "https://github.com/Epoch-AI-Lab/t4-cuda",
-        external: true,
-      },
-    ],
+    name: "Blueline",
+    role: "Supply chain security, 2026",
+    org: "Epoch AI Labs",
+    hue: "#8fb0e0",
+    thesis: "Approve the change, not the download.",
+    say: "Sandboxed installs and release deltas for npm. Blueline reduces a package to what it actually alters, so review happens before bytes run.",
+    href: "projects/blueline.html",
+    cta: "Case study",
   },
   {
-    label: "Personal",
-    rows: [
-      {
-        name: "File Organizer MCP",
-        type: "Developer Tool",
-        year: "2025",
-        desc: "Local-first file management server for LLM agents, with dry-run safety gates.",
-        href: "projects/file-organizer-mcp.html",
-        badge: "Most popular",
-      },
-    ],
+    name: "Oot",
+    role: "Code governance, 2026",
+    org: "Epoch AI Labs",
+    hue: "#d09a9a",
+    thesis: "Version control as a court for code.",
+    say: "Agents rename interfaces, pass their own tests, and break the build in ways line merges cannot see. Oot rules on intent disputes and guards the merge boundary.",
+    href: "projects/oot.html",
+    cta: "Case study",
+  },
+  {
+    name: "T4 CUDA Kernels",
+    role: "GPU research, 2026",
+    org: "Epoch AI Labs",
+    hue: "#8fbf8f",
+    thesis: "The register is public, the numbers are tagged.",
+    say: "Training and inference kernels for a 2018 Tesla T4. 1.94x against eager PyTorch, then 2.02x re-measured on a second physical card.",
+    href: "https://github.com/Epoch-AI-Lab/t4-cuda",
+    external: true,
+    cta: "The register",
+  },
+  {
+    name: "File Organizer MCP",
+    role: "Developer tool, 2025",
+    org: "Personal, most used",
+    hue: "#c8b273",
+    thesis: "One atomic call instead of twenty.",
+    say: "Local-first file management for LLM agents. organize_files() scans, plans and moves as one operation, previewed in dry-run before anything moves.",
+    href: "projects/file-organizer-mcp.html",
+    cta: "Case study",
   },
 ];
 
@@ -162,33 +167,76 @@ export default function Home() {
         </div>
       </section>
 
-      {/* projects: a dithered sun cropped by the edge, the work orbiting it */}
-      <section className="scene-dark bg-black projects-scene" aria-label="Projects">
-        <DitherSun className="projects-sun" />
-        <div className="p-sun-head">
-          <h2>Epoch AI Labs</h2>
+      {/* projects: four theses under a translucent dithered sun that
+          rides the scroll */}
+      <section className="scene-dark theses-scene" aria-label="Projects">
+        <div className="theses-sun-track" aria-hidden="true">
+          <DitherSun className="theses-sun" />
         </div>
-        <div className="projects-rows">
-          <p className="writing-tag">Projects</p>
-          <div className="p-orbit-ring" aria-hidden="true" />
-          <div className="p-rows">
-            {PROJECT_GROUPS.flatMap((g) => g.rows).map((row) => (
-              <a
-                key={row.name}
-                href={row.href}
-                target={row.external ? "_blank" : undefined}
-                rel={row.external ? "noreferrer" : undefined}
-              >
-                <span className="t">
-                  {row.name}
-                  {row.badge && <span className="badge">{row.badge}</span>}
+        <div className="theses-wrap">
+          <h2>Projects</h2>
+          <p className="t-lede">
+            Three works from Epoch AI Labs and one of my own. Each thesis is
+            quoted from its case study — hover one to watch it underline
+            itself.
+          </p>
+          {PROJECT_THESES.map((p) => (
+            <article className="t-thesis" key={p.name} style={{ "--hue": p.hue }}>
+              <span className="t-planet-slot">
+                <span className="t-planet-spin">
+                  <MiniPlanet hue={p.hue} className="t-planet" />
                 </span>
-                <span className="type">{row.type}</span>
-                <span className="year">{row.year}</span>
-                <span className="desc">{row.desc}</span>
-              </a>
-            ))}
-          </div>
+              </span>
+              {/* the planet anchors the row at the left edge; the text
+                  is always on and hover only spins the planet */}
+              <div className="t-text">
+                <div className="t-body">
+                  <div className="t-body-in">
+                    <p className="t-id">
+                      <b>{p.name}</b>
+                      {p.role}
+                      <br />
+                      {p.org}
+                      <br />
+                      <a
+                        href={p.href}
+                        target={p.external ? "_blank" : undefined}
+                        rel={p.external ? "noreferrer" : undefined}
+                      >
+                        {p.cta}
+                      </a>
+                    </p>
+                    <a
+                      className="t-claim"
+                      href={p.href}
+                      target={p.external ? "_blank" : undefined}
+                      rel={p.external ? "noreferrer" : undefined}
+                    >
+                      {p.thesis.slice(0, p.thesis.lastIndexOf(" ")) + " "}
+                      {/* the last word carries the curl, so the line lands
+                          under the words that end the sentence */}
+                      <span className="t-tail">
+                        {p.thesis.slice(p.thesis.lastIndexOf(" ") + 1)}
+                      <svg
+                        className="t-curl"
+                        viewBox="0 0 220 22"
+                        preserveAspectRatio="none"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                          <path
+                            d="M3 15 C30 8 52 19 84 12 C108 7 128 15 152 11 C172 8 186 11 196 10 C205 9 210 6 205 4 C199 2 193 5 197 9 C202 14 212 15 217 12"
+                            pathLength="1"
+                          />
+                        </svg>
+                      </span>
+                    </a>
+                    <p className="t-say">{p.say}</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 

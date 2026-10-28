@@ -8,8 +8,8 @@ import { useEffect, useRef } from "react";
    a real ball of fire, not a flat poster.
 
    Warm duotone (honey → amber → umber), drag to spin with inertia,
-   idle drift toward the flung direction, ~30fps cap. Reduced motion:
-   one static frame. */
+   idle drift toward the flung direction, occasional flares jetting
+   off the limb, ~30fps cap. Reduced motion: one static frame. */
 
 const BAYER = [
   [0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5],
@@ -43,10 +43,11 @@ export default function DitherSun({ className }) {
     let lastMoveT = 0;
     const TILT = -0.18;
 
-    /* fibonacci lattice: even dot coverage of the sphere */
+    /* fibonacci lattice: even dot coverage of the sphere.
+       ~36,000 points: denser still. */
     const pts = [];
     {
-      const N = 12400;
+      const N = 36000;
       const golden = Math.PI * (3 - Math.sqrt(5));
       for (let i = 0; i < N; i++) {
         const y = 1 - (i / (N - 1)) * 2;
@@ -79,6 +80,38 @@ export default function DitherSun({ className }) {
       }
     }
 
+    /* flares: occasional arcs of bright dots jetting off the limb.
+       Anchored to a surface point so they ride the rotation; a new
+       one every 8–17s, the first almost immediately. */
+    const flares = [];
+    let nextFlareAt = 2200;
+    function spawnFlare(now) {
+      const cyr = Math.cos(rotY), syr = Math.sin(rotY);
+      const ct = Math.cos(TILT), st = Math.sin(TILT);
+      for (let tries = 0; tries < 60; tries++) {
+        const u = Math.random() * 2 - 1;
+        const a = Math.random() * Math.PI * 2;
+        const rr = Math.sqrt(Math.max(0, 1 - u * u));
+        const p = [Math.cos(a) * rr, u, Math.sin(a) * rr];
+        const x = p[0] * cyr + p[2] * syr;
+        const zb = -p[0] * syr + p[2] * cyr;
+        const y = p[1] * ct - zb * st;
+        const z = p[1] * st + zb * ct;
+        const edge = Math.hypot(x, y);
+        /* only erupt from the visible limb */
+        if (z > 0.15 && edge > 0.72 && edge < 0.93) {
+          flares.push({
+            p,
+            born: now,
+            life: 2600 + Math.random() * 1500,
+            bend: (Math.random() < 0.5 ? -1 : 1) * (0.5 + Math.random() * 0.8),
+            reach: 0.26 + Math.random() * 0.2,
+          });
+          return;
+        }
+      }
+    }
+
     function resize() {
       const r = canvas.getBoundingClientRect();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -106,6 +139,11 @@ export default function DitherSun({ className }) {
         velY = decayTarget + (velY - decayTarget) * Math.pow(0.9985, dtMs);
       }
 
+      if (!reduced && t >= nextFlareAt) {
+        spawnFlare(t);
+        nextFlareAt = t + 6000 + Math.random() * 8000;
+      }
+
       ctx.clearRect(0, 0, size.w, size.h);
       const cx = size.w / 2, cy = size.h / 2;
       const R = Math.min(size.w, size.h) * 0.44;
@@ -129,7 +167,7 @@ export default function DitherSun({ className }) {
         const z = p[1] * st + z0 * ct;
         if (z > 0) continue;
         ctx.fillStyle = `rgba(140, 72, 22, ${(0.08 + 0.09 * -z).toFixed(3)})`;
-        ctx.fillRect(cx + x * R - 1.1, cy - y * R - 1.1, 2.2, 2.2);
+        ctx.fillRect(cx + x * R - 0.8, cy - y * R - 0.8, 1.6, 1.6);
       }
 
       /* front hemisphere: granulated fire, limb darkening, sunspots */
@@ -150,7 +188,7 @@ export default function DitherSun({ className }) {
           lum > 0.5 ? [240, 160, 60] :
           lum > 0.3 ? [180, 105, 32] : [110, 58, 16];
         ctx.fillStyle = `rgba(${ink[0]},${ink[1]},${ink[2]},${(0.95 * limbFade).toFixed(3)})`;
-        const r = 2 + 1.1 * z;
+        const r = 1.4 + 0.7 * z;
         ctx.fillRect(cx + x * R - r / 2, cy - y * R - r / 2, r, r);
       }
 
@@ -167,8 +205,48 @@ export default function DitherSun({ className }) {
         const a = (0.6 + 0.35 * z) * limbFade;
         if (a <= 0.01) continue;
         ctx.fillStyle = `rgba(70, 30, 8, ${a.toFixed(3)})`;
-        const r = 1.8 + 0.7 * z;
+        const r = 1.2 + 0.4 * z;
         ctx.fillRect(cx + x * R - r / 2, cy - y * R - r / 2, r, r);
+      }
+
+      /* flares: bright arcs streaming off the limb, rising fast,
+         fading slow, bending sideways — anchored dots, never a
+         continuous glow, so the edge stays grainy */
+      for (let f = flares.length - 1; f >= 0; f--) {
+        const fl = flares[f];
+        const a = (t - fl.born) / fl.life;
+        if (a >= 1) { flares.splice(f, 1); continue; }
+        const p = fl.p;
+        const x = p[0] * cy_ + p[2] * sy_;
+        const zb = -p[0] * sy_ + p[2] * cy_;
+        const y = p[1] * ct - zb * st;
+        const z = p[1] * st + zb * ct;
+        /* rotated to the back half: the flare goes with it */
+        if (z <= 0.1) continue;
+        const ax = cx + x * R, ay = cy - y * R;
+        const e = Math.hypot(x, y);
+        const rx = x / e, ry = -y / e; /* radial unit, canvas y-down */
+        const growth = Math.min(1, a / 0.25);
+        const fade = a < 0.55 ? 1 : 1 - (a - 0.55) / 0.45;
+        const M = 20;
+        for (let k = 0; k <= M; k++) {
+          const u = k / M;
+          /* starts just inside the limb, so the stream visibly comes
+             OUT of the disc */
+          const d = fl.reach * growth * (u - 0.1);
+          const bend = fl.bend * 0.2 * u * u;
+          const px = ax + (rx * d - ry * bend) * R;
+          const py = ay + (ry * d + rx * bend) * R;
+          const sparkle = 0.65 + 0.35 * Math.sin(t * 0.02 + k * 2.1 + fl.bend * 7);
+          const alpha = 0.95 * (1 - u * 0.3) * fade * sparkle;
+          if (alpha <= 0.02) continue;
+          /* hot core near the base, cooling to deep orange at the tip */
+          const s = 2.2 + 1.6 * (1 - u);
+          ctx.fillStyle = u < 0.3
+            ? `rgba(255, 196, 87, ${alpha.toFixed(3)})`
+            : `rgba(255, 140, 38, ${alpha.toFixed(3)})`;
+          ctx.fillRect(px - s / 2, py - s / 2, s, s);
+        }
       }
 
       if (!reduced) raf = requestAnimationFrame(draw);
