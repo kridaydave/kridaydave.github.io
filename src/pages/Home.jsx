@@ -9,7 +9,6 @@ import MiniPlanet from "../components/MiniPlanet.jsx";
 import GitHubActivity from "../components/ui/github-activity.jsx";
 import { Mail } from "lucide-react";
 import { useLatestEssay } from "../hooks/useLatestEssay.js";
-import { useISTStatus } from "../hooks/useClock.js";
 import { POSTS } from "../content/pages.js";
 
 /* ---------- hero ---------- */
@@ -121,7 +120,6 @@ const PROJECT_THESES = [
 
 export default function Home() {
   const essay = useLatestEssay();
-  const ist = useISTStatus();
 
   /* The GitHub planet's ring: hover runs vibrate -> rainbow -> fast spin;
      un-hover decelerates from the ring's exact live angle back onto the base
@@ -370,12 +368,6 @@ export default function Home() {
       <section className="scene-dark now-section" aria-label="Now">
         <div className="now-inner">
           <p className="writing-tag">Now</p>
-          <div className="now-status">
-            <span className="online-dot" aria-hidden="true" />
-            <strong>{ist ? ist.time : "--:--:--"}</strong>
-            <span className="now-sep">·</span>
-            <span>{ist ? ist.activity : "Loading…"}</span>
-          </div>
           <div className="now-graph">
             <GitHubActivity username="kridaydave" />
           </div>

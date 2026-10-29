@@ -1,6 +1,5 @@
 import Home from "./pages/Home.jsx";
 import Blog from "./pages/Blog.jsx";
-import NowPage from "./pages/NowPage.jsx";
 import Rants from "./pages/Rants.jsx";
 import Favorites from "./pages/Favorites.jsx";
 import Uses from "./pages/Uses.jsx";
@@ -33,8 +32,6 @@ function resolvePage() {
       return <Home />;
     case "/blog":
       return <Blog />;
-    case "/now":
-      return <NowPage />;
     case "/rants":
       return <Rants />;
     case "/favorites":

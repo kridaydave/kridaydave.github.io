@@ -646,28 +646,7 @@ main.home {
   max-width: 980px; margin: 0 auto;
   padding: 40px 40px 60px;
 }
-.now-status {
-  display: inline-flex; align-items: center; gap: 9px;
-  font-family: var(--font-mono); font-size: 12.5px; color: var(--text-secondary);
-  margin-bottom: 26px;
-}
-.now-status .online-dot {
-  width: 7px; height: 7px; border-radius: 50%; background: #30d158;
-  box-shadow: 0 0 8px rgba(48, 209, 88, 0.7);
-}
-.now-status .now-sep { color: var(--text-tertiary); }
-.now-status strong { color: var(--text-primary); font-weight: 500; }
 .now-graph { overflow-x: auto; padding-bottom: 6px; }
-.now-total {
-  margin: 18px 0 0; font-family: var(--font-mono); font-size: 12.5px;
-  color: var(--text-tertiary);
-}
-.now-total strong { color: var(--text-primary); font-weight: 500; }
-.now-total a {
-  color: var(--text-secondary); border-bottom: 1px solid rgba(255,255,255,0.2);
-  padding-bottom: 1px; transition: color .15s, border-color .15s;
-}
-.now-total a:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.5); }
 
 /* the contribution graph, re-voiced in the site's dot language:
    GitHub's green squares become round blue dither dots */

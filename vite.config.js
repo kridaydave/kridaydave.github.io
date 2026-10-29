@@ -18,7 +18,6 @@ export default defineConfig({
         index: page("index.html"),
         "404": page("404.html"),
         blog: page("blog.html"),
-        now: page("now.html"),
         rants: page("rants.html"),
         favorites: page("favorites.html"),
         uses: page("uses.html"),

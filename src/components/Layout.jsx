@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Flame, House, Menu, PenLine, Radio, Star, X } from "lucide-react";
+import { ArrowLeft, Flame, House, Menu, PenLine, Star, X } from "lucide-react";
 import { Glass, Menu as GlassMenu, TabBar } from "glisse";
 import "glisse/styles.css";
 import { cn } from "../lib/utils";
@@ -8,7 +8,6 @@ import ReadingProgress from "./ReadingProgress";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", href: "/index.html" },
-  { key: "now", label: "Now", href: "/now.html" },
   { key: "blog", label: "Blog", href: "/blog.html" },
   { key: "rants", label: "Rants", href: "/rants.html" },
   { key: "favorites", label: "Favorites", href: "/favorites.html" },
@@ -17,7 +16,6 @@ const NAV_ITEMS = [
 /* Icons for the mobile glass menu's items. */
 const NAV_ICONS = {
   home: <House size={15} />,
-  now: <Radio size={15} />,
   blog: <PenLine size={15} />,
   rants: <Flame size={15} />,
   favorites: <Star size={15} />,
