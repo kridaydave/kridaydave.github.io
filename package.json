@@ -15,10 +15,13 @@
     "wrangler": "^4.20.0"
   },
   "dependencies": {
+    "@glass-sdk/liquid-glass": "^0.0.2",
     "clsx": "^2.1.1",
+    "cn": "^0.5.0",
     "glisse": "^0.4.2",
     "gsap": "^3.15.0",
     "lucide-react": "^1.59.0",
+    "motion": "^14.7.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tailwind-merge": "^3.7.0"

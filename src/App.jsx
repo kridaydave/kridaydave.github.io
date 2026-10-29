@@ -16,27 +16,30 @@ import ArticlePage from "./pages/ArticlePage.jsx";
  * navigation between pages is a real document load, like the static site.
  */
 function resolvePage() {
-  const path = window.location.pathname.replace(/\/+$/g, "") || "/";
+  // Workers Assets redirects /blog.html to the pretty /blog, so both forms
+  // must resolve to the same page or the pretty URL lands on the 404.
+  const path =
+    window.location.pathname.replace(/\/+$/g, "").replace(/\.html$/, "") || "/";
 
-  const postMatch = path.match(/^\/posts\/([^/]+?)(?:\.html)?$/);
+  const postMatch = path.match(/^\/posts\/([^/]+?)$/);
   if (postMatch) return <ArticlePage type="post" slug={postMatch[1]} />;
 
-  const projectMatch = path.match(/^\/projects\/([^/]+?)(?:\.html)?$/);
+  const projectMatch = path.match(/^\/projects\/([^/]+?)$/);
   if (projectMatch) return <ArticlePage type="project" slug={projectMatch[1]} />;
 
   switch (path) {
     case "/":
-    case "/index.html":
+    case "/index":
       return <Home />;
-    case "/blog.html":
+    case "/blog":
       return <Blog />;
-    case "/now.html":
+    case "/now":
       return <NowPage />;
-    case "/rants.html":
+    case "/rants":
       return <Rants />;
-    case "/favorites.html":
+    case "/favorites":
       return <Favorites />;
-    case "/uses.html":
+    case "/uses":
       return <Uses />;
     default:
       return <NotFound />;

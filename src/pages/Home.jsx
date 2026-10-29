@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Layout from "../components/Layout.jsx";
 import TiltCard from "../components/TiltCard.jsx";
 import HoverCard from "../components/HoverCard.jsx";
@@ -6,13 +6,31 @@ import EarthGlobe from "../components/EarthGlobe.jsx";
 import MoonGlobe from "../components/MoonGlobe.jsx";
 import DitherSun from "../components/DitherSun.jsx";
 import MiniPlanet from "../components/MiniPlanet.jsx";
-import ActivityGraph from "../components/ActivityGraph.jsx";
+import GitHubActivity from "../components/ui/github-activity.jsx";
+import { Mail } from "lucide-react";
 import { useLatestEssay } from "../hooks/useLatestEssay.js";
-import { useActivityData } from "../hooks/useActivityData.js";
 import { useISTStatus } from "../hooks/useClock.js";
 import { POSTS } from "../content/pages.js";
 
 /* ---------- hero ---------- */
+
+/* Brand marks for the contact row — lucide dropped brand icons, so these are
+   the official simple-icons paths, filled with currentColor. */
+const Mark = ({ d, size = 15 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden="true">
+    <path d={d} />
+  </svg>
+);
+const GithubMark = ({ size }) => (
+  <Mark d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+);
+const LinkedinMark = ({ size }) => (
+  <Mark size={size} d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+);
+const XMark = ({ size }) => (
+  <Mark size={size} d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+);
+
 
 const NAME = "Kriday Dave";
 
@@ -103,8 +121,84 @@ const PROJECT_THESES = [
 
 export default function Home() {
   const essay = useLatestEssay();
-  const activity = useActivityData();
   const ist = useISTStatus();
+
+  /* The GitHub planet's ring: hover runs vibrate -> rainbow -> fast spin;
+     un-hover decelerates from the ring's exact live angle back onto the base
+     orbit's phase, so it never snaps. Reduced-motion users get none of it. */
+  const ringRef = useRef(null);
+  const ringAnim = useRef(null);
+  const RING_BASE = "rgba(74, 222, 128, 0.5)";
+
+  const ringEnter = () => {
+    const ring = ringRef.current;
+    if (!ring?.animate || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    ringAnim.current?.cancel();
+    const vibrate = ring.animate(
+      [
+        { transform: "translate(-50%, -50%) rotate(0deg)", borderColor: "rgba(74, 222, 128, 0.85)" },
+        { transform: "translate(calc(-50% + 1.5px), calc(-50% - 1.5px)) rotate(3deg)" },
+        { transform: "translate(calc(-50% - 1.5px), calc(-50% + 1.5px)) rotate(7deg)", borderColor: "rgba(255, 90, 90, 0.85)" },
+        { transform: "translate(calc(-50% + 1.5px), -50%) rotate(11deg)", borderColor: "rgba(255, 184, 77, 0.85)" },
+        { transform: "translate(-50%, calc(-50% + 1.5px)) rotate(15deg)", borderColor: "rgba(255, 225, 77, 0.85)" },
+        { transform: "translate(calc(-50% - 1.5px), -50%) rotate(22deg)", borderColor: "rgba(124, 255, 107, 0.85)" },
+        { transform: "translate(calc(-50% + 1.5px), calc(-50% + 1.5px)) rotate(52deg)", borderColor: "rgba(77, 195, 255, 0.85)" },
+        { transform: "translate(calc(-50% - 1.5px), calc(-50% - 1.5px)) rotate(130deg)", borderColor: "rgba(176, 124, 255, 0.85)" },
+        { transform: "translate(-50%, -50%) rotate(240deg)", borderColor: "rgba(255, 107, 213, 0.85)" },
+      ],
+      { duration: 1700, easing: "cubic-bezier(0.45, 0, 0.55, 1)" }
+    );
+    ringAnim.current = vibrate;
+    vibrate.onfinish = () => {
+      const fast = ring.animate(
+        [
+          { transform: "translate(-50%, -50%) rotate(240deg)", borderColor: "rgba(255, 107, 213, 0.85)" },
+          { transform: "translate(-50%, -50%) rotate(330deg)", borderColor: "rgba(255, 90, 90, 0.85)" },
+          { transform: "translate(-50%, -50%) rotate(420deg)", borderColor: "rgba(255, 225, 77, 0.85)" },
+          { transform: "translate(-50%, -50%) rotate(510deg)", borderColor: "rgba(77, 195, 255, 0.85)" },
+          { transform: "translate(-50%, -50%) rotate(600deg)", borderColor: "rgba(255, 107, 213, 0.85)" },
+        ],
+        { duration: 500, iterations: Infinity }
+      );
+      ringAnim.current = fast;
+    };
+  };
+
+  const ringLeave = () => {
+    const ring = ringRef.current;
+    const anim = ringAnim.current;
+    if (!ring?.animate || !anim) return;
+    ringAnim.current = null;
+    // snapshot the ring's live angle and colour straight off its computed style
+    const cs = getComputedStyle(ring);
+    let angle = 0;
+    try {
+      const m = new DOMMatrixReadOnly(cs.transform === "none" ? "" : cs.transform);
+      angle = (Math.atan2(m.b, m.a) * 180) / Math.PI;
+    } catch (e) {}
+    let color = cs.borderTopColor;
+    anim.cancel();
+    // land on the base orbit's phase at the moment the slowdown will end
+    let endAngle = -16;
+    try {
+      const cssAnim = document
+        .getAnimations()
+        .find((a) => a.animationName === "ring-spin" && a.effect?.target === ring);
+      if (cssAnim?.currentTime != null) {
+        const phase = ((cssAnim.currentTime + 1400) % 22000) / 22000;
+        endAngle = -16 + 360 * phase;
+      }
+    } catch (e) {}
+    // take the shortest forward path to the landing angle
+    endAngle += 360 * Math.round((angle - endAngle) / 360);
+    ring.animate(
+      [
+        { transform: `translate(-50%, -50%) rotate(${angle}deg)`, borderColor: color },
+        { transform: `translate(-50%, -50%) rotate(${endAngle}deg)`, borderColor: RING_BASE },
+      ],
+      { duration: 1400, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+    );
+  };
 
   /* the three essays newest after the featured one, newest first */
   const wallEssays = useMemo(
@@ -266,7 +360,9 @@ export default function Home() {
 
         <div className="essay-wall">
           <HoverCard essays={wallEssays} />
-          <a className="writing-more" href="/blog.html">All essays</a>
+          <a className="writing-cta" href="/blog.html">
+            Read more <span aria-hidden="true">→</span>
+          </a>
         </div>
       </section>
 
@@ -281,19 +377,8 @@ export default function Home() {
             <span>{ist ? ist.activity : "Loading…"}</span>
           </div>
           <div className="now-graph">
-            <ActivityGraph data={activity} />
+            <GitHubActivity username="kridaydave" />
           </div>
-          <p className="now-total">
-            <strong>
-              {activity?.total?.lastYear != null
-                ? Number(activity.total.lastYear).toLocaleString()
-                : "—"}
-            </strong>{" "}
-            contributions in the last year ·{" "}
-            <a href="https://github.com/kridaydave" target="_blank" rel="noreferrer">
-              @kridaydave
-            </a>
-          </p>
         </div>
       </section>
 
@@ -305,10 +390,39 @@ export default function Home() {
           about AI — my inbox is open.
         </p>
         <div className="contact-row">
-          <a href="mailto:davekriday@gmail.com">davekriday@gmail.com</a>
-          <a href="https://github.com/kridaydave" target="_blank" rel="noreferrer">GitHub</a>
-          <a href="https://linkedin.com/in/kriday-dave-0169a83b5" target="_blank" rel="noreferrer">LinkedIn</a>
-          <a href="https://twitter.com/KridayTop" target="_blank" rel="noreferrer">X / Twitter</a>
+          <a className="contact-planet" href="mailto:davekriday@gmail.com" style={{ "--planet-size": "68px", "--planet-rgb": "255 176 64" }}>
+            <span className="planet-disc">
+              <Mail size={19} strokeWidth={1.5} />
+            </span>
+            <span className="planet-name">Email</span>
+          </a>
+          <a
+            className="contact-planet ringed"
+            href="https://github.com/kridaydave"
+            target="_blank"
+            rel="noreferrer"
+            style={{ "--planet-size": "84px", "--planet-rgb": "74 222 128" }}
+            onPointerEnter={ringEnter}
+            onPointerLeave={ringLeave}
+          >
+            <span className="planet-disc">
+              <span className="planet-ring" aria-hidden="true" ref={ringRef} />
+              <GithubMark size={22} />
+            </span>
+            <span className="planet-name">GitHub</span>
+          </a>
+          <a className="contact-planet" href="https://linkedin.com/in/kriday-dave-0169a83b5" target="_blank" rel="noreferrer" style={{ "--planet-size": "66px", "--planet-rgb": "96 165 250" }}>
+            <span className="planet-disc">
+              <LinkedinMark size={18} />
+            </span>
+            <span className="planet-name">LinkedIn</span>
+          </a>
+          <a className="contact-planet" href="https://twitter.com/KridayTop" target="_blank" rel="noreferrer" style={{ "--planet-size": "58px", "--planet-rgb": "235 235 245" }}>
+            <span className="planet-disc">
+              <XMark size={16} />
+            </span>
+            <span className="planet-name">X / Twitter</span>
+          </a>
         </div>
       </section>
     </Layout>

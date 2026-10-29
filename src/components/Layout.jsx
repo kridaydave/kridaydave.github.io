@@ -1,13 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Menu, Moon, Sun, X } from "lucide-react";
-import { TabBar } from "glisse";
+import { ArrowLeft, Flame, House, Menu, PenLine, Radio, Star, X } from "lucide-react";
+import { Glass, Menu as GlassMenu, TabBar } from "glisse";
 import "glisse/styles.css";
 import { cn } from "../lib/utils";
 import useScrollReveal from "../hooks/useScrollReveal.js";
 import ReadingProgress from "./ReadingProgress";
-
-const NAV_LINK =
-  "block w-full text-left rounded-full px-3.5 py-1.5 text-[13px] font-medium text-ink-3 transition-colors hover:text-ink hover:bg-white/8 not-dark:hover:bg-black/6";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", href: "/index.html" },
@@ -16,6 +13,15 @@ const NAV_ITEMS = [
   { key: "rants", label: "Rants", href: "/rants.html" },
   { key: "favorites", label: "Favorites", href: "/favorites.html" },
 ];
+
+/* Icons for the mobile glass menu's items. */
+const NAV_ICONS = {
+  home: <House size={15} />,
+  now: <Radio size={15} />,
+  blog: <PenLine size={15} />,
+  rants: <Flame size={15} />,
+  favorites: <Star size={15} />,
+};
 
 /**
  * Pill in the top-left gutter: an arrow that flips to an X on hover. Stays put
@@ -51,20 +57,6 @@ function FrameLines() {
   );
 }
 
-function ThemeToggle({ onToggle }) {
-  return (
-    <button
-      className="grid size-9 place-items-center rounded-md text-ink transition-colors hover:bg-surface-2"
-      type="button"
-      aria-label="Toggle theme"
-      onClick={onToggle}
-    >
-      <Sun className="hidden size-[18px] dark:block" />
-      <Moon className="block size-[18px] dark:hidden" />
-    </button>
-  );
-}
-
 /**
  * Persistent viewport-edge progressive blur: content dissolves as it
  * leaves at the top of the screen and blurs as it enters at the bottom,
@@ -84,41 +76,10 @@ function EdgeBlurs() {
   );
 }
 
-function Navbar({ active, homeMode, spyHash }) {
-  const [dark, setDark] = useState(() =>
-    document.documentElement.classList.contains("dark")
-  );
-  const [open, setOpen] = useState(false);
-
-  const toggleTheme = () => {
-    const next = !document.documentElement.classList.contains("dark");
-    document.documentElement.classList.toggle("dark", next);
-    try {
-      localStorage.setItem("theme", next ? "dark" : "light");
-    } catch (e) {}
-    setDark(next);
-  };
-
-  // A plain page highlights its own nav item. On the home page the scroll spy
-  // takes over, because the hash links point at sections within one document.
-  // The nav only carries one hash link (#top), so a spy hit on #about or
-  // #contact matches nothing; fall back to Home rather than dropping the dot.
-  // A plain page highlights its own nav item. On the home page the scroll spy
-  // takes over, because the hash links point at sections within one document.
-  // The nav only carries one hash link (#top), so a spy hit on #about or
-  // #contact matches nothing; fall back to Home rather than dropping the dot.
-  const links = NAV_ITEMS.map((item) => {
-    const href = homeMode && item.key === "home" ? "#top" : item.href;
-    const isActive = homeMode ? spyHash === href || href === "#top" : active === item.key;
-    return (
-      <a key={item.key} href={href} className={cn(NAV_LINK, isActive && "bg-white/10 text-ink not-dark:bg-black/8")}>
-        {item.label}
-      </a>
-    );
-  });
-
-  /* glisse's TabBar carries the liquid-glass lens. It follows the OS theme
-     on its own, so nav-glass tokens in site.css pin it to the site theme. */
+function Navbar({ active, homeMode }) {
+  /* The whole nav is glisse glass: the pill refracts the page behind it and
+     the strip renders real links, so hover prefetch keeps working. Tokens
+     come from .glisse-site in site.css; the site is dark-only. */
   const tabItems = NAV_ITEMS.map((item) => ({
     value: item.key,
     label: item.label,
@@ -126,45 +87,48 @@ function Navbar({ active, homeMode, spyHash }) {
   }));
   const tabValue = homeMode ? "home" : active;
 
+  // The mobile menu's items are plain buttons, so it navigates from here.
+  const go = (key) => {
+    const item = NAV_ITEMS.find((i) => i.key === key);
+    if (!item) return;
+    if (homeMode && item.key === "home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    if (item.href !== window.location.pathname) {
+      window.location.assign(item.href);
+    }
+  };
+
   return (
-    <header
-      className="nav-glass fixed top-[14px] left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/25 bg-[rgba(10,10,14,0.55)] px-2.5 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-[20px] animate-[slideDown_0.5s_cubic-bezier(0.2,0.8,0.2,1)_both] not-dark:border-black/12 not-dark:bg-[rgba(255,255,255,0.55)] not-dark:shadow-[0_12px_36px_rgba(0,0,0,0.14)]"
-    >
-      <a
-        href={homeMode ? "#top" : "/index.html"}
-        className="mr-1 border-r border-white/15 px-3 py-1 font-serif text-[17px] italic leading-none text-ink not-dark:border-black/15"
-      >
-        Kriday
-      </a>
-      <TabBar
-        aria-label="Main navigation"
-        className="hidden md:flex"
-        items={tabItems}
-        value={tabValue}
-        style={{ "--lg-tab-width": "72px", "--lg-tab-height": "30px" }}
-      />
-      <div className="flex items-center gap-1">
-        <ThemeToggle onToggle={toggleTheme} />
-        <button
-          className="grid size-9 place-items-center rounded-full text-ink transition-colors hover:bg-white/8 not-dark:hover:bg-black/6 md:hidden"
-          type="button"
-          aria-label="Toggle menu"
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
+    <header className="fixed top-[14px] left-1/2 z-50 -translate-x-1/2 whitespace-nowrap animate-[navFade_0.5s_ease-out_both]">
+      <Glass className="glisse-site nav-pill">
+        <a
+          href={homeMode ? "#top" : "/index.html"}
+          className="mr-1 border-r border-white/15 px-3 py-1 font-serif text-[17px] italic leading-none text-ink not-dark:border-black/15"
         >
-          <Menu />
-        </button>
-      </div>
-      <nav
-        className={cn(
-          "absolute right-0 top-[calc(100%+8px)] flex-col items-stretch gap-1 rounded-2xl border border-white/25 bg-[rgba(10,10,14,0.9)] p-3 backdrop-blur-[28px] not-dark:border-black/15 not-dark:bg-[rgba(255,255,255,0.94)] md:hidden",
-          open ? "flex" : "hidden"
-        )}
-        aria-label="Mobile navigation"
-        onClick={() => setOpen(false)}
-      >
-        {links}
-      </nav>
+          Kriday
+        </a>
+        <TabBar
+          aria-label="Main navigation"
+          items={tabItems}
+          value={tabValue}
+          style={{ "--lg-tab-width": "72px", "--lg-tab-height": "30px" }}
+        />
+        <GlassMenu
+          aria-label="Mobile navigation"
+          /* glisse's unlayered .lg-menu rule beats a plain md:hidden,
+             so the hide needs the important modifier. */
+          className="glisse-site md:hidden!"
+          icon={<Menu size={16} />}
+          align="end"
+          items={NAV_ITEMS.map((item) => ({
+            label: item.label,
+            icon: NAV_ICONS[item.key],
+            onSelect: () => go(item.key),
+          }))}
+        />
+      </Glass>
     </header>
   );
 }
@@ -194,27 +158,27 @@ function Footer({ showUses }) {
 }
 
 /* --- Instant prefetch on hover / touch (port of initPrefetch) --- */
+const prefetched = new Set();
+
+function prefetchHref(url) {
+  if (!url || prefetched.has(url)) return;
+  try {
+    const parsed = new URL(url, window.location.origin);
+    if (parsed.origin !== window.location.origin) return;
+    if (parsed.pathname === window.location.pathname) return;
+    prefetched.add(parsed.href);
+    const link = document.createElement("link");
+    link.rel = "prefetch";
+    link.href = parsed.href;
+    link.as = "document";
+    document.head.appendChild(link);
+  } catch (e) {}
+}
+
 function initPrefetch() {
-  const prefetched = new Set();
-
-  function prefetchUrl(url) {
-    if (!url || prefetched.has(url)) return;
-    try {
-      const parsed = new URL(url, window.location.origin);
-      if (parsed.origin !== window.location.origin) return;
-      if (parsed.pathname === window.location.pathname) return;
-      prefetched.add(parsed.href);
-      const link = document.createElement("link");
-      link.rel = "prefetch";
-      link.href = parsed.href;
-      link.as = "document";
-      document.head.appendChild(link);
-    } catch (e) {}
-  }
-
   const onEnter = (e) => {
     const anchor = e.target.closest && e.target.closest("a");
-    if (anchor && anchor.href && !anchor.target) prefetchUrl(anchor.href);
+    if (anchor && anchor.href && !anchor.target) prefetchHref(anchor.href);
   };
   document.addEventListener("pointerenter", onEnter, { passive: true, capture: true });
   document.addEventListener("touchstart", onEnter, { passive: true, capture: true });
