@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import Layout from "../components/Layout.jsx";
+import MiniPlanet from "../components/MiniPlanet.jsx";
 import FilterBar, { EmptyFilterState } from "../components/FilterBar.jsx";
 import { POSTS } from "../content/pages.js";
+import { hueFor } from "../lib/hues.js";
 import { linesFromHtml, plainFromHtml } from "../lib/text.js";
 import { highlight } from "../lib/highlight.jsx";
 import { SECTION, SECTION_TITLE } from "../lib/styles.js";
@@ -124,11 +126,6 @@ function getMatchSnippet(lines, fallbackText, tokens) {
   return snippet;
 }
 
-/* Rows are a dashed box; each row owns its bottom rule so the last one can
-   drop it. Below 480px the meta column moves inline above the title. */
-const ITEM =
-  "group grid grid-cols-[120px_1fr_auto] items-center gap-4 border-b border-dashed border-hair p-4 transition-colors last:border-b-0 hover:bg-surface-1 max-[480px]:grid-cols-[1fr_auto] max-[480px]:gap-2.5";
-
 export default function Blog() {
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState("all");
@@ -149,18 +146,32 @@ export default function Blog() {
   const visibleCount = visible.filter((v) => v.visible).length;
 
   return (
-    <Layout active="blog">
+    <Layout active="blog" bleed>
+      {/* hero: the dithered galaxy — dark at the upper left where the
+          title sits, bright swirl sweeping out to the lower right */}
+      <section className="blog-hero scene-dark" aria-label="Blog">
+        <img
+          className="blog-hero-img"
+          src="/assets/hero/blog-galaxy.webp"
+          alt=""
+          aria-hidden="true"
+        />
+        <div className="blog-hero-shade" aria-hidden="true" />
+        <div className="blog-hero-inner">
+          <p className="blog-hero-kicker">Observation log</p>
+          <h1 className="blog-hero-title">Blog</h1>
+          <p className="blog-hero-lede">
+            Long-form writing on agentic engineering, AI research, and the
+            developer memory layer.{" "}
+            <a href="/rss.xml" className="blog-hero-rss">
+              RSS ↗
+            </a>
+          </p>
+        </div>
+      </section>
+
+      <div className="blog-body">
       <section className={SECTION}>
-        <h2 className={SECTION_TITLE}>Blog</h2>
-        <p className="mb-[22px] text-[16px] text-ink-2">
-          Long-form writing on agentic engineering, AI research, and the developer memory layer.{" "}
-          <a
-            href="/rss.xml"
-            className="whitespace-nowrap text-ink-2 underline decoration-dashed underline-offset-[3px] transition-colors hover:text-ink"
-          >
-            RSS ↗
-          </a>
-        </p>
 
         <FilterBar
           query={query}
@@ -172,42 +183,44 @@ export default function Blog() {
           onTagChange={setTag}
         />
 
-        <div className="border border-dashed border-hair" data-reveal>
+        {/* observation log: one dotted rule per entry, a node dot that
+            ignites amber on hover, mono coordinates on the left */}
+        <div className="log-list" data-reveal>
           {visible.map(({ item, indexed, visible: shown }) => (
             <a
               key={item.slug}
               href={item.href}
-              className={ITEM}
+              className={shown ? "log-row" : "log-row hidden"}
               data-tags={item.tags}
               data-title={item.title}
               data-excerpt={item.excerpt}
-              style={shown ? undefined : { display: "none" }}
+              style={{ "--post-hue": hueFor(item.tags) }}
             >
-              <div className="flex flex-col gap-1.5 max-[480px]:flex-row max-[480px]:items-center max-[480px]:justify-between">
-                <span className="font-mono text-[12px] tracking-[0.1em] text-ink-3">{item.num}</span>
-                <span className="max-w-full self-start overflow-hidden rounded-[3px] border border-dotted border-hair bg-surface-1 px-[9px] py-[3px] font-mono text-[11px] text-ellipsis whitespace-nowrap text-ink-3">
-                  {item.tagLabel}
-                </span>
+              <span className="log-dot" aria-hidden="true" />
+              <span className="log-avatar" aria-hidden="true">
+                <MiniPlanet hue={hueFor(item.tags)} className="log-planet" />
+              </span>
+              <div className="log-meta">
+                <span className="log-num">{item.num}</span>
+                <span className="log-date">{POSTS[item.slug]?.date ?? ""}</span>
               </div>
-              <div>
-                <h3 className="mb-[5px] text-[18px] font-semibold text-ink transition-colors group-hover:text-ink-2">
-                  {highlight(item.title, tokens)}
-                </h3>
-                <p className="text-[15px] leading-[1.6] text-ink-2 max-[480px]:text-[13px]">
+              <div className="log-main">
+                <div className="log-head">
+                  <h3 className="log-title">{highlight(item.title, tokens)}</h3>
+                  <span className="log-tag">{item.tagLabel}</span>
+                </div>
+                <p className="log-excerpt">
                   {highlight(getMatchSnippet(indexed.lines, item.excerpt, tokens), tokens)}
                 </p>
               </div>
-              <ArrowUpRight
-                className="shrink-0 text-ink-3 transition-[transform,color] duration-200 group-hover:-translate-y-[2px] group-hover:translate-x-[2px] group-hover:text-ink max-[480px]:col-start-2 max-[480px]:[grid-row:1/span_2]"
-                size={18}
-                aria-hidden="true"
-              />
+              <ArrowUpRight className="log-arrow" size={19} aria-hidden="true" />
             </a>
           ))}
         </div>
 
         {visibleCount === 0 && <EmptyFilterState>No matching posts found.</EmptyFilterState>}
       </section>
+      </div>
     </Layout>
   );
 }

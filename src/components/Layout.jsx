@@ -228,6 +228,8 @@ function useScrollSpy(enabled) {
 export default function Layout({
   active,
   homeMode = false,
+  bleed = false,
+  edgeBlurs = true,
   scrollSpy = false,
   showUses = false,
   progress = false,
@@ -243,11 +245,17 @@ export default function Layout({
     return initPrefetch();
   }, []);
 
+  const fullBleed = homeMode || bleed;
+
   return (
     <>
       {progress && <ReadingProgress />}
-      <EdgeBlurs />
-      <FrameLines />
+      {/* text-dense pages opt out: backdrop smear over bright paragraphs
+          reads as a glow, not a dissolve */}
+      {edgeBlurs && <EdgeBlurs />}
+      {/* the frame lines sit at the old column edges; full-bleed pages
+          cross them with content, where they read as stray rules */}
+      {!bleed && <FrameLines />}
       <Navbar active={active} homeMode={homeMode} spyHash={spyHash} />
       {back && <BackPill href={back.href} label={back.label} />}
       <main
@@ -255,9 +263,8 @@ export default function Layout({
         ref={mainRef}
         className={cn(
           "relative z-[2] mx-auto flex w-full flex-col",
-          homeMode &&
-            "home bg-transparent",
-          !homeMode &&
+          fullBleed && "home bg-transparent",
+          !fullBleed &&
             "max-w-column border-x border-dashed border-hair bg-column px-4 pt-[76px] shadow-[0_0_0_1px_var(--column-bg)] backdrop-blur-[14px] max-[480px]:px-4"
         )}
       >

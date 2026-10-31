@@ -15,6 +15,9 @@ export const POST_BODY = [
   "[&_h2]:mt-[46px] [&_h2]:mb-4 [&_h2]:font-serif [&_h2]:text-[32px]",
   "[&_h2]:font-normal [&_h2]:leading-[1.25] [&_h2]:tracking-[-0.02em] [&_h2]:text-white",
 
+  "[&_h3]:mt-[34px] [&_h3]:mb-3 [&_h3]:font-serif [&_h3]:text-[21px]",
+  "[&_h3]:font-normal [&_h3]:leading-[1.3] [&_h3]:text-ink",
+
   "[&_strong]:font-semibold [&_strong]:text-ink",
 
   "[&_code]:rounded-[3px] [&_code]:border [&_code]:border-solid [&_code]:border-hair",
