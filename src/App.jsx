@@ -1,8 +1,6 @@
 import Home from "./pages/Home.jsx";
 import Blog from "./pages/Blog.jsx";
-import Rants from "./pages/Rants.jsx";
 import Favorites from "./pages/Favorites.jsx";
-import Uses from "./pages/Uses.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import ArticlePage from "./pages/ArticlePage.jsx";
 
@@ -32,12 +30,8 @@ function resolvePage() {
       return <Home />;
     case "/blog":
       return <Blog />;
-    case "/rants":
-      return <Rants />;
     case "/favorites":
       return <Favorites />;
-    case "/uses":
-      return <Uses />;
     default:
       return <NotFound />;
   }

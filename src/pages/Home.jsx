@@ -224,7 +224,7 @@ export default function Home() {
   );
 
   return (
-    <Layout active="home" homeMode showUses>
+    <Layout active="home" homeMode>
       {/* hero scene: daylight clouds, portrait, the name */}
       <section className="hero scene-dark" aria-label="Introduction">
         <img className="hero-img" src="assets/hero/clouds.webp" alt="" aria-hidden="true" />

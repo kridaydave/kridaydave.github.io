@@ -7,7 +7,7 @@ const PILL_OFF = "border-hair bg-transparent text-ink-3 hover:border-ink-2 hover
 const PILL_ON = "border-ink bg-ink font-semibold text-[var(--bg)]";
 
 /**
- * Search box plus tag pills, shared by the Blog and Rants indexes.
+ * Search box plus tag pills, shared by the Blog index.
  * Filtering happens in the parent; this only renders the controls.
  */
 export default function FilterBar({

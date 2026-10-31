@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Flame, House, Menu, PenLine, Star, X } from "lucide-react";
+import { ArrowLeft, House, Menu, PenLine, Star, X } from "lucide-react";
 import { Glass, Menu as GlassMenu, TabBar } from "glisse";
 import "glisse/styles.css";
 import { cn } from "../lib/utils";
@@ -9,7 +9,6 @@ import ReadingProgress from "./ReadingProgress";
 const NAV_ITEMS = [
   { key: "home", label: "Home", href: "/index.html" },
   { key: "blog", label: "Blog", href: "/blog.html" },
-  { key: "rants", label: "Rants", href: "/rants.html" },
   { key: "favorites", label: "Favorites", href: "/favorites.html" },
 ];
 
@@ -17,7 +16,6 @@ const NAV_ITEMS = [
 const NAV_ICONS = {
   home: <House size={15} />,
   blog: <PenLine size={15} />,
-  rants: <Flame size={15} />,
   favorites: <Star size={15} />,
 };
 
@@ -131,23 +129,13 @@ function Navbar({ active, homeMode }) {
   );
 }
 
-function Footer({ showUses }) {
+function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="relative z-[2] mx-auto w-full max-w-column border-x border-t border-dashed border-hair bg-column px-4 pt-6 pb-8 text-center text-[13px] text-ink-3 backdrop-blur-[14px] [&_p+p]:mt-1 [&_strong]:font-semibold [&_strong]:text-ink-2">
       <p>
         Designed &amp; Developed by <strong>Kriday Dave</strong>
       </p>
-      {showUses && (
-        <p>
-          <a
-            href="/uses.html"
-            className="text-ink-2 underline decoration-dashed underline-offset-[3px] transition-colors hover:text-ink"
-          >
-            Uses
-          </a>
-        </p>
-      )}
       <p>
         &copy; <span id="year">{year}</span> All rights reserved.
       </p>
@@ -231,7 +219,6 @@ export default function Layout({
   bleed = false,
   edgeBlurs = true,
   scrollSpy = false,
-  showUses = false,
   progress = false,
   back = null,
   children,
@@ -270,7 +257,7 @@ export default function Layout({
       >
         {children}
       </main>
-      <Footer showUses={showUses} />
+      <Footer />
     </>
   );
 }
