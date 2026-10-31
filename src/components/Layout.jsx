@@ -1,19 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Menu, Moon, Sun, X } from "lucide-react";
+import { ArrowLeft, House, Menu, PenLine, Star, X } from "lucide-react";
+import { Glass, Menu as GlassMenu, TabBar } from "glisse";
+import "glisse/styles.css";
 import { cn } from "../lib/utils";
 import useScrollReveal from "../hooks/useScrollReveal.js";
 import ReadingProgress from "./ReadingProgress";
 
-const NAV_LINK =
-  "relative py-1 text-[14px] font-medium text-ink-3 transition-colors hover:text-ink";
-
 const NAV_ITEMS = [
   { key: "home", label: "Home", href: "/index.html" },
-  { key: "now", label: "Now", href: "/now.html" },
   { key: "blog", label: "Blog", href: "/blog.html" },
-  { key: "rants", label: "Rants", href: "/rants.html" },
   { key: "favorites", label: "Favorites", href: "/favorites.html" },
 ];
+
+/* Icons for the mobile glass menu's items. */
+const NAV_ICONS = {
+  home: <House size={15} />,
+  blog: <PenLine size={15} />,
+  favorites: <Star size={15} />,
+};
 
 /**
  * Pill in the top-left gutter: an arrow that flips to an X on hover. Stays put
@@ -49,106 +53,89 @@ function FrameLines() {
   );
 }
 
-function ThemeToggle({ onToggle }) {
+/**
+ * Persistent viewport-edge progressive blur: content dissolves as it
+ * leaves at the top of the screen and blurs as it enters at the bottom,
+ * on every page. The site's own --background tints the top feather so
+ * it reads in both themes.
+ */
+function EdgeBlurs() {
   return (
-    <button
-      className="grid size-9 place-items-center rounded-md text-ink transition-colors hover:bg-surface-2"
-      type="button"
-      aria-label="Toggle theme"
-      onClick={onToggle}
-    >
-      <Sun className="hidden size-[18px] dark:block" />
-      <Moon className="block size-[18px] dark:hidden" />
-    </button>
+    <>
+      <div className="edge-blur top" aria-hidden="true">
+        <span /><span /><span /><span /><span />
+      </div>
+      <div className="edge-blur bottom" aria-hidden="true">
+        <span /><span /><span /><span /><span />
+      </div>
+    </>
   );
 }
 
-function Navbar({ active, homeMode, spyHash }) {
-  const [dark, setDark] = useState(() =>
-    document.documentElement.classList.contains("dark")
-  );
-  const [open, setOpen] = useState(false);
+function Navbar({ active, homeMode }) {
+  /* The whole nav is glisse glass: the pill refracts the page behind it and
+     the strip renders real links, so hover prefetch keeps working. Tokens
+     come from .glisse-site in site.css; the site is dark-only. */
+  const tabItems = NAV_ITEMS.map((item) => ({
+    value: item.key,
+    label: item.label,
+    href: homeMode && item.key === "home" ? "#top" : item.href,
+  }));
+  const tabValue = homeMode ? "home" : active;
 
-  const toggleTheme = () => {
-    const next = !document.documentElement.classList.contains("dark");
-    document.documentElement.classList.toggle("dark", next);
-    try {
-      localStorage.setItem("theme", next ? "dark" : "light");
-    } catch (e) {}
-    setDark(next);
+  // The mobile menu's items are plain buttons, so it navigates from here.
+  const go = (key) => {
+    const item = NAV_ITEMS.find((i) => i.key === key);
+    if (!item) return;
+    if (homeMode && item.key === "home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    if (item.href !== window.location.pathname) {
+      window.location.assign(item.href);
+    }
   };
 
-  // A plain page highlights its own nav item. On the home page the scroll spy
-  // takes over, because the hash links point at sections within one document.
-  // The nav only carries one hash link (#top), so a spy hit on #about or
-  // #contact matches nothing; fall back to Home rather than dropping the dot.
-  const links = NAV_ITEMS.map((item) => {
-    const href = homeMode && item.key === "home" ? "#top" : item.href;
-    const isActive = homeMode ? spyHash === href || href === "#top" : active === item.key;
-    return (
-      <a key={item.key} href={href} className={cn(NAV_LINK, isActive && "text-ink")}>
-        {item.label}
-        {isActive && (
-          <span className="absolute bottom-[-2px] left-1/2 size-1 -translate-x-1/2 rounded-full bg-ink" />
-        )}
-      </a>
-    );
-  });
-
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-dashed border-hair-strong bg-background backdrop-blur-[12px] animate-[slideDown_0.5s_cubic-bezier(0.2,0.8,0.2,1)_both]">
-      <div className="mx-auto flex h-12 w-full max-w-column items-center justify-between border-x border-dashed border-hair px-4">
-        <a href={homeMode ? "#top" : "/index.html"} className="font-serif text-[28px] leading-none text-ink">
+    <header className="fixed top-[14px] left-1/2 z-50 -translate-x-1/2 whitespace-nowrap animate-[navFade_0.5s_ease-out_both]">
+      <Glass className="glisse-site nav-pill">
+        <a
+          href={homeMode ? "#top" : "/index.html"}
+          className="mr-1 border-r border-white/15 px-3 py-1 font-serif text-[17px] italic leading-none text-ink not-dark:border-black/15"
+        >
           Kriday
         </a>
-        <nav className="hidden items-center gap-5 md:flex" aria-label="Main navigation">
-          {links}
-        </nav>
-        <div className="flex items-center gap-2">
-          <ThemeToggle onToggle={toggleTheme} />
-          <div className="hidden h-5 w-px bg-hair md:block" />
-          <button
-            className="grid size-9 place-items-center rounded-md text-ink transition-colors hover:bg-surface-2 md:hidden"
-            type="button"
-            aria-label="Toggle menu"
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <Menu />
-          </button>
-        </div>
-      </div>
-      <nav
-        className={cn(
-          "flex-col border-x border-b border-dashed border-hair bg-background px-4 pt-3 pb-4 md:hidden",
-          open ? "flex" : "hidden"
-        )}
-        aria-label="Mobile navigation"
-        onClick={() => setOpen(false)}
-      >
-        {links}
-      </nav>
+        <TabBar
+          aria-label="Main navigation"
+          items={tabItems}
+          value={tabValue}
+          style={{ "--lg-tab-width": "72px", "--lg-tab-height": "30px" }}
+        />
+        <GlassMenu
+          aria-label="Mobile navigation"
+          /* glisse's unlayered .lg-menu rule beats a plain md:hidden,
+             so the hide needs the important modifier. */
+          className="glisse-site md:hidden!"
+          icon={<Menu size={16} />}
+          align="end"
+          items={NAV_ITEMS.map((item) => ({
+            label: item.label,
+            icon: NAV_ICONS[item.key],
+            onSelect: () => go(item.key),
+          }))}
+        />
+      </Glass>
     </header>
   );
 }
 
-function Footer({ showUses }) {
+function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="relative z-[2] mx-auto w-full max-w-column border-x border-t border-dashed border-hair bg-column px-4 pt-6 pb-8 text-center text-[13px] text-ink-3 backdrop-blur-[14px] [&_p+p]:mt-1 [&_strong]:font-semibold [&_strong]:text-ink-2">
       <p>
         Designed &amp; Developed by <strong>Kriday Dave</strong>
       </p>
-      {showUses && (
-        <p>
-          <a
-            href="/uses.html"
-            className="text-ink-2 underline decoration-dashed underline-offset-[3px] transition-colors hover:text-ink"
-          >
-            Uses
-          </a>
-        </p>
-      )}
       <p>
         &copy; <span id="year">{year}</span> All rights reserved.
       </p>
@@ -157,27 +144,27 @@ function Footer({ showUses }) {
 }
 
 /* --- Instant prefetch on hover / touch (port of initPrefetch) --- */
+const prefetched = new Set();
+
+function prefetchHref(url) {
+  if (!url || prefetched.has(url)) return;
+  try {
+    const parsed = new URL(url, window.location.origin);
+    if (parsed.origin !== window.location.origin) return;
+    if (parsed.pathname === window.location.pathname) return;
+    prefetched.add(parsed.href);
+    const link = document.createElement("link");
+    link.rel = "prefetch";
+    link.href = parsed.href;
+    link.as = "document";
+    document.head.appendChild(link);
+  } catch (e) {}
+}
+
 function initPrefetch() {
-  const prefetched = new Set();
-
-  function prefetchUrl(url) {
-    if (!url || prefetched.has(url)) return;
-    try {
-      const parsed = new URL(url, window.location.origin);
-      if (parsed.origin !== window.location.origin) return;
-      if (parsed.pathname === window.location.pathname) return;
-      prefetched.add(parsed.href);
-      const link = document.createElement("link");
-      link.rel = "prefetch";
-      link.href = parsed.href;
-      link.as = "document";
-      document.head.appendChild(link);
-    } catch (e) {}
-  }
-
   const onEnter = (e) => {
     const anchor = e.target.closest && e.target.closest("a");
-    if (anchor && anchor.href && !anchor.target) prefetchUrl(anchor.href);
+    if (anchor && anchor.href && !anchor.target) prefetchHref(anchor.href);
   };
   document.addEventListener("pointerenter", onEnter, { passive: true, capture: true });
   document.addEventListener("touchstart", onEnter, { passive: true, capture: true });
@@ -229,8 +216,9 @@ function useScrollSpy(enabled) {
 export default function Layout({
   active,
   homeMode = false,
+  bleed = false,
+  edgeBlurs = true,
   scrollSpy = false,
-  showUses = false,
   progress = false,
   back = null,
   children,
@@ -244,16 +232,32 @@ export default function Layout({
     return initPrefetch();
   }, []);
 
+  const fullBleed = homeMode || bleed;
+
   return (
     <>
       {progress && <ReadingProgress />}
-      <FrameLines />
+      {/* text-dense pages opt out: backdrop smear over bright paragraphs
+          reads as a glow, not a dissolve */}
+      {edgeBlurs && <EdgeBlurs />}
+      {/* the frame lines sit at the old column edges; full-bleed pages
+          cross them with content, where they read as stray rules */}
+      {!bleed && <FrameLines />}
       <Navbar active={active} homeMode={homeMode} spyHash={spyHash} />
       {back && <BackPill href={back.href} label={back.label} />}
-      <main id="top" ref={mainRef} className="relative z-[2] mx-auto flex w-full max-w-column flex-col border-x border-dashed border-hair bg-column px-4 pt-12 shadow-[0_0_0_1px_var(--column-bg)] backdrop-blur-[14px] max-[480px]:px-4">
+      <main
+        id="top"
+        ref={mainRef}
+        className={cn(
+          "relative z-[2] mx-auto flex w-full flex-col",
+          fullBleed && "home bg-transparent",
+          !fullBleed &&
+            "max-w-column border-x border-dashed border-hair bg-column px-4 pt-[76px] shadow-[0_0_0_1px_var(--column-bg)] backdrop-blur-[14px] max-[480px]:px-4"
+        )}
+      >
         {children}
       </main>
-      <Footer showUses={showUses} />
+      <Footer />
     </>
   );
 }

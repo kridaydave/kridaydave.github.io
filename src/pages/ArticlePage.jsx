@@ -6,6 +6,9 @@ import { plainFromHtml, wordCount } from "../lib/text.js";
 import { copyText } from "../lib/clipboard.js";
 import { cn } from "../lib/utils";
 import { ARTICLE_SECTION } from "../lib/styles.js";
+import RailToc from "../components/ui/rail-toc.jsx";
+import MiniPlanet from "../components/MiniPlanet.jsx";
+import { hueFor, SLUG_TAGS } from "../lib/hues.js";
 import { POST_BODY, POST_CMD, POST_TERM } from "../lib/postBody.js";
 
 const WORDS_PER_MINUTE = 200;
@@ -82,6 +85,21 @@ export default function ArticlePage({ type, slug }) {
     return `${Math.max(1, Math.ceil(words / WORDS_PER_MINUTE))} min read`;
   }, [article]);
 
+  /* TOC: pull the body's h2/h3 into a rail, stamping anchor ids as we go.
+     Build-time authored content, parsed for ids only. */
+  const { bodyHtml, toc } = useMemo(() => {
+    if (!article || typeof DOMParser === "undefined") {
+      return { bodyHtml: article?.body ?? "", toc: [] };
+    }
+    const doc = new DOMParser().parseFromString(article.body, "text/html");
+    const items = [...doc.querySelectorAll("h2, h3")].map((h, i) => {
+      const id = `sec-${i + 1}`;
+      h.id = id;
+      return { id, label: h.textContent.trim(), depth: h.tagName === "H3" ? 1 : 0 };
+    });
+    return { bodyHtml: doc.body.innerHTML, toc: items };
+  }, [article]);
+
   if (!article) {
     return (
       <Layout active={null}>
@@ -107,13 +125,52 @@ export default function ArticlePage({ type, slug }) {
     );
   }
 
+  const hue = hueFor(SLUG_TAGS[slug] ?? "dev");
+
   return (
     <Layout
       active={isPost ? "blog" : "home"}
       progress={article.withProgress}
-      back={{ href: article.backHref, label: article.backLabel }}
+      bleed
+      edgeBlurs={false}
     >
-      <article className={ARTICLE_SECTION}>
+      {/* article shell: a left sidebar (back + name, rail toc, the post's
+          planet) beside the reading column; collapses on small screens */}
+      <div className="article-shell">
+        <aside className="article-side">
+          <div className="side-top">
+            <a className="side-name" href="/index.html">Kriday</a>
+            <a className="side-back" href={article.backHref}>
+              ← {article.backLabel}
+            </a>
+          </div>
+          <div className="side-mid">
+            {toc.length >= 2 && (
+              <RailToc items={toc} title="On this page" indent={18} />
+            )}
+          </div>
+          <div className="side-foot">
+            <span className="side-planet" aria-hidden="true">
+              <MiniPlanet hue={hue} className="side-planet-canvas" />
+            </span>
+            <p className="side-foot-meta">
+              {article.tag}
+              <br />
+              {article.date}
+              {isPost && <> · {readTime}</>}
+            </p>
+          </div>
+        </aside>
+
+        {/* mobile-only slim top bar; the sidebar hides below 1024px */}
+        <div className="article-mobile-bar">
+          <a className="side-back" href={article.backHref}>
+            ← Back to {article.backLabel}
+          </a>
+          <a className="side-name" href="/index.html">Kriday</a>
+        </div>
+
+        <article className="article-main">
         <header className="mb-9">
           <div className="mb-[18px] flex flex-wrap items-center gap-3.5">
             <span className="rounded-[3px] border border-dotted border-hair bg-surface-1 px-2.25 py-[3px] font-mono text-[11px] tracking-[0.12em] text-ink-3">
@@ -161,9 +218,10 @@ export default function ArticlePage({ type, slug }) {
         <div
           ref={bodyRef}
           className={cn(POST_BODY, POST_CMD, POST_TERM)}
-          dangerouslySetInnerHTML={{ __html: article.body }}
+          dangerouslySetInnerHTML={{ __html: bodyHtml }}
         />
-      </article>
+        </article>
+      </div>
     </Layout>
   );
 }
